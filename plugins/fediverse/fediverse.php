@@ -109,7 +109,7 @@ function kp_fediverse_plugin_handle_publish(int $episodeId, int $podcastId, stri
 function kp_fediverse_plugin_handle_delete(array $episode): void {
     if (function_exists('kp_ap_delete_episode')) {
         try {
-            kp_ap_delete_episode((int)$episode['id']);
+            kp_ap_delete_episode($episode);
         } catch (Throwable $e) {
             // Ignorar fallos de red al borrar
         }

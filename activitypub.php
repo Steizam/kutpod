@@ -176,6 +176,7 @@ function kp_ap_update_actor(int $podcastId): void {
   foreach ($followers as $f) {
       $ins->execute([$oid, $f['inbox']]);
   }
+  kp_ap_trigger_delivery();
 }
 
 // ---------------------------------------------------------------------------
@@ -464,53 +465,117 @@ function kp_ap_publish_episode(int $episodeId, bool $resend = false): void {
   foreach ($followers as $f) {
       $ins->execute([$oid, $f['inbox']]);
   }
+
+  kp_ap_trigger_delivery();
 }
 
 // ---------------------------------------------------------------------------
 // Eliminar un episodio publicado del Fediverso
 // ---------------------------------------------------------------------------
-function kp_ap_delete_episode(int $episodeId): void {
-  $e = kp_one("SELECT * FROM episodes WHERE id = ?", [$episodeId]);
+function kp_ap_delete_episode($episodeOrId): void {
+  if (is_array($episodeOrId)) {
+    $e = $episodeOrId;
+  } else {
+    $e = kp_one("SELECT * FROM episodes WHERE id = ?", [(int)$episodeOrId]);
+  }
   if (!$e) return;
   $p = kp_one("SELECT * FROM podcasts WHERE id = ?", [$e['podcast_id']]);
-  if (!$p || !$p['federate']) return;
+  if (!$p || empty($p['federate'])) return;
 
   $base = kp_ap_base();
-  // Buscar en el outbox la actividad 'Create' para este episodio
+  $actor = "$base/users/{$p['slug']}";
   $searchUrl = "$base/@{$p['slug']}/{$e['slug']}";
+  $cleanTitle = trim(preg_replace('/\s*\([^)]*\)\s*$/', '', $e['title'] ?? ''));
+
   $outboxItems = kp_q("SELECT * FROM ap_outbox WHERE podcast_id = ? AND type = 'Create' ORDER BY id DESC", [$p['id']]);
-  
-  $noteIdToDelete = null;
+
+  $notesToDelete = [];
   foreach ($outboxItems as $item) {
-    if (strpos($item['object_json'], $searchUrl) !== false) {
-      $obj = json_decode($item['object_json'], true);
-      $noteIdToDelete = $obj['object']['id'] ?? null;
-      break;
+    $raw = $item['object_json'];
+    $obj = json_decode($raw, true);
+    if (!$obj || empty($obj['object'])) continue;
+
+    $noteObj = $obj['object'];
+    $noteId = is_string($noteObj) ? $noteObj : ($noteObj['id'] ?? null);
+    if (!$noteId) continue;
+
+    $matched = false;
+    // 1. Coincidencia por URL canónica de episodio
+    if (strpos($raw, $searchUrl) !== false) {
+      $matched = true;
+    }
+    // 2. Coincidencia por slug de episodio en el identificador de la nota
+    if (!empty($e['slug']) && strpos($noteId, "/notes/{$e['slug']}") !== false) {
+      $matched = true;
+    }
+    // 3. Coincidencia por archivo de audio
+    if (!empty($e['audio_url']) && strpos($raw, $e['audio_url']) !== false) {
+      $matched = true;
+    }
+    // 4. Coincidencia por título exacto
+    if (!empty($e['title']) && (strpos($raw, htmlspecialchars($e['title'])) !== false || strpos($raw, $e['title']) !== false)) {
+      $matched = true;
+    }
+    // 5. Coincidencia por título base (sin sufijos tipo "(actualizado)")
+    if (!empty($cleanTitle) && mb_strlen($cleanTitle) > 4 && (strpos($raw, htmlspecialchars($cleanTitle)) !== false || strpos($raw, $cleanTitle) !== false)) {
+      $matched = true;
+    }
+
+    if ($matched) {
+      $notesToDelete[$noteId] = true;
     }
   }
 
-  if (!$noteIdToDelete) return; // No se encontró o ya se borró
+  // Fallback si no se encontró en ap_outbox
+  if (empty($notesToDelete) && !empty($e['slug'])) {
+    $notesToDelete["$actor/notes/{$e['slug']}"] = true;
+  }
 
-  $actor = "$base/users/{$p['slug']}";
-  $actId = "$actor/activities/" . bin2hex(random_bytes(8));
-
-  $activity = [
-    '@context' => 'https://www.w3.org/ns/activitystreams',
-    'id' => $actId,
-    'type' => 'Delete',
-    'actor' => $actor,
-    'to' => ['https://www.w3.org/ns/activitystreams#Public'],
-    'object' => $noteIdToDelete
-  ];
-
-  $oid = kp_exec("INSERT INTO ap_outbox (podcast_id,activity_id,type,object_json) VALUES (?,?,?,?)",
-    [$p['id'], $actId, 'Delete', json_encode($activity, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)]);
+  if (empty($notesToDelete)) return;
 
   $followers = kp_q("SELECT DISTINCT inbox FROM ap_followers WHERE podcast_id = ? AND inbox != ''", [$p['id']]);
   $ins = kp_db()->prepare("INSERT INTO ap_delivery (outbox_id, inbox) VALUES (?, ?)");
-  foreach ($followers as $f) {
+
+  foreach (array_keys($notesToDelete) as $noteId) {
+    $actId = "$actor/activities/" . bin2hex(random_bytes(8));
+    $activity = [
+      '@context' => 'https://www.w3.org/ns/activitystreams',
+      'id' => $actId,
+      'type' => 'Delete',
+      'actor' => $actor,
+      'to' => ['https://www.w3.org/ns/activitystreams#Public'],
+      'object' => [
+        'id' => $noteId,
+        'type' => 'Tombstone'
+      ]
+    ];
+
+    $oid = kp_exec("INSERT INTO ap_outbox (podcast_id,activity_id,type,object_json) VALUES (?,?,?,?)",
+      [$p['id'], $actId, 'Delete', json_encode($activity, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)]);
+
+    foreach ($followers as $f) {
       $ins->execute([$oid, $f['inbox']]);
+    }
   }
+
+  kp_ap_trigger_delivery();
+}
+
+// ---------------------------------------------------------------------------
+// Disparador de entrega en segundo plano / no bloqueante
+// ---------------------------------------------------------------------------
+function kp_ap_trigger_delivery(): void {
+  $script = __DIR__ . '/cli/ap-deliver.php';
+  if (file_exists($script) && function_exists('exec')) {
+    @exec("php " . escapeshellarg($script) . " > /dev/null 2>&1 &");
+    return;
+  }
+  if (function_exists('fastcgi_finish_request')) {
+    @fastcgi_finish_request();
+    @kp_ap_deliver_pending(50);
+    return;
+  }
+  @kp_ap_deliver_pending(20);
 }
 
 // ---------------------------------------------------------------------------
