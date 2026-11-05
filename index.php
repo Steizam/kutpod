@@ -23,14 +23,22 @@ require_once __DIR__ . '/includes/cache.php';
 
 kp_csrf_ensure_session();
 
-
+// Cambio explícito de idioma
+if (isset($_GET['lang']) && in_array($_GET['lang'], ['es', 'en'], true)) {
+    kp_set_lang($_GET['lang']);
+    $redirectUrl = strtok($_SERVER['REQUEST_URI'], '?');
+    $params = $_GET;
+    unset($params['lang']);
+    $qs = http_build_query($params);
+    header('Location: ' . $redirectUrl . ($qs ? '?' . $qs : ''));
+    exit;
+}
 
 // Logout
 if (($_GET['action'] ?? '') === 'logout') { kp_logout(); header('Location: /admin/login'); exit; }
 
 $page = $_GET['page'] ?? 'overview';
 $allowed = ['overview','alerts','podcasts','podcast','new-podcast','edit-podcast','new-episode','analytics','import','backups','fediverse','users','edit-user','api','pages','preferences','login','login-2fa','search','broadcast','queue','update','forgot','reset','recover','plugins'];
-
 
 // Gate: todo requiere sesión salvo páginas de acceso
 if (!in_array($page, ['login', 'login-2fa', 'forgot', 'reset', 'recover'], true) && !kp_current_user()) { header('Location: /admin/login'); exit; }
@@ -45,15 +53,16 @@ if ($page === 'fediverse' && !kp_plugin_is_active('fediverse')) {
     $page = 'overview';
 }
 
-$titles = [
-  'overview'=>'Overview','alerts'=>'Alertas','podcasts'=>'Podcasts','podcast'=>'Podcast',
+$titleFallback = [
+  'overview'=>'Resumen','alerts'=>'Alertas','podcasts'=>'Podcasts','podcast'=>'Podcast',
   'new-podcast'=>'Nuevo podcast','edit-podcast'=>'Editar podcast','new-episode'=>'Nuevo episodio',
   'analytics'=>'Estadísticas','import'=>'Importar RSS','backups'=>'Respaldos',
   'fediverse'=>'Fediverso','users'=>'Usuarios','edit-user'=>'Editar Usuario','api'=>'API · Kut Editor','pages'=>'Páginas','preferences'=>'Preferencias','login'=>'Entrar','login-2fa'=>'Verificación de 2FA','search'=>'Buscar',
   'broadcast'=>'Broadcast','queue'=>'Cola de procesos','update'=>'Actualizaciones',
-  'forgot'=>'Recuperar contraseña','reset'=>'Restablecer contraseña','recover'=>'Usar código de respaldo'
+  'forgot'=>'Recuperar contraseña','reset'=>'Restablecer contraseña','recover'=>'Usar código de respaldo',
+  'plugins'=>'Plugins'
 ];
-$title = 'KutPod · ' . ($titles[$page] ?? 'Panel');
+$title = 'KutPod · ' . __('page_' . $page, $titleFallback[$page] ?? ucfirst($page));
 
 // Renderiza el body capturando la salida de la página correspondiente.
 if (isset($_GET['ajax'])) {

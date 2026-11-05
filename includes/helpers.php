@@ -9,6 +9,132 @@ function admin_url(string $p = ''): string {
   return '/admin' . ($p ? '/' . $p : '');
 }
 
+// ============================================================================
+// i18n · Detección y traducción
+// ============================================================================
+function kp_detect_lang(): string {
+  global $kp_current_lang;
+  if ($kp_current_lang !== null) {
+    return $kp_current_lang;
+  }
+  // 1. Parámetro GET explícito (persiste en sesión y cookie)
+  if (isset($_GET['lang']) && in_array($_GET['lang'], ['es', 'en'], true)) {
+    kp_set_lang($_GET['lang']);
+    return $_GET['lang'];
+  }
+  // 2. Sesión
+  if (session_status() === PHP_SESSION_ACTIVE && !empty($_SESSION['kp_lang']) && in_array($_SESSION['kp_lang'], ['es', 'en'], true)) {
+    return $_SESSION['kp_lang'];
+  }
+  // 3. Cookie
+  if (!empty($_COOKIE['kp_lang']) && in_array($_COOKIE['kp_lang'], ['es', 'en'], true)) {
+    return $_COOKIE['kp_lang'];
+  }
+  // 4. Ajuste guardado en la base de datos
+  $dbLang = kp_setting('site_language');
+  if ($dbLang && in_array($dbLang, ['es', 'en'], true)) {
+    return $dbLang;
+  }
+  // 5. Cabecera HTTP Accept-Language del navegador
+  $accept = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
+  if ($accept) {
+    $esPos = stripos($accept, 'es');
+    $enPos = stripos($accept, 'en');
+    if ($enPos !== false && ($esPos === false || $enPos < $esPos)) {
+      return 'en';
+    }
+  }
+  return 'es'; // predeterminado
+}
+
+function kp_set_lang(string $lang): void {
+  global $kp_current_lang;
+  if (!in_array($lang, ['es', 'en'], true)) {
+    $lang = 'es';
+  }
+  $kp_current_lang = $lang;
+  if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+    @session_start();
+  }
+  if (session_status() === PHP_SESSION_ACTIVE) {
+    $_SESSION['kp_lang'] = $lang;
+  }
+  $_COOKIE['kp_lang'] = $lang;
+  if (!headers_sent()) {
+    $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ||
+               (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+    setcookie('kp_lang', $lang, [
+      'expires'  => time() + 31536000,
+      'path'     => '/',
+      'secure'   => $isHttps,
+      'httponly' => false,
+      'samesite' => 'Lax'
+    ]);
+  }
+}
+
+function __(string $key, $fallback = '', array $replace = []): string {
+  if (is_array($fallback)) {
+    $replace = $fallback;
+    $fallback = '';
+  }
+  static $strings = null;
+  static $loadedLang = null;
+  $lang = kp_detect_lang();
+  if ($strings === null || $loadedLang !== $lang) {
+    $loadedLang = $lang;
+    $file = __DIR__ . "/lang/{$lang}.php";
+    $strings = file_exists($file) ? require $file : [];
+    $fallbackFile = __DIR__ . "/lang/es.php";
+    if ($lang !== 'es' && file_exists($fallbackFile)) {
+      $esStrings = require $fallbackFile;
+      $strings = array_merge($esStrings, $strings);
+    }
+  }
+  $text = $strings[$key] ?? ($fallback !== '' ? $fallback : $key);
+  if (strpos($text, '|') !== false && isset($replace['count'])) {
+    $parts = explode('|', $text);
+    $text = ((int)$replace['count'] === 1) ? $parts[0] : ($parts[1] ?? $parts[0]);
+  }
+  if (!empty($replace)) {
+    foreach ($replace as $k => $v) {
+      $text = str_replace(':' . $k, (string)$v, $text);
+    }
+  }
+  return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+}
+
+function __raw(string $key, $fallback = '', array $replace = []): string {
+  if (is_array($fallback)) {
+    $replace = $fallback;
+    $fallback = '';
+  }
+  static $strings_raw = null;
+  static $loadedLangRaw = null;
+  $lang = kp_detect_lang();
+  if ($strings_raw === null || $loadedLangRaw !== $lang) {
+    $loadedLangRaw = $lang;
+    $file = __DIR__ . "/lang/{$lang}.php";
+    $strings_raw = file_exists($file) ? require $file : [];
+    $fallbackFile = __DIR__ . "/lang/es.php";
+    if ($lang !== 'es' && file_exists($fallbackFile)) {
+      $esStrings = require $fallbackFile;
+      $strings_raw = array_merge($esStrings, $strings_raw);
+    }
+  }
+  $text = $strings_raw[$key] ?? ($fallback !== '' ? $fallback : $key);
+  if (strpos($text, '|') !== false && isset($replace['count'])) {
+    $parts = explode('|', $text);
+    $text = ((int)$replace['count'] === 1) ? $parts[0] : ($parts[1] ?? $parts[0]);
+  }
+  if (!empty($replace)) {
+    foreach ($replace as $k => $v) {
+      $text = str_replace(':' . $k, (string)$v, $text);
+    }
+  }
+  return $text;
+}
+
 // Settings · clave → valor desde tabla `settings`, cacheado por request.
 function kp_setting(string $k, $default = null) {
   static $cache = null;
@@ -144,7 +270,7 @@ function icon(string $name, int $size = 16): string {
   return "<svg width=\"$size\" height=\"$size\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\">$p</svg>";
 }
 
-// Tiempo relativo "hace 2h" / "hace 3d" desde un timestamp ISO o UNIX.
+// Tiempo relativo "hace 2h" / "2h ago" desde un timestamp ISO o UNIX.
 function kp_relative_time($when): string {
   if (!$when) return '';
   if (is_string($when) && !is_numeric($when)) {
@@ -155,6 +281,16 @@ function kp_relative_time($when): string {
   $t = is_numeric($when) ? (int)$when : strtotime((string)$when);
   if (!$t) return (string)$when;
   $d = max(0, time() - $t);
+  $lang = kp_detect_lang();
+  if ($lang === 'en') {
+    if ($d < 60)        return $d . 's ago';
+    if ($d < 3600)      return (int)($d/60) . 'm ago';
+    if ($d < 86400)     return (int)($d/3600) . 'h ago';
+    if ($d < 86400*7)   return (int)($d/86400) . 'd ago';
+    if ($d < 86400*30)  return (int)($d/86400/7) . 'w ago';
+    if ($d < 86400*365) return (int)($d/86400/30) . 'mo ago';
+    return (int)($d/86400/365) . 'y ago';
+  }
   if ($d < 60)        return 'hace ' . $d . 's';
   if ($d < 3600)      return 'hace ' . (int)($d/60) . 'm';
   if ($d < 86400)     return 'hace ' . (int)($d/3600) . 'h';
@@ -190,9 +326,9 @@ function spark(array $values, ?string $color = null): string {
 }
 
 function ep_header(bool $podcastView = false): string {
-  $col3 = $podcastView ? 'Fediverso' : 'Show';
+  $col3 = $podcastView ? __('ep_col_fediverse') : __('ep_col_show');
   return '<div style="display:grid;grid-template-columns:40px 1.6fr 1fr 90px 100px 90px 80px;gap:14px;padding:8px;font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.08em;font-weight:600">
-    <div></div><div>Título</div><div>' . $col3 . '</div><div>Duración</div><div>Descargas</div><div>Estado</div><div></div>
+    <div></div><div>' . __('ep_col_title') . '</div><div>' . $col3 . '</div><div>' . __('ep_col_duration') . '</div><div>' . __('ep_col_downloads') . '</div><div>' . __('ep_col_status') . '</div><div></div>
   </div>';
 }
 
@@ -207,28 +343,28 @@ function ep_row(array $ep, bool $podcastView = false): string {
     if (!empty($p['federate']) && kp_plugin_is_active('fediverse')) {
       $csrf = kp_csrf_field();
       $col3Html = '<div style="display:inline-flex;gap:6px">
-      <form method="POST" style="margin:0;padding:0;display:inline-block" onsubmit="return confirm(\'¿Estás seguro de que quieres volver a enviar este episodio al Fediverso?\')">
+      <form method="POST" style="margin:0;padding:0;display:inline-block" onsubmit="return confirm(\'' . e(__('ep_confirm_refederate')) . '\')">
         ' . $csrf . '
         <input type="hidden" name="action" value="refederate">
         <input type="hidden" name="episode_id" value="' . (int)$ep['db_id'] . '">
-        <button type="submit" class="btn" style="padding:4px 8px;font-size:11px;color:var(--accent);border-color:var(--accent);display:inline-flex;align-items:center;gap:4px">' . icon('globe', 11) . ' Re-enviar</button>
+        <button type="submit" class="btn" style="padding:4px 8px;font-size:11px;color:var(--accent);border-color:var(--accent);display:inline-flex;align-items:center;gap:4px">' . icon('globe', 11) . ' ' . __('ep_action_refederate') . '</button>
       </form>
-      <form method="POST" style="margin:0;padding:0;display:inline-block" onsubmit="return confirm(\'¿Estás seguro de que deseas eliminar este post del Fediverso? Esto enviará una actividad Delete a tus seguidores.\')">
+      <form method="POST" style="margin:0;padding:0;display:inline-block" onsubmit="return confirm(\'' . e(__('ep_confirm_defederate')) . '\')">
         ' . $csrf . '
         <input type="hidden" name="action" value="defederate">
         <input type="hidden" name="episode_id" value="' . (int)$ep['db_id'] . '">
-        <button type="submit" class="btn" style="padding:4px 8px;font-size:11px;color:#ef4444;border-color:#ef4444;display:inline-flex;align-items:center;gap:4px">' . icon('trash', 11) . ' Eliminar</button>
+        <button type="submit" class="btn" style="padding:4px 8px;font-size:11px;color:#ef4444;border-color:#ef4444;display:inline-flex;align-items:center;gap:4px">' . icon('trash', 11) . ' ' . __('ep_action_defederate') . '</button>
       </form>
       </div>';
     } else {
-      $col3Html = '<span style="font-size:12px;color:var(--text-3)">Desactivado</span>';
+      $col3Html = '<span style="font-size:12px;color:var(--text-3)">' . __('disabled') . '</span>';
     }
   } else {
     $col3Html = '<div style="font-size:13px;color:var(--text-2)">'.e($p['title']).'</div>';
   }
 
   $publicUrl = kp_get_protocol() . '://' . kp_handle_domain() . '/@' . rawurlencode($ep['podcast']) . '/' . rawurlencode($ep['id']);
-  $copyBtnHtml = '<button class="admin-copy-url-btn" data-url="' . e($publicUrl) . '" style="background:none;border:none;padding:0;font-family:inherit;font-size:11.5px;color:var(--text-3);cursor:pointer;display:inline-flex;align-items:center;gap:3px;text-decoration:underline;vertical-align:middle;margin-left:2px" onmouseover="this.style.color=\'var(--text-2)\'" onmouseout="this.style.color=\'var(--text-3)\'">' . icon('copy', 11) . ' <span>Copiar enlace</span></button>';
+  $copyBtnHtml = '<button class="admin-copy-url-btn" data-url="' . e($publicUrl) . '" style="background:none;border:none;padding:0;font-family:inherit;font-size:11.5px;color:var(--text-3);cursor:pointer;display:inline-flex;align-items:center;gap:3px;text-decoration:underline;vertical-align:middle;margin-left:2px" onmouseover="this.style.color=\'var(--text-2)\'" onmouseout="this.style.color=\'var(--text-3)\'">' . icon('copy', 11) . ' <span>' . __('copy_link') . '</span></button>';
 
   return '<div style="display:grid;grid-template-columns:40px 1.6fr 1fr 90px 100px 90px 80px;gap:14px;align-items:center;padding:12px 8px;border-top:1px solid var(--border)">
     ' . $coverHtml . '
@@ -244,7 +380,7 @@ function ep_row(array $ep, bool $podcastView = false): string {
     <div class="tabular" style="font-size:13px">'.e($ep['duration']).'</div>
     <div class="tabular" style="font-size:13px">'.number_format($ep['downloads']).'</div>
     <div><span class="tag '.e($ep['status']).'">'.e($ep['status']).'</span></div>
-    <div style="text-align:right"><a href="/admin/new-episode?id='.urlencode($ep['id']).'&podcast='.urlencode($ep['podcast']).'" class="btn" style="padding:4px 8px;font-size:12px;color:var(--accent);border-color:var(--accent)">'.icon('edit',13).' Editar</a></div>
+    <div style="text-align:right"><a href="/admin/new-episode?id='.urlencode($ep['id']).'&podcast='.urlencode($ep['podcast']).'" class="btn" style="padding:4px 8px;font-size:12px;color:var(--accent);border-color:var(--accent)">'.icon('edit',13).' ' . __('ep_action_edit') . '</a></div>
   </div>';
 }
 

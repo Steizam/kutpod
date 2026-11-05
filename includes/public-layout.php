@@ -5,7 +5,7 @@ $inst = kp_instance();
 $logo = kp_setting('instance_logo');
 ?>
 <!doctype html>
-<html lang="es" data-public="1" data-theme="<?= e(kp_setting('public_theme', 'light')) ?>">
+<html lang="<?= e(kp_detect_lang()) ?>" data-public="1" data-theme="<?= e(kp_setting('public_theme', 'light')) ?>">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>

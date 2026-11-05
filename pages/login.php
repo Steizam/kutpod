@@ -28,14 +28,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <?php else: ?>
         <div style="width:48px;height:48px;border-radius:12px;background:var(--accent);color:white;display:grid;place-items:center;font-weight:800;font-size:22px;margin:0 auto 12px">K</div>
       <?php endif; ?>
-      <h1 class="page-title" style="font-size:20px;margin:0">Entrar a <?= e($inst['name']) ?></h1>
-      <p class="page-sub" style="margin-top:6px;font-size:12.5px">Tu studio de podcasting federado.</p>
+      <h1 class="page-title" style="font-size:20px;margin:0"><?= __('auth_login_to', ['name' => $inst['name']]) ?></h1>
+      <p class="page-sub" style="margin-top:6px;font-size:12.5px"><?= __('auth_login_subtitle') ?></p>
     </div>
     <?php if ($error): ?><div class="error" style="margin-bottom:14px;padding:10px 12px;background:rgba(248,113,113,.1);border-radius:8px"><?= e($error) ?></div><?php endif; ?>
-    <div class="field"><label class="label">Email</label><input class="input" type="email" name="email" required autofocus></div>
-    <div class="field" style="margin-top:14px"><label class="label">Contraseña</label><input class="input" type="password" name="password" required></div>
-    <button class="btn btn-primary" type="submit" style="width:100%;margin-top:20px;justify-content:center">Entrar</button>
-    <div style="text-align:center;margin-top:16px;font-size:13px"><a href="/" style="color:var(--text);font-weight:500;text-decoration:none">← Volver al sitio público</a></div>
-    <div style="text-align:center;margin-top:12px;font-size:13px"><a href="/admin/forgot" style="color:var(--text-3);text-decoration:none">¿Olvidaste tu contraseña?</a><span style="color:var(--border);margin:0 8px">|</span><a href="/admin/recover" style="color:var(--text-3);text-decoration:none">Usar código de respaldo</a></div>
+    <div class="field"><label class="label"><?= __('email', 'Email') ?></label><input class="input" type="email" name="email" required autofocus></div>
+    <div class="field" style="margin-top:14px"><label class="label"><?= __('password', 'Contraseña') ?></label><input class="input" type="password" name="password" required></div>
+    <button class="btn btn-primary" type="submit" style="width:100%;margin-top:20px;justify-content:center"><?= __('auth_login_btn', 'Entrar') ?></button>
+    <div style="text-align:center;margin-top:16px;font-size:13px"><a href="/" style="color:var(--text);font-weight:500;text-decoration:none"><?= __('auth_back_to_public') ?></a></div>
+    <div style="text-align:center;margin-top:12px;font-size:13px"><a href="/admin/forgot" style="color:var(--text-3);text-decoration:none"><?= __('auth_forgot_password_question') ?></a><span style="color:var(--border);margin:0 8px">|</span><a href="/admin/recover" style="color:var(--text-3);text-decoration:none"><?= __('auth_use_backup_code') ?></a></div>
   </form>
 </div>

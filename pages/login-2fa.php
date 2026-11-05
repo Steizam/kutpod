@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: /admin');
         exit;
     } else {
-        $error = 'Código de verificación incorrecto o expirado.';
+        $error = __('auth_2fa_invalid_code', 'Código de verificación incorrecto o expirado.');
     }
 }
 ?>
@@ -51,17 +51,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div style="width:48px;height:48px;border-radius:12px;background:var(--accent);color:white;display:grid;place-items:center;font-weight:800;font-size:22px;margin:0 auto 12px">
         <?= icon('shield', 22) ?>
       </div>
-      <h1 class="page-title" style="font-size:20px;margin:0">Verificación de 2FA</h1>
-      <p class="page-sub" style="margin-top:6px;font-size:12.5px">Introduce el código de 6 dígitos de tu aplicación de autenticación.</p>
+      <h1 class="page-title" style="font-size:20px;margin:0"><?= __('auth_2fa_title', 'Verificación de 2FA') ?></h1>
+      <p class="page-sub" style="margin-top:6px;font-size:12.5px"><?= __('auth_2fa_enter_code') ?></p>
     </div>
     <?php if ($error): ?><div class="error" style="margin-bottom:14px;padding:10px 12px;background:rgba(248,113,113,.1);border-radius:8px"><?= e($error) ?></div><?php endif; ?>
     <div class="field">
-      <label class="label">Código de Seguridad</label>
+      <label class="label"><?= __('auth_2fa_security_code') ?></label>
       <input class="input tabular" type="text" name="code" pattern="[0-9]{6}" inputmode="numeric" placeholder="Ej: 123456" required autofocus style="text-align:center;font-size:20px;letter-spacing:4px">
     </div>
-    <button class="btn btn-primary" type="submit" style="width:100%;margin-top:20px;justify-content:center">Verificar y Entrar</button>
+    <button class="btn btn-primary" type="submit" style="width:100%;margin-top:20px;justify-content:center"><?= __('auth_2fa_verify_btn') ?></button>
     <div style="text-align:center;margin-top:16px;font-size:13px">
-      <a href="/admin/login" style="color:var(--text-3);text-decoration:none">Cancelar y volver</a>
+      <a href="/admin/login" style="color:var(--text-3);text-decoration:none"><?= __('auth_cancel_and_back') ?></a>
     </div>
   </form>
 </div>

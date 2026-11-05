@@ -25,8 +25,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_form'] ?? '') === 'appear
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_form'] ?? '') === 'instance') {
   $set = kp_db()->prepare("INSERT INTO settings (k,v) VALUES (?,?)
                            ON CONFLICT(k) DO UPDATE SET v=excluded.v, updated_at=datetime('now')");
-  foreach (['instance_name','instance_domain','instance_tagline','owner_name','timezone'] as $k) {
-    if (isset($_POST[$k])) $set->execute([$k, trim($_POST[$k])]);
+  foreach (['instance_name','instance_domain','instance_tagline','owner_name','timezone','site_language'] as $k) {
+    if (isset($_POST[$k])) {
+      $val = trim($_POST[$k]);
+      $set->execute([$k, $val]);
+      if ($k === 'site_language') {
+        kp_set_lang($val);
+      }
+    }
   }
   
   if (!empty($_FILES['instance_logo']['tmp_name'])) {
@@ -199,8 +205,16 @@ $inst = kp_instance();
   <form id="instancia" class="card span-12" method="POST" enctype="multipart/form-data">
     <?= kp_csrf_field() ?>
     <input type="hidden" name="_form" value="instance">
-    <div class="card-title" style="margin-bottom:14px">Instancia</div>
-    <div class="field"><div class="label">Nombre de la instancia</div><input class="input" name="instance_name" value="<?= e($inst['name']) ?>"></div>
+    <div class="card-title" style="margin-bottom:14px"><?= __('pref_tab_instance') ?></div>
+    <div class="field">
+      <div class="label"><?= __('pref_language_title') ?></div>
+      <select class="select" name="site_language">
+        <option value="es" <?= kp_detect_lang() === 'es' ? 'selected' : '' ?>><?= __('spanish') ?> (Spanish)</option>
+        <option value="en" <?= kp_detect_lang() === 'en' ? 'selected' : '' ?>><?= __('english') ?> (English)</option>
+      </select>
+      <div class="help" style="margin-top:4px"><?= __('pref_language_desc') ?></div>
+    </div>
+    <div class="field" style="margin-top:12px"><div class="label"><?= __('pref_instance_name') ?></div><input class="input" name="instance_name" value="<?= e($inst['name']) ?>"></div>
     <div class="field" style="margin-top:12px"><div class="label">Propietario ("Podcasts de...")</div><input class="input" name="owner_name" value="<?= e($inst['owner']) ?>" placeholder="Ernesto"></div>
     <div class="field" style="margin-top:12px"><div class="label">Dominio</div><input class="input" name="instance_domain" value="<?= e($inst['domain']) ?>"></div>
     <div class="field" style="margin-top:12px"><div class="label">Tagline (opcional)</div><input class="input" name="instance_tagline" value="<?= e($inst['tagline']) ?>" placeholder="Tres podcasts, un feed propio."></div>

@@ -72,40 +72,44 @@ try {
   <div style="display:flex;align-items:center;gap:14px;color:#fff;min-width:0">
     <?= icon('refreshCw',18) ?>
     <div>
-      <div style="font-size:14px;font-weight:600">Nueva versión disponible: v<?= e($updateAvailable['new_version'] ?? '') ?></div>
-      <div style="font-size:12px;opacity:0.8;margin-top:2px">Estás en v<?= KUTPOD_VERSION ?> · <?= !empty($updateAvailable['published_at']) ? 'publicada ' . kp_relative_time($updateAvailable['published_at']) : '' ?></div>
+      <div style="font-size:14px;font-weight:600"><?= __('overview_new_version', '', ['version' => e($updateAvailable['new_version'] ?? '')]) ?></div>
+      <div style="font-size:12px;opacity:0.8;margin-top:2px"><?= __('overview_current_version', '', ['current' => KUTPOD_VERSION, 'when' => (!empty($updateAvailable['published_at']) ? kp_relative_time($updateAvailable['published_at']) : '')]) ?></div>
     </div>
   </div>
-  <a class="btn" href="/admin/update" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3);white-space:nowrap;backdrop-filter:blur(4px)"><?= icon('download',13) ?> Ver actualización</a>
+  <a class="btn" href="/admin/update" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3);white-space:nowrap;backdrop-filter:blur(4px)"><?= icon('download',13) ?> <?= __('overview_view_update') ?></a>
 </div>
 <?php endif; ?>
 
 <div class="page-head">
   <div>
-    <h1 class="page-title">Overview</h1>
+    <h1 class="page-title"><?= __('nav_overview') ?></h1>
     <p class="page-sub">
-      <?= $has_podcasts ? count($podcasts) . ' show' . (count($podcasts)>1?'s':'') . ' activos' : 'Sin podcasts todavía' ?>
-      · <?= $totalEps ?> episodio<?= $totalEps===1?'':'s' ?>
-      · <?= $drafts ?> borrador<?= $drafts===1?'':'es' ?>
+      <?php if ($has_podcasts): ?>
+        <?= count($podcasts) ?> <?= count($podcasts) > 1 ? (kp_detect_lang() === 'en' ? 'active shows' : 'shows activos') : (kp_detect_lang() === 'en' ? 'active show' : 'show activo') ?>
+      <?php else: ?>
+        <?= __('overview_no_podcasts') ?>
+      <?php endif; ?>
+      · <?= $totalEps ?> <?= $totalEps === 1 ? (kp_detect_lang() === 'en' ? 'episode' : 'episodio') : (kp_detect_lang() === 'en' ? 'episodes' : 'episodios') ?>
+      · <?= $drafts ?> <?= $drafts === 1 ? (kp_detect_lang() === 'en' ? 'draft' : 'borrador') : (kp_detect_lang() === 'en' ? 'drafts' : 'borradores') ?>
     </p>
   </div>
 </div>
 
 <div class="stat-grid">
-  <?= stat_card('Descargas · 7d', fmt_num($tot7), 'download', ['sub'=>$tot7 ? 'OP3 nativo' : 'Aún sin tráfico']) ?>
-  <?= stat_card('Descargas totales', fmt_num($tot), 'chart', ['sub'=>$tot ? 'desde el primer ep' : '—']) ?>
-  <?= stat_card('Episodios publicados', (string)$totalEps, 'headphones', ['sub'=>$drafts ? "$drafts borrador" . ($drafts>1?'es':'') . ' en cola' : 'Sin borradores']) ?>
-  <?= stat_card('Seguidores Fediverso', fmt_num($subs), 'rss', ['sub'=>'ActivityPub']) ?>
+  <?= stat_card(__('overview_stat_downloads_7d'), fmt_num($tot7), 'download', ['sub'=>$tot7 ? 'OP3' : (kp_detect_lang()==='en'?'No traffic yet':'Aún sin tráfico')]) ?>
+  <?= stat_card(__('overview_stat_downloads_total'), fmt_num($tot), 'chart', ['sub'=>$tot ? (kp_detect_lang()==='en'?'all time':'desde el primer ep') : '—']) ?>
+  <?= stat_card(__('overview_stat_episodes'), (string)$totalEps, 'headphones', ['sub'=>$drafts ? "$drafts " . (kp_detect_lang()==='en'?'drafts in queue':'borradores en cola') : (kp_detect_lang()==='en'?'No drafts':'Sin borradores')]) ?>
+  <?= stat_card(__('overview_stat_followers'), fmt_num($subs), 'rss', ['sub'=>'ActivityPub']) ?>
 </div>
 
 <?php if (!$has_podcasts): ?>
   <div class="card card-lg" style="padding:60px 40px;margin-top:24px;text-align:center">
     <div style="display:inline-grid;place-items:center;width:64px;height:64px;border-radius:16px;background:var(--accent-soft);color:var(--accent);margin-bottom:18px"><?= icon('mic',28) ?></div>
-    <h2 style="font-size:22px;letter-spacing:-0.01em;margin-bottom:8px">Tu instancia está limpia.</h2>
-    <p class="page-sub" style="max-width:480px;margin:0 auto 24px">Crea tu primer podcast o importa un feed RSS existente. Cuando publiques episodios verás las estadísticas reales aquí.</p>
+    <h2 style="font-size:22px;letter-spacing:-0.01em;margin-bottom:8px"><?= __('overview_empty_title') ?></h2>
+    <p class="page-sub" style="max-width:480px;margin:0 auto 24px"><?= __('overview_empty_desc') ?></p>
     <div class="row" style="justify-content:center;gap:10px">
-      <a class="btn btn-primary" href="/admin/new-podcast"><?= icon('plus',13) ?> Crear primer podcast</a>
-      <a class="btn" href="/admin/import"><?= icon('rss',13) ?> Importar RSS</a>
+      <a class="btn btn-primary" href="/admin/new-podcast"><?= icon('plus',13) ?> <?= __('overview_create_first_podcast') ?></a>
+      <a class="btn" href="/admin/import"><?= icon('rss',13) ?> <?= __('overview_import_rss') ?></a>
     </div>
   </div>
 
@@ -117,8 +121,9 @@ try {
     <?php 
       $period = (int)($_GET['period'] ?? 30);
       if (!in_array($period, [7, 30, 365])) $period = 30;
+      $periodStr = $period == 365 ? __('overview_period_12m') : ($period == 7 ? __('overview_period_7d') : __('overview_period_30d'));
     ?>
-    <div class="card-title">Descargas por show — últimos <?= $period==365 ? '12 meses' : $period.' días' ?></div>
+    <div class="card-title"><?= __('overview_downloads_by_show', '', ['period' => $periodStr]) ?></div>
     <div class="seg">
       <button class="<?= $period==7?'active':'' ?>" onclick="location.href='?period=7'">7d</button>
       <button class="<?= $period==30?'active':'' ?>" onclick="location.href='?period=30'">30d</button>
@@ -228,8 +233,8 @@ try {
   <!-- COLUMNA 1: Tus podcasts (Paginado a Top 4) -->
   <div class="card kp-paginated-card" data-page-size="4" style="display:flex;flex-direction:column;height:100%">
     <div class="card-head">
-      <div class="card-title">Tus podcasts</div>
-      <a class="btn btn-ghost" href="/admin/podcasts">Ver todos →</a>
+      <div class="card-title"><?= __('overview_your_podcasts') ?></div>
+      <a class="btn btn-ghost" href="/admin/podcasts"><?= __('overview_view_all') ?></a>
     </div>
     <div class="kp-paginated-items list" style="flex:1">
       <?php
@@ -256,7 +261,7 @@ try {
             ?>
               <div style="font-size:11px;color:var(--text-3);margin-top:3px;display:flex;align-items:center;gap:4px">
                 <span style="color:var(--accent);display:inline-flex"><?= icon('star', 10) ?></span>
-                <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;" title="Top: <?= e($top_ep['title']) ?> (<?= fmt_num((int)$top_ep['downloads']) ?> descargas)">
+                <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;" title="Top: <?= e($top_ep['title']) ?> (<?= fmt_num((int)$top_ep['downloads']) ?> <?= e(strtolower(__('downloads', 'descargas'))) ?>)">
                   Top: <strong style="color:var(--text-2)"><?= e($top_ep['title']) ?></strong> (<?= fmt_num((int)$top_ep['downloads']) ?> desc.)
                 </span>
               </div>
@@ -264,7 +269,7 @@ try {
           </div>
           <div class="tabular" style="text-align:right">
             <div style="font-weight:600"><?= fmt_num((int)$p['downloads7']) ?></div>
-            <div style="font-size:10.5px;color:var(--text-3);margin-top:2px">desc. 7d</div>
+            <div style="font-size:10.5px;color:var(--text-3);margin-top:2px"><?= __('overview_desc_7d') ?></div>
           </div>
         </a>
       <?php endforeach; ?>
@@ -306,7 +311,7 @@ try {
     }
     if ($other_dl > 0) {
       $slices[] = [
-        'title' => 'Otros shows',
+        'title' => __('overview_other_shows'),
         'color' => '#8c8c95',
         'downloads' => $other_dl,
         'pct' => round(($other_dl / $donut_total) * 100, 1)
@@ -315,8 +320,8 @@ try {
   ?>
   <div class="card" style="display:flex;flex-direction:column;height:100%">
     <div class="card-head" style="margin-bottom:12px">
-      <div class="card-title">Distribución por show</div>
-      <span style="font-size:11px;color:var(--text-3);background:var(--surface-2);border:1px solid var(--border);padding:2px 8px;border-radius:12px"><?= $period==365 ? '12 meses' : $period.' días' ?></span>
+      <div class="card-title"><?= __('overview_show_distribution') ?></div>
+      <span style="font-size:11px;color:var(--text-3);background:var(--surface-2);border:1px solid var(--border);padding:2px 8px;border-radius:12px"><?= $period==365 ? __('overview_period_12m') : ($period == 7 ? __('overview_period_7d') : __('overview_period_30d')) ?></span>
     </div>
 
     <div style="position:relative;display:flex;justify-content:center;align-items:center;padding:12px 0;flex:1">
@@ -324,8 +329,8 @@ try {
         <!-- Fondo base del donut -->
         <circle cx="80" cy="80" r="56" fill="none" stroke="var(--surface-2)" stroke-width="18" />
         <?php if ($donut_total <= 0 || empty($slices)): ?>
-          <text x="80" y="78" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text-3)">Sin descargas</text>
-          <text x="80" y="94" text-anchor="middle" font-size="10" fill="var(--text-3)">en el período</text>
+          <text x="80" y="78" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text-3)"><?= __('overview_donut_no_downloads') ?></text>
+          <text x="80" y="94" text-anchor="middle" font-size="10" fill="var(--text-3)"><?= __('overview_donut_in_period') ?></text>
         <?php else:
           $acc = 0;
           foreach ($slices as $sIdx => $sl):
@@ -334,7 +339,7 @@ try {
             $gap = $C - $visible_dash;
             $offset = -$acc;
             $acc += $dash;
-            $tip_donut = '<div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:'.e($sl['color']).'"></span><strong style="color:var(--text)">'.e($sl['title']).'</strong></div><div style="font-size:13px;font-weight:600;margin-top:4px;color:var(--text)">'.number_format($sl['downloads']).' descargas ('.$sl['pct'].'%)</div>';
+            $tip_donut = '<div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:'.e($sl['color']).'"></span><strong style="color:var(--text)">'.e($sl['title']).'</strong></div><div style="font-size:13px;font-weight:600;margin-top:4px;color:var(--text)">'.number_format($sl['downloads']).' '.e(strtolower(__('downloads'))).' ('.$sl['pct'].'%)</div>';
         ?>
           <circle cx="80" cy="80" r="56" fill="none"
             stroke="<?= e($sl['color']) ?>"
@@ -349,7 +354,7 @@ try {
         <?php endforeach; ?>
           <!-- Total en el centro -->
           <text x="80" y="77" text-anchor="middle" font-size="18" font-weight="700" fill="var(--text)" style="letter-spacing:-0.02em"><?= fmt_num($donut_total) ?></text>
-          <text x="80" y="93" text-anchor="middle" font-size="10.5" fill="var(--text-3)">descargas</text>
+          <text x="80" y="93" text-anchor="middle" font-size="10.5" fill="var(--text-3)"><?= strtolower(__('downloads')) ?></text>
         <?php endif; ?>
       </svg>
     </div>
@@ -357,7 +362,7 @@ try {
     <?php if (!empty($slices)): ?>
       <div class="col" style="gap:6px;margin-top:auto;border-top:1px solid var(--border);padding-top:12px">
         <?php foreach ($slices as $sIdx => $sl):
-          $tip_legend = '<div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:'.e($sl['color']).'"></span><strong style="color:var(--text)">'.e($sl['title']).'</strong></div><div style="font-size:13px;font-weight:600;margin-top:4px;color:var(--text)">'.number_format($sl['downloads']).' descargas ('.$sl['pct'].'%)</div>';
+          $tip_legend = '<div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:'.e($sl['color']).'"></span><strong style="color:var(--text)">'.e($sl['title']).'</strong></div><div style="font-size:13px;font-weight:600;margin-top:4px;color:var(--text)">'.number_format($sl['downloads']).' '.e(strtolower(__('downloads'))).' ('.$sl['pct'].'%)</div>';
         ?>
           <div class="row donut-legend-row" data-donut-id="<?= $sIdx ?>" data-tooltip-html="<?= htmlspecialchars($tip_legend, ENT_QUOTES, 'UTF-8') ?>" style="justify-content:space-between;padding:6px 8px;border-radius:6px;font-size:12px;cursor:pointer">
             <div class="row" style="gap:8px;min-width:0">
@@ -379,21 +384,21 @@ try {
     <!-- Ritmo de publicación -->
     <div class="card" style="flex:1;display:flex;flex-direction:column;justify-content:space-between">
       <div>
-        <div class="card-head"><div class="card-title">Ritmo de publicación</div></div>
+        <div class="card-head"><div class="card-title"><?= __('overview_publishing_pace') ?></div></div>
         <?php if ($rhythm_days === null): ?>
-          <div class="page-sub" style="padding:20px 0;text-align:center">Necesitas al menos 2 episodios publicados para medir el ritmo.</div>
+          <div class="page-sub" style="padding:20px 0;text-align:center"><?= __('overview_pace_min_eps') ?></div>
         <?php else: ?>
           <div class="tabular" style="font-size:30px;font-weight:600;letter-spacing:-0.02em">
-            <?= number_format($rhythm_days, 1) ?><span style="font-size:13.5px;color:var(--text-3);font-weight:400;margin-left:6px">días entre eps</span>
+            <?= number_format($rhythm_days, 1) ?><span style="font-size:13.5px;color:var(--text-3);font-weight:400;margin-left:6px"><?= __('overview_days_between_eps') ?></span>
           </div>
           <div class="delta <?= $rhythm_days <= $meta ? 'up' : 'down' ?>" style="margin-top:6px">
             <?= icon($rhythm_days <= $meta ? 'arrowDown' : 'arrowUp',12) ?>
-            <?= number_format(abs($meta - $rhythm_days), 1) ?>d vs meta de <?= $meta ?>d
+            <?= number_format(abs($meta - $rhythm_days), 1) ?><?= __('overview_vs_target', ['target' => $meta]) ?>
           </div>
         <?php endif; ?>
       </div>
       <?php if ($rhythm_days !== null): ?>
-        <div class="row" style="justify-content:space-between;margin-top:14px;font-size:11px;color:var(--text-3)"><span>últimos episodios</span><span><?= e($episodes[0]['date'] ?? '') ?></span></div>
+        <div class="row" style="justify-content:space-between;margin-top:14px;font-size:11px;color:var(--text-3)"><span><?= __('overview_latest_episodes') ?></span><span><?= e($episodes[0]['date'] ?? '') ?></span></div>
       <?php endif; ?>
     </div>
 
@@ -401,7 +406,7 @@ try {
     <?php if ($topShow): ?>
     <div class="card" style="flex:1;display:flex;flex-direction:column;justify-content:space-between">
       <div>
-        <div class="card-head"><div class="card-title">Top show · 7d</div></div>
+        <div class="card-head"><div class="card-title"><?= __('overview_top_show') ?></div></div>
         <div class="row" style="gap:14px;align-items:flex-start">
           <?php if ($topShow['cover']): ?>
             <img class="cover" src="<?= e($topShow['cover']) ?>" style="width:64px;height:64px;border-radius:12px;object-fit:cover;flex-shrink:0" alt="">
@@ -418,12 +423,12 @@ try {
             <div style="font-size:12px;color:var(--text-3);margin-top:2px"><?= (int)$topShow['episodes'] ?> eps · <?= e($topShow['cat']) ?></div>
             <div class="row" style="gap:16px;margin-top:12px">
               <div><div style="font-size:11px;color:var(--text-3)">7d</div><div class="tabular" style="font-weight:600"><?= fmt_num((int)$topShow['downloads7']) ?></div></div>
-              <div><div style="font-size:11px;color:var(--text-3)">Total</div><div class="tabular" style="font-weight:600"><?= fmt_num((int)$topShow['downloads']) ?></div></div>
+              <div><div style="font-size:11px;color:var(--text-3)"><?= __('stat_total', 'Total') ?></div><div class="tabular" style="font-weight:600"><?= fmt_num((int)$topShow['downloads']) ?></div></div>
             </div>
           </div>
         </div>
       </div>
-      <a class="btn" style="margin-top:14px;width:100%;justify-content:center" href="/admin/podcast/<?= e($topShow['id']) ?>">Abrir show →</a>
+      <a class="btn" style="margin-top:14px;width:100%;justify-content:center" href="/admin/podcast/<?= e($topShow['id']) ?>"><?= __('overview_open_show') ?></a>
     </div>
     <?php endif; ?>
   </div>
@@ -431,13 +436,13 @@ try {
 
 <div class="card" style="margin-top:var(--gap)">
   <div class="card-head">
-    <div class="card-title">Episodios recientes</div>
-    <a class="btn btn-ghost" href="/admin/podcasts">Ver más →</a>
+    <div class="card-title"><?= __('overview_recent_episodes') ?></div>
+    <a class="btn btn-ghost" href="/admin/podcasts"><?= __('overview_view_more') ?></a>
   </div>
   <?php if (!$has_episodes): ?>
-    <div class="page-sub" style="padding:40px;text-align:center">Aún no has publicado episodios.
+    <div class="page-sub" style="padding:40px;text-align:center"><?= __('overview_no_episodes_yet') ?>
       <?php if ($has_podcasts): ?>
-        <a class="btn" style="margin-top:14px" href="/admin/new-episode?podcast=<?= e($podcasts[0]['id']) ?>">Subir el primero →</a>
+        <a class="btn" style="margin-top:14px" href="/admin/new-episode?podcast=<?= e($podcasts[0]['id']) ?>"><?= __('overview_upload_first') ?></a>
       <?php endif; ?>
     </div>
   <?php else: ?>

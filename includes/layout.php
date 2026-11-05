@@ -15,8 +15,9 @@ try {
 } catch (Throwable $e) {}
 
 // Removed admin_url (moved to helpers.php)
+$cur_lang = kp_detect_lang();
 ?><!doctype html>
-<html lang="es" data-theme="<?= e(kp_setting('admin_theme', 'dark')) ?>">
+<html lang="<?= e($cur_lang) ?>" data-theme="<?= e(kp_setting('admin_theme', 'dark')) ?>">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -54,43 +55,43 @@ $is_auth_page = in_array($page, ['login', 'login-2fa', 'forgot', 'reset', 'recov
         <?php endif; ?>
         <div><div class="brand-name">KutPod</div><div class="brand-sub">Studio · v<?= KUTPOD_VERSION ?></div></div>
       </div>
-      <a href="/" target="_blank" rel="noopener" class="btn btn-ghost" style="padding:4px 8px;font-size:11px">Ver Sitio</a>
+      <a href="/" target="_blank" rel="noopener" class="btn btn-ghost" style="padding:4px 8px;font-size:11px"><?= __('view_site') ?></a>
     </div>
     <div class="nav-section">
-      <a class="nav-item <?= $page==='overview'?'active':'' ?>" href="<?= admin_url() ?>"><?= icon('grid') ?> Resumen</a>
+      <a class="nav-item <?= $page==='overview'?'active':'' ?>" href="<?= admin_url() ?>"><?= icon('grid') ?> <?= __('nav_overview') ?></a>
       <a class="nav-item <?= $page==='alerts'?'active':'' ?>" href="<?= admin_url('alerts') ?>">
-        <?= icon('bell') ?> Alertas
+        <?= icon('bell') ?> <?= __('nav_alerts') ?>
         <?php if ($unread_alerts): ?>
           <span class="badge" style="<?= $page==='alerts' ? '' : 'background:var(--accent);color:var(--bg-1)' ?>"><?= $unread_alerts ?></span>
         <?php endif; ?>
       </a>
     </div>
     <div class="nav-section">
-      <div class="nav-label">Podcasts</div>
-      <a class="nav-item <?= in_array($page,['podcasts','podcast'])?'active':'' ?>" href="<?= admin_url('podcasts') ?>"><?= icon('mic') ?> Todos los Podcasts</a>
-      <a class="nav-item <?= $page==='new-podcast'?'active':'' ?>" href="<?= admin_url('new-podcast') ?>"><?= icon('plus') ?> Nuevo Podcast</a>
-      <a class="nav-item <?= $page==='import'?'active':'' ?>" href="<?= admin_url('import') ?>"><?= icon('rss') ?> Importar RSS</a>
+      <div class="nav-label"><?= __('nav_podcasts') ?></div>
+      <a class="nav-item <?= in_array($page,['podcasts','podcast'])?'active':'' ?>" href="<?= admin_url('podcasts') ?>"><?= icon('mic') ?> <?= __('nav_all_podcasts') ?></a>
+      <a class="nav-item <?= $page==='new-podcast'?'active':'' ?>" href="<?= admin_url('new-podcast') ?>"><?= icon('plus') ?> <?= __('nav_new_podcast') ?></a>
+      <a class="nav-item <?= $page==='import'?'active':'' ?>" href="<?= admin_url('import') ?>"><?= icon('rss') ?> <?= __('nav_import_rss') ?></a>
     </div>
     <div class="nav-section">
-      <div class="nav-label">Red</div>
-      <a class="nav-item <?= $page==='analytics'?'active':'' ?>" href="<?= admin_url('analytics') ?>"><?= icon('chart') ?> Estadísticas</a>
+      <div class="nav-label"><?= __('nav_network') ?></div>
+      <a class="nav-item <?= $page==='analytics'?'active':'' ?>" href="<?= admin_url('analytics') ?>"><?= icon('chart') ?> <?= __('nav_analytics') ?></a>
       <?php if (kp_plugin_is_active('fediverse')): ?>
-        <a class="nav-item <?= $page==='fediverse'?'active':'' ?>" href="<?= admin_url('fediverse') ?>"><?= icon('globe') ?> Fediverso</a>
+        <a class="nav-item <?= $page==='fediverse'?'active':'' ?>" href="<?= admin_url('fediverse') ?>"><?= icon('globe') ?> <?= __('nav_fediverse') ?></a>
       <?php endif; ?>
-      <a class="nav-item <?= $page==='pages'?'active':'' ?>" href="<?= admin_url('pages') ?>"><?= icon('file') ?> Páginas</a>
+      <a class="nav-item <?= $page==='pages'?'active':'' ?>" href="<?= admin_url('pages') ?>"><?= icon('file') ?> <?= __('nav_pages') ?></a>
     </div>
     <div class="nav-section">
-      <div class="nav-label">Administración</div>
-      <a class="nav-item <?= $page==='update'?'active':'' ?>" href="<?= admin_url('update') ?>"><?= icon('refreshCw') ?> Actualizaciones</a>
-      <a class="nav-item <?= $page==='queue'?'active':'' ?>" href="<?= admin_url('queue') ?>"><?= icon('layers') ?> Cola de procesos</a>
-      <a class="nav-item <?= $page==='backups'?'active':'' ?>" href="<?= admin_url('backups') ?>"><?= icon('layers') ?> Respaldos</a>
-      <a class="nav-item <?= $page==='preferences'?'active':'' ?>" href="<?= admin_url('preferences') ?>"><?= icon('settings') ?> Preferencias</a>
-      <a class="nav-item <?= $page==='plugins'?'active':'' ?>" href="<?= admin_url('plugins') ?>"><?= icon('layers') ?> Plugins</a>
-      <a class="nav-item <?= $page==='users'?'active':'' ?>" href="<?= admin_url('users') ?>"><?= icon('users') ?> Usuarios</a>
+      <div class="nav-label"><?= __('nav_admin') ?></div>
+      <a class="nav-item <?= $page==='update'?'active':'' ?>" href="<?= admin_url('update') ?>"><?= icon('refreshCw') ?> <?= __('nav_update') ?></a>
+      <a class="nav-item <?= $page==='queue'?'active':'' ?>" href="<?= admin_url('queue') ?>"><?= icon('layers') ?> <?= __('nav_queue') ?></a>
+      <a class="nav-item <?= $page==='backups'?'active':'' ?>" href="<?= admin_url('backups') ?>"><?= icon('layers') ?> <?= __('nav_backups') ?></a>
+      <a class="nav-item <?= $page==='preferences'?'active':'' ?>" href="<?= admin_url('preferences') ?>"><?= icon('settings') ?> <?= __('nav_preferences') ?></a>
+      <a class="nav-item <?= $page==='plugins'?'active':'' ?>" href="<?= admin_url('plugins') ?>"><?= icon('layers') ?> <?= __('nav_plugins') ?></a>
+      <a class="nav-item <?= $page==='users'?'active':'' ?>" href="<?= admin_url('users') ?>"><?= icon('users') ?> <?= __('nav_users') ?></a>
     </div>
     <div class="nav-section">
-      <div class="nav-label">Otros</div>
-      <a class="nav-item <?= $page==='api'?'active':'' ?>" href="<?= admin_url('api') ?>"><?= icon('share') ?> API</a>
+      <div class="nav-label"><?= __('nav_other') ?></div>
+      <a class="nav-item <?= $page==='api'?'active':'' ?>" href="<?= admin_url('api') ?>"><?= icon('share') ?> <?= __('nav_api') ?></a>
     </div>
     <div class="sidebar-footer">
       <a href="<?= admin_url('users') ?>" style="display:flex; align-items:center; gap:10px; flex:1; min-width:0; text-decoration:none; color:inherit;">
@@ -104,7 +105,7 @@ $is_auth_page = in_array($page, ['login', 'login-2fa', 'forgot', 'reset', 'recov
           <div style="font-size:11px;color:var(--text-3)"><?= e(ucfirst($current_user['role'] ?? 'owner')) ?></div>
         </div>
       </a>
-      <a class="kebab" href="/admin?action=logout" title="Cerrar sesión"><?= icon('logOut') ?></a>
+      <a class="kebab" href="/admin?action=logout" title="<?= __('logout') ?>"><?= icon('logOut') ?></a>
     </div>
   </aside>
   <?php endif; ?>
@@ -115,16 +116,29 @@ $is_auth_page = in_array($page, ['login', 'login-2fa', 'forgot', 'reset', 'recov
       <div class="crumbs">
         <a class="btn btn-ghost" style="padding:4px 8px;font-size:13px" href="<?= admin_url() ?>">KutPod</a>
         <?= icon('chevronRight',14) ?>
-        <span class="crumb-current"><?= e($title ?? 'Página') ?></span>
+        <span class="crumb-current"><?= e($title ?? __('page')) ?></span>
       </div>
-      <form class="search" action="<?= admin_url('search') ?>" method="GET" autocomplete="off" role="search">
-        <label style="display:flex;align-items:center;gap:8px;width:100%;cursor:text">
-          <?= icon('search',14) ?>
-          <input name="q" placeholder="Buscar podcasts, episodios, invitados…" value="<?= e($_GET['q'] ?? '') ?>" autocomplete="off" spellcheck="false"/>
-        </label>
-        <kbd>⌘K</kbd>
-        <div class="search-dropdown" id="search-dropdown" style="display:none;" role="listbox"></div>
-      </form>
+      <div style="display:flex;align-items:center;gap:12px">
+        <!-- Selector rápido de Idioma -->
+        <div style="display:inline-flex;gap:4px;align-items:center;background:var(--surface-2, rgba(255,255,255,0.06));padding:3px 6px;border-radius:6px;font-size:11.5px;font-weight:700;">
+          <a href="?lang=es" style="color:var(--text-1, white);text-decoration:none;padding:2px 6px;border-radius:4px;<?= $cur_lang === 'es' ? 'background:var(--accent);color:var(--bg-1, #000);' : 'opacity:0.6;' ?>">ES</a>
+          <a href="?lang=en" style="color:var(--text-1, white);text-decoration:none;padding:2px 6px;border-radius:4px;<?= $cur_lang === 'en' ? 'background:var(--accent);color:var(--bg-1, #000);' : 'opacity:0.6;' ?>">EN</a>
+        </div>
+        <form class="search" action="<?= admin_url('search') ?>" method="GET" autocomplete="off" role="search">
+          <label style="display:flex;align-items:center;gap:8px;width:100%;cursor:text">
+            <?= icon('search',14) ?>
+            <input name="q" placeholder="<?= __('search_placeholder_podcasts') ?>" value="<?= e($_GET['q'] ?? '') ?>" autocomplete="off" spellcheck="false"/>
+          </label>
+          <kbd>⌘K</kbd>
+          <div class="search-dropdown" id="search-dropdown" style="display:none;" role="listbox"></div>
+        </form>
+      </div>
+    </div>
+    <?php else: ?>
+    <!-- Selector rápido de idioma en páginas de acceso -->
+    <div style="position:fixed;top:16px;right:16px;z-index:999;display:inline-flex;gap:4px;align-items:center;background:var(--surface-2, rgba(255,255,255,0.06));padding:3px 6px;border-radius:6px;font-size:11.5px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+      <a href="?lang=es" style="color:var(--text-1, white);text-decoration:none;padding:2px 6px;border-radius:4px;<?= $cur_lang === 'es' ? 'background:var(--accent);color:var(--bg-1, #000);' : 'opacity:0.6;' ?>">ES</a>
+      <a href="?lang=en" style="color:var(--text-1, white);text-decoration:none;padding:2px 6px;border-radius:4px;<?= $cur_lang === 'en' ? 'background:var(--accent);color:var(--bg-1, #000);' : 'opacity:0.6;' ?>">EN</a>
     </div>
     <?php endif; ?>
     <div class="page"><?= $body ?></div>

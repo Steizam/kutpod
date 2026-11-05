@@ -15,7 +15,7 @@ if (!$token) {
 $u = kp_one("SELECT * FROM users WHERE reset_token = ? AND reset_expires > ?", [$token, time()]);
 
 if (!$u) {
-  $error = 'El enlace de recuperación es inválido o ha expirado.';
+  $error = __('auth_reset_invalid');
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $password = $_POST['password'] ?? '';
   $password_confirm = $_POST['password_confirm'] ?? '';
@@ -28,7 +28,7 @@ if (!$u) {
     $hash = password_hash($password, PASSWORD_DEFAULT);
     kp_db()->prepare("UPDATE users SET password_hash = ?, reset_token = NULL, reset_expires = NULL WHERE id = ?")->execute([$hash, $u['id']]);
     kp_alert('security', 'Contraseña restablecida', "El usuario " . $u['name'] . " ha restablecido su contraseña.", '', ['actor_name' => $u['email']]);
-    $msg = 'Tu contraseña ha sido restablecida con éxito.';
+    $msg = __('auth_reset_success');
   }
 }
 ?>
@@ -36,23 +36,23 @@ if (!$u) {
   <div class="card card-lg" style="width:380px;padding:36px">
     <div style="text-align:center;margin-bottom:24px">
       <div style="width:48px;height:48px;border-radius:12px;background:var(--accent);color:white;display:grid;place-items:center;font-weight:800;font-size:22px;margin:0 auto 12px">K</div>
-      <h1 class="page-title" style="font-size:20px;margin:0">Restablecer contraseña</h1>
-      <p class="page-sub" style="margin-top:6px;font-size:12.5px">Introduce tu nueva contraseña.</p>
+      <h1 class="page-title" style="font-size:20px;margin:0"><?= __('auth_reset_title') ?></h1>
+      <p class="page-sub" style="margin-top:6px;font-size:12.5px"><?= __('auth_reset_sub') ?></p>
     </div>
     
     <?php if ($error): ?><div class="error" style="margin-bottom:14px;padding:10px 12px;background:rgba(248,113,113,.1);border-radius:8px"><?= e($error) ?></div><?php endif; ?>
     
     <?php if ($msg): ?>
       <div style="margin-bottom:14px;padding:10px 12px;background:rgba(16,185,129,.1);color:#059669;border-radius:8px;font-size:13.5px;line-height:1.5"><?= e($msg) ?></div>
-      <a class="btn btn-primary" href="/admin/login" style="width:100%;justify-content:center;margin-top:20px">Ir al inicio de sesión</a>
+      <a class="btn btn-primary" href="/admin/login" style="width:100%;justify-content:center;margin-top:20px"><?= __('auth_go_to_login') ?></a>
     <?php elseif ($u): ?>
       <form method="POST">
-        <div class="field"><label class="label">Nueva contraseña</label><input class="input" type="password" name="password" required autofocus minlength="6"></div>
-        <div class="field" style="margin-top:14px"><label class="label">Confirmar contraseña</label><input class="input" type="password" name="password_confirm" required minlength="6"></div>
-        <button class="btn btn-primary" type="submit" style="width:100%;margin-top:20px;justify-content:center">Guardar contraseña</button>
+        <div class="field"><label class="label"><?= __('auth_new_password') ?></label><input class="input" type="password" name="password" required autofocus minlength="6"></div>
+        <div class="field" style="margin-top:14px"><label class="label"><?= __('auth_confirm_password') ?></label><input class="input" type="password" name="password_confirm" required minlength="6"></div>
+        <button class="btn btn-primary" type="submit" style="width:100%;margin-top:20px;justify-content:center"><?= __('auth_save_password') ?></button>
       </form>
     <?php else: ?>
-      <a class="btn" href="/admin/forgot" style="width:100%;justify-content:center;margin-top:20px">Solicitar nuevo enlace</a>
+      <a class="btn" href="/admin/forgot" style="width:100%;justify-content:center;margin-top:20px"><?= __('auth_request_new_link') ?></a>
     <?php endif; ?>
   </div>
 </div>

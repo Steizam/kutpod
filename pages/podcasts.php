@@ -11,10 +11,10 @@ $podcastsPage = array_slice($podcasts, ($pageShow - 1) * $perPage, $perPage);
 $totalEps = (int)array_sum(array_column($podcasts, 'episodes'));
 ?>
 <div class="page-head">
-  <div><h1 class="page-title">Podcasts</h1><p class="page-sub"><?= $totalShowsCount ?> show<?= $totalShowsCount === 1 ? '' : 's' ?> · <?= $totalEps ?> episodios totales</p></div>
+  <div><h1 class="page-title"><?= __('nav_podcasts') ?></h1><p class="page-sub"><?= __('overview_active_shows', ['count' => $totalShowsCount]) ?> · <?= __('overview_total_eps', ['count' => $totalEps]) ?></p></div>
   <div class="row">
-    <a class="btn" href="/admin/import"><?= icon('rss',13) ?> Importar RSS</a>
-    <a class="btn btn-primary" href="/admin/new-podcast"><?= icon('plus',13) ?> Nuevo podcast</a>
+    <a class="btn" href="/admin/import"><?= icon('rss',13) ?> <?= __('nav_import_rss') ?></a>
+    <a class="btn btn-primary" href="/admin/new-podcast"><?= icon('plus',13) ?> <?= __('nav_new_podcast') ?></a>
   </div>
 </div>
 <div class="grid-12">
