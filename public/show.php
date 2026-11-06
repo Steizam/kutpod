@@ -88,7 +88,7 @@ if ($is_premium_show) {
 ?>
 <section class="pub-show-hero" style="background:linear-gradient(180deg,<?= e($p['color']) ?>1a 0%,transparent 100%)">
   <div class="pub-container">
-    <a class="pub-link" href="/shows" style="margin-bottom:24px;display:inline-block">← Catálogo</a>
+    <a class="pub-link" href="/shows" style="margin-bottom:24px;display:inline-block"><?= __('pub_back_catalog', '← Catálogo') ?></a>
     <div class="pub-show-hero-grid" style="display:grid;grid-template-columns:320px 1fr;gap:40px;align-items:start">
       <div class="pub-show-cover-wrap">
         <?php if ($p['cover']): ?>
@@ -112,16 +112,16 @@ if ($is_premium_show) {
         <h1 class="pub-h1" style="margin-bottom:12px">
           <?= e($p['title']) ?>
           <?php if (($p['parental'] ?? 'clean') === 'explicit'): ?>
-            <span style="display:inline-block;background:var(--border);color:var(--text-2);border-radius:4px;font-size:12px;padding:2px 6px;margin-left:6px;vertical-align:middle;line-height:1;font-weight:800">E</span>
+            <span style="display:inline-block;background:var(--border);color:var(--text-2);border-radius:4px;font-size:12px;padding:2px 6px;margin-left:6px;vertical-align:middle;line-height:1;font-weight:800" title="<?= __('pub_explicit_content', 'Contenido explícito') ?>">E</span>
           <?php endif; ?>
           <?php if ((int)kp_get_podcast_meta($p, 'premium_enabled', 0)): ?>
-            <span style="display:inline-block;background:#10b981;color:#fff;border-radius:4px;font-size:12px;padding:2px 6px;margin-left:6px;vertical-align:middle;line-height:1;font-weight:800">$</span>
+            <span style="display:inline-block;background:#10b981;color:#fff;border-radius:4px;font-size:12px;padding:2px 6px;margin-left:6px;vertical-align:middle;line-height:1;font-weight:800" title="<?= __('pub_premium_content', 'Contenido premium') ?>">$</span>
           <?php endif; ?>
         </h1>
         <?php kp_do_action('public_show_hero_meta', $p); ?>
-        <p class="pub-show-desc" style="font-size:15.5px;color:var(--pub-text-2);line-height:1.65;max-width:620px;margin-bottom:20px"><?= nl2br($p['description'] ?: 'Sin descripción.') ?></p>
+        <p class="pub-show-desc" style="font-size:15.5px;color:var(--pub-text-2);line-height:1.65;max-width:620px;margin-bottom:20px"><?= nl2br($p['description'] ?: __('pub_no_description', 'Sin descripción.')) ?></p>
         <div class="row" style="gap:24px;font-size:13.5px;color:var(--pub-muted);margin-bottom:24px">
-          <span><?= (int)$p['episodes'] ?> episodios</span><span>·</span><span><?= fmt_num($p['downloads']) ?> reproducciones</span>
+          <span><?= __('pub_episodes_count', ':count episodios', ['count' => (int)$p['episodes']]) ?></span><span>·</span><span><?= __('pub_downloads_count', ':count reproducciones', ['count' => fmt_num($p['downloads'])]) ?></span>
         </div>
         
         <div class="row" style="gap:16px;flex-wrap:wrap;align-items:center">
@@ -212,13 +212,13 @@ if ($is_premium_show) {
 
 <section class="pub-section"><div class="pub-container">
   <div class="pub-ep-head">
-    <h2 class="pub-ep-head-title">EPISODIOS</h2>
+    <h2 class="pub-ep-head-title"><?= __('pub_episodes_heading', 'EPISODIOS') ?></h2>
     <?php if (count($seasons) > 1): ?>
     <div class="pub-season-picker">
       <select class="pub-season-select" onchange="window.location.href='/@<?= e($p['id']) ?>?p=1'+(this.value?'&s='+this.value:'')">
-        <option value="">Todas las temporadas</option>
+        <option value=""><?= __('pub_all_seasons', 'Todas las temporadas') ?></option>
         <?php foreach ($seasons as $seasonNum): ?>
-          <option value="<?= $seasonNum ?>" <?= $filterSeason === $seasonNum ? 'selected' : '' ?>>Temporada <?= $seasonNum ?></option>
+          <option value="<?= $seasonNum ?>" <?= $filterSeason === $seasonNum ? 'selected' : '' ?>><?= __('pub_season_num', 'Temporada :s', ['s' => $seasonNum]) ?></option>
         <?php endforeach; ?>
       </select>
       <svg class="pub-season-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -231,18 +231,18 @@ if ($is_premium_show) {
         <div class="pub-ep-top">
           <a class="pub-ep-title-link" href="/@<?= e($p['id']) ?>/<?= e($ep['id']) ?>">
             <?php if (($ep['type'] ?? '') === 'trailer'): ?>
-              <span class="badge-promo" style="margin-right:6px">Trailer</span>
+              <span class="badge-promo" style="margin-right:6px"><?= __('pub_trailer', 'Trailer') ?></span>
             <?php elseif (($ep['type'] ?? '') === 'bonus'): ?>
-              <span class="badge-extra" style="margin-right:6px">Bonus</span>
+              <span class="badge-extra" style="margin-right:6px"><?= __('pub_bonus', 'Bonus') ?></span>
             <?php elseif (!empty($ep['n'])): ?>
               <span class="pub-ep-num"><?= (int)$ep['n'] ?>.</span>
             <?php endif; ?>
             <span class="pub-ep-title"><?= e($ep['title']) ?></span>
             <?php if (($p['parental'] ?? 'clean') === 'explicit'): ?>
-              <span class="pub-badge-e" title="Contenido explícito">E</span>
+              <span class="pub-badge-e" title="<?= __('pub_explicit_content', 'Contenido explícito') ?>">E</span>
             <?php endif; ?>
             <?php if ((int)kp_get_podcast_meta($p, 'premium_enabled', 0) || (int)kp_get_episode_meta($ep, 'premium_enabled', 0)): ?>
-              <span class="pub-badge-prem" title="Contenido premium">$</span>
+              <span class="pub-badge-prem" title="<?= __('pub_premium_content', 'Contenido premium') ?>">$</span>
             <?php endif; ?>
           </a>
         </div>
@@ -256,8 +256,8 @@ if ($is_premium_show) {
         <div class="pub-ep-bottom">
           <div class="pub-ep-action">
             <?php 
-            $play_label = 'Reproducir' . (!empty($ep['duration']) ? ' · ' . e($ep['duration']) : '');
-            $play_btn = '<button class="pub-ep-play-pill" style="background:'.e($p['color']).';color:#fff" aria-label="Reproducir ' . e($ep['title']) . '"
+            $play_label = __('pub_play', 'Reproducir') . (!empty($ep['duration']) ? ' · ' . e($ep['duration']) : '');
+            $play_btn = '<button class="pub-ep-play-pill" style="background:'.e($p['color']).';color:#fff" aria-label="' . e(__('pub_play_episode', 'Reproducir :title', ['title' => $ep['title']])) . '"
                     data-kp-play data-src="/r/'.urlencode($p['id']).'/'.urlencode($ep['id']).'/audio.mp3"
                     data-title="'.e($ep['title']).'" data-podcast="'.e($p['title']).'"
                     data-color="'.e($p['color']).'" data-initial="'.e($p['initial']).'"
@@ -272,13 +272,13 @@ if ($is_premium_show) {
             <?php
             $meta = [];
             if (!empty($ep['s']) && (int)$ep['s'] > 0) {
-              $meta[] = '<span>Temporada ' . (int)$ep['s'] . '</span>';
+              $meta[] = '<span>' . __('pub_season_num', 'Temporada :s', ['s' => (int)$ep['s']]) . '</span>';
             }
             if (!empty($ep['n']) && (int)$ep['n'] > 0) {
-              $meta[] = '<span>Episodio ' . (int)$ep['n'] . '</span>';
+              $meta[] = '<span>' . __('pub_episode_num', 'Episodio :n', ['n' => (int)$ep['n']]) . '</span>';
             }
             if (!empty($ep['date_iso'])) {
-              $meta[] = '<span data-kp-date="' . e($ep['date_iso']) . '">Publicado ' . e(kp_relative_time($ep['date_iso'])) . '</span>';
+              $meta[] = '<span data-kp-date="' . e($ep['date_iso']) . '">' . __('pub_published_time', 'Publicado :time', ['time' => e(kp_relative_time($ep['date_iso']))]) . '</span>';
             }
             echo implode('<span class="pub-ep-meta-sep" aria-hidden="true">·</span>', $meta);
             ?>

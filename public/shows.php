@@ -3,8 +3,8 @@ require_once __DIR__ . '/../includes/helpers.php';
 $podcasts = kp_podcasts();
 ?>
 <section class="pub-section"><div class="pub-container">
-  <h1 class="pub-h1" style="margin-bottom:12px">Catálogo</h1>
-  <p style="color:var(--pub-muted);font-size:15px;margin-bottom:40px;max-width:620px"><?= count($podcasts) ?> shows, una voz.</p>
+  <h1 class="pub-h1" style="margin-bottom:12px"><?= __('pub_catalog_title', 'Catálogo') ?></h1>
+  <p style="color:var(--pub-muted);font-size:15px;margin-bottom:40px;max-width:620px"><?= __('pub_catalog_subtitle', ':count shows, una voz.', ['count' => count($podcasts)]) ?></p>
   <div class="pub-shows-grid">
     <?php foreach ($podcasts as $p): ?>
       <a class="pub-show-card" href="/@<?= e($p['id']) ?>" style="text-decoration:none;color:inherit">
@@ -25,7 +25,7 @@ $podcasts = kp_podcasts();
               <span style="display:inline-block;background:#10b981;color:#fff;border-radius:4px;font-size:10px;padding:2px 3px;margin-left:4px;vertical-align:middle;line-height:1;font-weight:800">$</span>
             <?php endif; ?>
           </h3>
-          <div style="font-size:12.5px;color:var(--pub-muted);margin-top:4px"><?= (int)$p['episodes'] ?> episodios · <?= e($p['cat']) ?></div>
+          <div style="font-size:12.5px;color:var(--pub-muted);margin-top:4px"><?= __('pub_episodes_count', ':count episodios', ['count' => (int)$p['episodes']]) ?> · <?= e($p['cat']) ?></div>
         </div>
       </a>
     <?php endforeach; ?>

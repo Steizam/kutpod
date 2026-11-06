@@ -45,12 +45,13 @@ if ($idParam > 0) {
 
 if (!$ep || !$p) {
     http_response_code(404);
+    $embedLang = kp_detect_lang();
     ?>
     <!DOCTYPE html>
-    <html lang="es">
+    <html lang="<?= e($embedLang) ?>">
     <head>
       <meta charset="utf-8">
-      <title>Episodio no encontrado · KutPod</title>
+      <title><?= __('pub_episode_not_found', 'Episodio no encontrado') ?> · KutPod</title>
       <style>
         body { margin:0; padding:24px; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:#0f172a; color:#f8fafc; display:flex; align-items:center; justify-content:center; height:100vh; box-sizing:border-box; text-align:center }
         .box { background:rgba(255,255,255,0.06); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1) }
@@ -60,8 +61,8 @@ if (!$ep || !$p) {
     </head>
     <body>
       <div class="box">
-        <h1>Episodio no encontrado</h1>
-        <p>El contenido solicitado no está disponible o ha sido retirado.</p>
+        <h1><?= __('pub_episode_not_found', 'Episodio no encontrado') ?></h1>
+        <p><?= __('pub_episode_not_available', 'El contenido solicitado no está disponible o ha sido retirado.') ?></p>
       </div>
     </body>
     </html>
@@ -87,9 +88,10 @@ if (str_starts_with($fullEpisodeUrl, 'file://')) {
 }
 $durationSecs = (int)($ep['duration_secs'] ?? 0);
 $durationFmt = $ep['duration'] ?: ($durationSecs > 0 ? kp_fmt_duration($durationSecs) : '0:00');
+$embedLang = kp_detect_lang();
 ?>
 <!DOCTYPE html>
-<html lang="es" data-theme="<?= e($theme) ?>">
+<html lang="<?= e($embedLang) ?>" data-theme="<?= e($theme) ?>">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -412,19 +414,19 @@ $durationFmt = $ep['duration'] ?: ($durationSecs > 0 ? kp_fmt_duration($duration
           <?= e($ep['title']) ?>
         </a>
       </div>
-      <a href="<?= e($fullEpisodeUrl) ?>" target="_blank" rel="noopener" class="kp-embed-badge" title="Abrir en KutPod">
+      <a href="<?= e($fullEpisodeUrl) ?>" target="_blank" rel="noopener" class="kp-embed-badge" title="<?= __('pub_open_in_kutpod', 'Abrir en KutPod') ?>">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
         <span>KutPod</span>
       </a>
     </div>
 
     <div class="kp-embed-controls-row">
-      <button type="button" class="kp-embed-btn-play" id="btnPlay" aria-label="Reproducir">
+      <button type="button" class="kp-embed-btn-play" id="btnPlay" aria-label="<?= __('pub_play', 'Reproducir') ?>">
         <svg id="playIcon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
         <svg id="pauseIcon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
       </button>
 
-      <button type="button" class="kp-embed-btn-skip" id="btnBack" title="Retroceder 15 segundos">
+      <button type="button" class="kp-embed-btn-skip" id="btnBack" title="<?= __('pub_skip_back_15', 'Retroceder 15 segundos') ?>">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
         <span style="margin-left:2px">15</span>
       </button>
@@ -438,13 +440,13 @@ $durationFmt = $ep['duration'] ?: ($durationSecs > 0 ? kp_fmt_duration($duration
         <span class="kp-embed-time dur" id="timeDur"><?= e($durationFmt) ?></span>
       </div>
 
-      <button type="button" class="kp-embed-btn-skip" id="btnFwd" title="Adelantar 30 segundos">
+      <button type="button" class="kp-embed-btn-skip" id="btnFwd" title="<?= __('pub_skip_fwd_30', 'Adelantar 30 segundos') ?>">
         <span style="margin-right:2px">30</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
       </button>
 
       <div class="kp-embed-extras">
-        <select class="kp-embed-speed" id="speedSelect" title="Velocidad de reproducción">
+        <select class="kp-embed-speed" id="speedSelect" title="<?= __('pub_playback_speed', 'Velocidad de reproducción') ?>">
           <option value="0.75">0.75×</option>
           <option value="1" selected>1×</option>
           <option value="1.25">1.25×</option>

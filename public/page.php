@@ -4,19 +4,19 @@ require_once __DIR__ . '/../includes/helpers.php';
 
 $slug = preg_replace('/[^a-z0-9\-]/', '', $_GET['id'] ?? $_GET['slug'] ?? '');
 $file = __DIR__ . '/../storage/pages/' . $slug . '.json';
-if (!$slug || !file_exists($file)) { http_response_code(404); echo '<div class="pub-container" style="padding:80px 0"><h1>Página no encontrada</h1></div>'; return; }
+if (!$slug || !file_exists($file)) { http_response_code(404); echo '<div class="pub-container" style="padding:80px 0"><h1>' . e(__('pub_page_not_found', 'Página no encontrada')) . '</h1></div>'; return; }
 
 $pg = json_decode(file_get_contents($file), true);
-if (!$pg || empty($pg['published'])) { http_response_code(404); echo '<div class="pub-container" style="padding:80px 0"><h1>No disponible</h1></div>'; return; }
+if (!$pg || empty($pg['published'])) { http_response_code(404); echo '<div class="pub-container" style="padding:80px 0"><h1>' . e(__('pub_page_not_available', 'No disponible')) . '</h1></div>'; return; }
 $title = $pg['title'];
 $og_title = $pg['title'];
 $og_description = mb_strimwidth(trim(strip_tags($pg['content_md'] ?? '')), 0, 200, '...');
 ?>
 <article class="pub-container pub-static">
   <header style="padding:64px 0 32px;border-bottom:1px solid var(--pub-border);margin-bottom:48px">
-    <div style="font-size:12px;color:var(--pub-muted);text-transform:uppercase;letter-spacing:0.08em">Página</div>
+    <div style="font-size:12px;color:var(--pub-muted);text-transform:uppercase;letter-spacing:0.08em"><?= __('pub_page_label', 'Página') ?></div>
     <h1 style="font-size:48px;font-weight:700;letter-spacing:-0.02em;margin:8px 0 0;line-height:1.05"><?= e($pg['title']) ?></h1>
-    <div style="font-size:13px;color:var(--pub-muted);margin-top:14px">Actualizado el <?= e(date('d M Y', strtotime($pg['updated'] ?? 'now'))) ?></div>
+    <div style="font-size:13px;color:var(--pub-muted);margin-top:14px"><?= __('pub_page_updated_on', 'Actualizado el :date', ['date' => e(date('d M Y', strtotime($pg['updated'] ?? 'now')))]) ?></div>
   </header>
   <div class="pub-prose">
     <?php
@@ -37,7 +37,7 @@ $og_description = mb_strimwidth(trim(strip_tags($pg['content_md'] ?? '')), 0, 20
       }
 
       if (!$md) {
-        echo '<p class="pub-muted">Esta página está vacía.</p>';
+        echo '<p class="pub-muted">' . e(__('pub_page_empty', 'Esta página está vacía.')) . '</p>';
       } else {
         $h = e($md);
         $h = preg_replace('/^### (.+)$/m', '<h3>$1</h3>', $h);

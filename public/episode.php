@@ -175,10 +175,10 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
       <h1 class="pub-ep-detail-title">
         <?= e($ep['title']) ?>
         <?php if (($p['parental'] ?? 'clean') === 'explicit'): ?>
-          <span class="pub-badge-e" title="Contenido explícito" style="vertical-align:middle;margin-left:8px">E</span>
+          <span class="pub-badge-e" title="<?= __('pub_explicit_content', 'Contenido explícito') ?>" style="vertical-align:middle;margin-left:8px">E</span>
         <?php endif; ?>
         <?php if ((int)kp_get_podcast_meta($p, 'premium_enabled', 0) || (int)kp_get_episode_meta($ep, 'premium_enabled', 0)): ?>
-          <span class="pub-badge-prem" title="Contenido premium" style="vertical-align:middle;margin-left:4px">$</span>
+          <span class="pub-badge-prem" title="<?= __('pub_premium_content', 'Contenido premium') ?>" style="vertical-align:middle;margin-left:4px">$</span>
         <?php endif; ?>
       </h1>
 
@@ -186,9 +186,9 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
         <div class="pub-ep-detail-play-row">
           <?php
           ob_start();
-          $play_label = 'Reproducir' . (!empty($ep['duration']) ? ' · ' . e($ep['duration']) : '');
+          $play_label = __('pub_play', 'Reproducir') . (!empty($ep['duration']) ? ' · ' . e($ep['duration']) : '');
           ?>
-          <button class="pub-ep-play-pill" style="background:<?= e($p['color']) ?>;color:#fff" aria-label="Reproducir <?= e($ep['title']) ?>"
+          <button class="pub-ep-play-pill" style="background:<?= e($p['color']) ?>;color:#fff" aria-label="<?= e(__('pub_play_episode', 'Reproducir :title', ['title' => $ep['title']])) ?>"
                   data-kp-play data-src="/r/<?= urlencode($p['id']) ?>/<?= urlencode($ep['id']) ?>/audio.mp3"
                   data-title="<?= e($ep['title']) ?>" data-podcast="<?= e($p['title']) ?>"
                   data-color="<?= e($p['color']) ?>" data-initial="<?= e($p['initial']) ?>"
@@ -205,13 +205,13 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
             <?php
             $epMetaParts = [];
             if (!empty($ep['n']) && (int)$ep['n'] > 0) {
-              $epMetaParts[] = '<span>Episodio ' . (int)$ep['n'] . '</span>';
+              $epMetaParts[] = '<span>' . __('pub_episode_num', 'Episodio :n', ['n' => (int)$ep['n']]) . '</span>';
             }
             if (!empty($ep['s']) && (int)$ep['s'] > 0) {
-              $epMetaParts[] = '<span>Temporada ' . (int)$ep['s'] . '</span>';
+              $epMetaParts[] = '<span>' . __('pub_season_num', 'Temporada :s', ['s' => (int)$ep['s']]) . '</span>';
             }
             if (!empty($ep['date_iso'])) {
-              $epMetaParts[] = '<span data-kp-date="' . e($ep['date_iso']) . '">Publicado ' . e(kp_relative_time($ep['date_iso'])) . '</span>';
+              $epMetaParts[] = '<span data-kp-date="' . e($ep['date_iso']) . '">' . __('pub_published_time', 'Publicado :time', ['time' => e(kp_relative_time($ep['date_iso']))]) . '</span>';
             }
             echo implode('<span class="pub-ep-meta-sep" aria-hidden="true">·</span>', $epMetaParts);
             ?>
@@ -220,7 +220,7 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
 
         <button type="button" class="pub-ep-share-btn" onclick="kpShareEpisode(this)" data-title="<?= e($ep['title']) ?>">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
-          <span class="pub-ep-share-label">Compartir</span>
+          <span class="pub-ep-share-label"><?= __('pub_share', 'Compartir') ?></span>
         </button>
       </div>
 
@@ -228,8 +228,8 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
         <div style="margin-top:20px;display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--pub-surface);border:1px solid var(--pub-border);border-radius:10px;width:fit-content">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--pub-muted)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
           <div style="font-size:13px">
-            <span style="font-weight:600;color:var(--pub-text)">Transcripción:</span>
-            <a href="<?= e($ep['transcript_url']) ?>" target="_blank" style="color:<?= e($p['color']) ?>;text-decoration:none;margin-left:4px" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Ver o descargar</a>
+            <span style="font-weight:600;color:var(--pub-text)"><?= __('pub_transcript', 'Transcripción') ?>:</span>
+            <a href="<?= e($ep['transcript_url']) ?>" target="_blank" style="color:<?= e($p['color']) ?>;text-decoration:none;margin-left:4px" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><?= __('pub_view_download_transcript', 'Ver o descargar') ?></a>
           </div>
         </div>
       <?php endif; ?>
@@ -241,7 +241,7 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
         <!-- Bloque de Capítulos si existen -->
         <?php if (!empty($chapters)): ?>
           <div class="pub-ep-side-block pub-ep-chapters-block">
-            <h3 class="pub-ep-subheading" style="margin-bottom:20px">Capítulos del episodio</h3>
+            <h3 class="pub-ep-subheading" style="margin-bottom:20px"><?= __('pub_episode_chapters', 'Capítulos del episodio') ?></h3>
             <div class="pub-ep-chapters-clean-list">
               <?php foreach ($chapters as $ch): 
                   $sec = (int)($ch['startTime'] ?? 0);
@@ -253,7 +253,7 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
                         data-title="<?= e($ep['title']) ?>" data-podcast="<?= e($p['title']) ?>"
                         data-color="<?= e($p['color']) ?>" data-initial="<?= e($p['initial']) ?>"
                         data-cover="<?= e($ep['cover'] ?: ($p['cover'] ?? '')) ?>"
-                        aria-label="Saltar al minuto <?= $fmt ?>">
+                        aria-label="<?= e(__('pub_jump_to_minute', 'Saltar al minuto :time', ['time' => $fmt])) ?>">
                   <span class="pub-ep-chapter-time"><?= $fmt ?></span>
                   <span class="pub-ep-chapter-title"><?= e($ch['title']) ?></span>
                   <?php if (!empty($ch_img)): ?>
@@ -275,7 +275,7 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
                   if (!empty($sbConfig['show_platforms']) && (!empty($listen_platforms) || !empty($sbConfig['show_rss']))): ?>
                     <!-- Plataformas de Escucha -->
                     <div class="pub-ep-side-block">
-                      <h3 class="pub-ep-side-heading"><?= e($sbConfig['title_platforms'] ?: 'Escúchalo en') ?></h3>
+                      <h3 class="pub-ep-side-heading"><?= e(empty($sbConfig['title_platforms']) || $sbConfig['title_platforms'] === 'Escúchalo en' ? __('pub_listen_on', 'Escúchalo en') : $sbConfig['title_platforms']) ?></h3>
                       <div class="pub-ep-side-platforms-icons" style="--podcast-color:<?= e($p['color']) ?>;">
                         <?php foreach ($listen_platforms as $slug => $plat):
                             $platData = \KutPod\KpPlatforms::DATA['podcasting'][$slug] ?? null;
@@ -299,22 +299,22 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
                   if (!empty($sbConfig['show_navigation']) && ($prevEp || $nextEp)): ?>
                     <!-- Navegación entre episodios -->
                     <div class="pub-ep-side-block">
-                      <h3 class="pub-ep-side-heading"><?= e($sbConfig['title_navigation'] ?: 'Navegación') ?></h3>
+                      <h3 class="pub-ep-side-heading"><?= e(empty($sbConfig['title_navigation']) || $sbConfig['title_navigation'] === 'Navegación' ? __('pub_navigation', 'Navegación') : $sbConfig['title_navigation']) ?></h3>
                       <div class="pub-ep-side-nav-group">
                         <?php if ($nextEp): ?>
-                          <a href="/@<?= e($p['id']) ?>/<?= e($nextEp['id']) ?>" class="pub-ep-side-nav-card" title="Siguiente episodio: <?= e($nextEp['title']) ?>">
+                          <a href="/@<?= e($p['id']) ?>/<?= e($nextEp['id']) ?>" class="pub-ep-side-nav-card" title="<?= e(__('pub_next_episode', 'Siguiente episodio: :title', ['title' => $nextEp['title']])) ?>">
                             <div class="pub-ep-side-nav-meta">
                               <span class="pub-ep-side-nav-arrow"><?= icon('arrowUp', 12) ?></span>
-                              <span>Siguiente episodio</span>
+                              <span><?= __('pub_next_episode_label', 'Siguiente episodio') ?></span>
                             </div>
                             <div class="pub-ep-side-nav-title"><?= e($nextEp['title']) ?></div>
                           </a>
                         <?php endif; ?>
                         <?php if ($prevEp): ?>
-                          <a href="/@<?= e($p['id']) ?>/<?= e($prevEp['id']) ?>" class="pub-ep-side-nav-card" title="Episodio anterior: <?= e($prevEp['title']) ?>">
+                          <a href="/@<?= e($p['id']) ?>/<?= e($prevEp['id']) ?>" class="pub-ep-side-nav-card" title="<?= e(__('pub_prev_episode', 'Episodio anterior: :title', ['title' => $prevEp['title']])) ?>">
                             <div class="pub-ep-side-nav-meta">
                               <span class="pub-ep-side-nav-arrow"><?= icon('arrowDown', 12) ?></span>
-                              <span>Episodio anterior</span>
+                              <span><?= __('pub_prev_episode_label', 'Episodio anterior') ?></span>
                             </div>
                             <div class="pub-ep-side-nav-title"><?= e($prevEp['title']) ?></div>
                           </a>
@@ -328,7 +328,7 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
                   if ($personsInSidebar): ?>
                     <!-- Participantes del episodio -->
                     <div class="pub-ep-side-block">
-                      <h3 class="pub-ep-side-heading"><?= e($sbConfig['title_persons'] ?: 'Participantes') ?></h3>
+                      <h3 class="pub-ep-side-heading"><?= e(empty($sbConfig['title_persons']) || $sbConfig['title_persons'] === 'Participantes' ? __('pub_participants', 'Participantes') : $sbConfig['title_persons']) ?></h3>
                       <div class="pub-ep-side-persons-list">
                         <?php foreach ($persons as $person): ?>
                           <div class="pub-ep-side-person-item">
@@ -362,27 +362,27 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
                   if (!empty($sbConfig['show_meta'])): ?>
                     <!-- Ficha técnica y Descarga -->
                     <div class="pub-ep-side-block">
-                      <h3 class="pub-ep-side-heading"><?= e($sbConfig['title_meta'] ?: 'Detalles del episodio') ?></h3>
+                      <h3 class="pub-ep-side-heading"><?= e(empty($sbConfig['title_meta']) || $sbConfig['title_meta'] === 'Detalles del episodio' ? __('pub_episode_details', 'Detalles del episodio') : $sbConfig['title_meta']) ?></h3>
                       <div class="pub-ep-side-meta-card">
                         <div class="pub-ep-side-meta-row">
-                          <span class="pub-ep-side-meta-k">Duración</span>
+                          <span class="pub-ep-side-meta-k"><?= __('pub_meta_duration', 'Duración') ?></span>
                           <span class="pub-ep-side-meta-v"><?= e($ep['duration'] ?: kp_fmt_duration((int)($ep['duration_secs'] ?? 0))) ?></span>
                         </div>
                         <?php if (!empty($ep['audio_bytes'])): ?>
                           <div class="pub-ep-side-meta-row">
-                            <span class="pub-ep-side-meta-k">Tamaño</span>
+                            <span class="pub-ep-side-meta-k"><?= __('pub_meta_size', 'Tamaño') ?></span>
                             <span class="pub-ep-side-meta-v"><?= human_bytes($ep['audio_bytes']) ?></span>
                           </div>
                         <?php endif; ?>
                         <?php if (!empty($ep['type']) && $ep['type'] !== 'full'): ?>
                           <div class="pub-ep-side-meta-row">
-                            <span class="pub-ep-side-meta-k">Tipo</span>
+                            <span class="pub-ep-side-meta-k"><?= __('pub_meta_type', 'Tipo') ?></span>
                             <span class="pub-ep-side-meta-v"><?= ucfirst(e($ep['type'])) ?></span>
                           </div>
                         <?php endif; ?>
                         <?php if (!empty($ep['date_iso'])): ?>
                           <div class="pub-ep-side-meta-row">
-                            <span class="pub-ep-side-meta-k">Publicado</span>
+                            <span class="pub-ep-side-meta-k"><?= __('pub_meta_published', 'Publicado') ?></span>
                             <span class="pub-ep-side-meta-v" data-kp-date="<?= e($ep['date_iso']) ?>"><?= e(kp_relative_time($ep['date_iso'])) ?></span>
                           </div>
                         <?php endif; ?>
@@ -391,15 +391,15 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
                       <?php if (!empty($sbConfig['show_download']) || (!empty($sbConfig['show_transcript']) && !empty($ep['transcript_url']))): ?>
                         <div class="pub-ep-side-actions">
                           <?php if (!empty($sbConfig['show_download'])): ?>
-                            <a href="/r/<?= urlencode($p['id']) ?>/<?= urlencode($ep['id']) ?>/audio.mp3" download class="pub-ep-side-dl-btn" title="Descargar archivo MP3">
+                            <a href="/r/<?= urlencode($p['id']) ?>/<?= urlencode($ep['id']) ?>/audio.mp3" download class="pub-ep-side-dl-btn" title="<?= __('pub_download_mp3_title', 'Descargar archivo MP3') ?>">
                               <?= icon('download', 14) ?>
-                              <span>Descargar MP3</span>
+                              <span><?= __('pub_download_mp3', 'Descargar MP3') ?></span>
                             </a>
                           <?php endif; ?>
                           <?php if (!empty($sbConfig['show_transcript']) && !empty($ep['transcript_url'])): ?>
-                            <a href="<?= e($ep['transcript_url']) ?>" target="_blank" class="pub-ep-side-transcript-btn" title="Ver o descargar transcripción">
+                            <a href="<?= e($ep['transcript_url']) ?>" target="_blank" class="pub-ep-side-transcript-btn" title="<?= __('pub_view_transcript_title', 'Ver o descargar transcripción') ?>">
                               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                              <span>Ver transcripción</span>
+                              <span><?= __('pub_view_transcript', 'Ver transcripción') ?></span>
                             </a>
                           <?php endif; ?>
                         </div>
@@ -412,7 +412,7 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
                   if (!empty($sbConfig['show_support']) && (!empty($funding_platforms) || !empty($social_platforms))): ?>
                     <!-- Apoyo y Comunidad -->
                     <div class="pub-ep-side-block">
-                      <h3 class="pub-ep-side-heading"><?= e($sbConfig['title_support'] ?: 'Apoyo y Comunidad') ?></h3>
+                      <h3 class="pub-ep-side-heading"><?= e(empty($sbConfig['title_support']) || $sbConfig['title_support'] === 'Apoyo y Comunidad' ? __('pub_support_community', 'Apoyo y Comunidad') : $sbConfig['title_support']) ?></h3>
                       <div class="pub-ep-side-links-group">
                         <?php foreach ($funding_platforms as $slug => $plat):
                             $platData = \KutPod\KpPlatforms::DATA['funding'][$slug] ?? null;
@@ -420,7 +420,7 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
                         ?>
                           <a href="<?= e($plat['link']) ?>" target="_blank" rel="noopener" class="pub-ep-side-plat-badge pub-ep-side-badge-support" style="--badge-accent:<?= e($p['color']) ?>">
                             <span class="pub-ep-side-plat-icon"><?= get_public_platform_svg('funding', $slug) ?></span>
-                            <span class="pub-ep-side-plat-label">Apoyar en <?= e($fLabel) ?></span>
+                            <span class="pub-ep-side-plat-label"><?= __('pub_support_on', 'Apoyar en :name', ['name' => $fLabel]) ?></span>
                           </a>
                         <?php endforeach; ?>
                         <?php foreach ($social_platforms as $slug => $plat):
@@ -442,8 +442,8 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
                     <!-- Likes del Fediverso (ActivityPub) -->
                     <div class="pub-ep-side-block">
                       <h3 class="pub-ep-side-heading" style="display:flex;align-items:center;justify-content:space-between">
-                        <span><?= e($sbConfig['title_fediverse_likes'] ?: 'Me gusta en el Fediverso') ?></span>
-                        <span class="pub-ep-side-likes-badge" title="<?= $likes_count ?> likes recibidos">
+                        <span><?= e(empty($sbConfig['title_fediverse_likes']) || $sbConfig['title_fediverse_likes'] === 'Me gusta en el Fediverso' ? __('pub_fediverse_likes', 'Me gusta en el Fediverso') : $sbConfig['title_fediverse_likes']) ?></span>
+                        <span class="pub-ep-side-likes-badge" title="<?= __('pub_likes_received', ':count likes recibidos', ['count' => $likes_count]) ?>">
                           <?= icon('heart', 12) ?>
                           <span><?= $likes_count ?></span>
                         </span>
@@ -451,7 +451,7 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
                       <div class="pub-ep-side-likes-card">
                         <?php if ($likes_count > 0): ?>
                           <div class="pub-ep-side-likes-summary">
-                            <span><strong><?= $likes_count ?></strong> <?= $likes_count === 1 ? 'persona le ha dado me gusta' : 'personas le han dado me gusta' ?></span>
+                            <span><strong><?= $likes_count ?></strong> <?= $likes_count === 1 ? __('pub_one_person_liked', 'persona le ha dado me gusta') : __('pub_people_liked', 'personas le han dado me gusta') ?></span>
                           </div>
                           <div class="pub-ep-side-likes-avatars">
                             <?php foreach ($fediverse_likes as $like): ?>
@@ -467,7 +467,7 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
                         <?php else: ?>
                           <div class="pub-ep-side-likes-empty">
                             <span class="pub-ep-side-likes-empty-icon"><?= icon('heart', 16) ?></span>
-                            <p>Aún no hay me gusta desde el Fediverso. Interactúa desde Mastodon con la nota de este episodio para aparecer aquí.</p>
+                            <p><?= __('pub_no_fediverse_likes', 'Aún no hay me gusta desde el Fediverso. Interactúa desde Mastodon con la nota de este episodio para aparecer aquí.') ?></p>
                           </div>
                         <?php endif; ?>
                       </div>
@@ -484,19 +484,19 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
                   ?>
                     <!-- Incrustar reproductor -->
                     <div class="pub-ep-side-block">
-                      <h3 class="pub-ep-side-heading"><?= e($sbConfig['title_embed'] ?: 'Incrustar reproductor') ?></h3>
+                      <h3 class="pub-ep-side-heading"><?= e(empty($sbConfig['title_embed']) || $sbConfig['title_embed'] === 'Incrustar reproductor' ? __('pub_embed_player', 'Incrustar reproductor') : $sbConfig['title_embed']) ?></h3>
                       <div class="pub-ep-side-embed-card">
-                        <p class="pub-ep-side-embed-desc">Copia el código para incluir este reproductor en tu sitio web o blog:</p>
+                        <p class="pub-ep-side-embed-desc"><?= __('pub_embed_copy_desc', 'Copia el código para incluir este reproductor en tu sitio web o blog:') ?></p>
                         <div class="pub-ep-side-embed-box">
                           <input type="text" readonly class="pub-ep-side-embed-input" value="<?= e($iframeCode) ?>" id="kpEmbedCode">
-                          <button type="button" class="pub-ep-side-embed-copy-btn" onclick="kpCopyEmbedCode(this)" title="Copiar código HTML">
+                          <button type="button" class="pub-ep-side-embed-copy-btn" onclick="kpCopyEmbedCode(this)" title="<?= __('pub_copy_html_code', 'Copiar código HTML') ?>">
                             <?= icon('copy', 13) ?>
-                            <span class="kp-copy-text">Copiar</span>
+                            <span class="kp-copy-text"><?= __('btn_copy', 'Copiar') ?></span>
                           </button>
                         </div>
                         <div class="pub-ep-side-embed-links">
                           <a href="<?= e($embedUrl) ?>" target="_blank" rel="noopener" class="pub-ep-side-embed-preview">
-                            <?= icon('externalLink', 12) ?> Vista previa del reproductor
+                            <?= icon('externalLink', 12) ?> <?= __('pub_embed_preview', 'Vista previa del reproductor') ?>
                           </a>
                         </div>
                       </div>
@@ -514,12 +514,12 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
     <div class="pub-ep-grid-body">
       <!-- Sección Descripción -->
       <div class="pub-ep-detail-desc-block">
-        <h3 class="pub-ep-subheading">Descripción</h3>
+        <h3 class="pub-ep-subheading"><?= __('pub_description', 'Descripción') ?></h3>
         <div class="pub-prose pub-ep-clean-prose">
           <?php
             $md = $ep['notes_md'] ?? '';
             if (!$md) {
-              echo '<p>Sin notas del episodio.</p>';
+              echo '<p>' . __('pub_no_episode_notes', 'Sin notas del episodio.') . '</p>';
             } else {
               echo kp_md_to_html($md);
             }
@@ -530,7 +530,7 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
       <!-- Sección Notas del Podcast -->
       <?php if ($fixed_notes): ?>
       <div class="pub-ep-detail-notes-block">
-        <h3 class="pub-ep-subheading">Notas del podcast</h3>
+        <h3 class="pub-ep-subheading"><?= __('pub_podcast_notes', 'Notas del podcast') ?></h3>
         <div class="pub-prose pub-ep-clean-prose" style="--podcast-color: <?= e($p['color']) ?>;">
           <?= kp_md_to_html($fixed_notes) ?>
         </div>
@@ -541,7 +541,7 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
     <!-- Fila 3 - Ancho Completo: Participantes (solo si NO se están mostrando ya en la barra lateral) -->
     <?php if (!$personsInSidebar && !empty($persons)): ?>
     <div class="pub-ep-grid-persons">
-      <h3 class="pub-ep-subheading">En este episodio participó:</h3>
+      <h3 class="pub-ep-subheading"><?= __('pub_participated_in_ep', 'En este episodio participó:') ?></h3>
       <div class="pub-ep-persons-grid">
         <?php foreach ($persons as $person): ?>
           <div class="pub-ep-person-card">
@@ -569,7 +569,7 @@ $personsInSidebar = $showSidebarAlternate && !empty($sbConfig['show_persons']) &
               <?php if (!empty($person['url'])): ?>
                 <a href="<?= e($person['url']) ?>" target="_blank" class="pub-ep-person-link" style="color:<?= e($p['color']) ?>">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                  Visitar enlace
+                  <?= __('pub_visit_link', 'Visitar enlace') ?>
                 </a>
               <?php endif; ?>
             </div>
@@ -592,7 +592,7 @@ function kpShareEpisode(btn) {
     navigator.clipboard.writeText(url).then(() => {
       if (label) {
         const orig = label.textContent;
-        label.textContent = '¡Enlace copiado!';
+        label.textContent = <?= json_encode(__('pub_link_copied', '¡Enlace copiado!')) ?>;
         setTimeout(() => { label.textContent = orig; }, 2000);
       }
     }).catch(() => {});
@@ -609,7 +609,7 @@ function kpCopyEmbedCode(btn) {
   const copyAction = () => {
     if (textEl) {
       const orig = textEl.textContent;
-      textEl.textContent = '¡Copiado! ✓';
+      textEl.textContent = <?= json_encode(__('pub_copied_check', '¡Copiado! ✓')) ?>;
       btn.style.color = 'var(--accent, #10b981)';
       setTimeout(() => {
         textEl.textContent = orig;

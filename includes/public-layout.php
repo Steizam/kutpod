@@ -88,23 +88,23 @@ if ($masto_url) {
         <?php else: ?>
           <div class="pub-brand-mark"><?= e(strtoupper(substr($inst['domain'], 0, 1))) ?></div>
         <?php endif; ?>
-        <div><div style="font-weight:700;font-size:16px;letter-spacing:-0.01em"><?= e($inst['name'] ?: $inst['domain']) ?></div><?php if ($inst['tagline'] || $inst['owner']): ?><div style="font-size:11px;color:var(--pub-muted);margin-top:1px"><?= e($inst['tagline'] ?: ('Podcasts de ' . $inst['owner'])) ?></div><?php endif; ?></div>
+        <div><div style="font-weight:700;font-size:16px;letter-spacing:-0.01em"><?= e($inst['name'] ?: $inst['domain']) ?></div><?php if ($inst['tagline'] || $inst['owner']): ?><div style="font-size:11px;color:var(--pub-muted);margin-top:1px"><?= e($inst['tagline'] ?: __('pub_podcasts_by', 'Podcasts de :owner', ['owner' => $inst['owner']])) ?></div><?php endif; ?></div>
       </a>
 
-      <label for="pub-menu-toggle" class="pub-menu-btn" aria-label="Menú">
+      <label for="pub-menu-toggle" class="pub-menu-btn" aria-label="<?= e(__('pub_menu', 'Menú')) ?>">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-open"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </label>
 
       <div class="pub-header-right-desktop row">
         <nav class="row" style="gap:4px">
-          <a class="pub-nav-link <?= ($route ?? '')==='home'?'active':'' ?>" href="/">Inicio</a>
-          <a class="pub-nav-link <?= ($route ?? '')==='shows'?'active':'' ?>" href="/shows">Shows</a>
+          <a class="pub-nav-link <?= ($route ?? '')==='home'?'active':'' ?>" href="/"><?= __('pub_nav_home', 'Inicio') ?></a>
+          <a class="pub-nav-link <?= ($route ?? '')==='shows'?'active':'' ?>" href="/shows"><?= __('pub_nav_shows', 'Shows') ?></a>
           <?php foreach (($published_pages ?? []) as $pg): if (($pg['menu'] ?? 'header') !== 'header') continue; ?>
             <a class="pub-nav-link <?= (($route ?? '')==='page' && ($_GET['id']??'')===$pg['slug'])?'active':'' ?>" href="/p/<?= e($pg['slug']) ?>"><?= e($pg['title']) ?></a>
           <?php endforeach; ?>
         </nav>
-        <div class="row pub-header-actions" style="gap:10px">
+        <div class="row pub-header-actions" style="gap:10px;align-items:center">
           <?php 
           if (!function_exists('kp_current_user')) {
               require_once __DIR__ . '/auth.php';
@@ -112,8 +112,12 @@ if ($masto_url) {
           if (kp_current_user()): ?>
             <a class="pub-btn pub-btn-ghost" href="/admin">Studio →</a>
           <?php else: ?>
-            <a class="pub-btn pub-btn-ghost" href="/admin" title="Panel de Administración">Admin</a>
+            <a class="pub-btn pub-btn-ghost" href="/admin" title="<?= e(__('pub_admin_panel_title', 'Panel de Administración')) ?>"><?= __('pub_admin_panel', 'Admin') ?></a>
           <?php endif; ?>
+          <div class="row" style="gap:4px;align-items:center;margin-left:4px;font-size:11.5px;font-weight:700">
+            <a href="?lang=es" style="color:var(--pub-text);text-decoration:none;padding:2px 6px;border-radius:4px;<?= kp_detect_lang() === 'es' ? 'background:var(--accent);color:#fff;' : 'opacity:0.6;' ?>">ES</a>
+            <a href="?lang=en" style="color:var(--pub-text);text-decoration:none;padding:2px 6px;border-radius:4px;<?= kp_detect_lang() === 'en' ? 'background:var(--accent);color:#fff;' : 'opacity:0.6;' ?>">EN</a>
+          </div>
         </div>
       </div>
     </div>
@@ -121,13 +125,13 @@ if ($masto_url) {
 
   <div class="pub-header-right-mobile">
     <nav class="row" style="gap:4px">
-      <a class="pub-nav-link <?= ($route ?? '')==='home'?'active':'' ?>" href="/">Inicio</a>
-      <a class="pub-nav-link <?= ($route ?? '')==='shows'?'active':'' ?>" href="/shows">Shows</a>
+      <a class="pub-nav-link <?= ($route ?? '')==='home'?'active':'' ?>" href="/"><?= __('pub_nav_home', 'Inicio') ?></a>
+      <a class="pub-nav-link <?= ($route ?? '')==='shows'?'active':'' ?>" href="/shows"><?= __('pub_nav_shows', 'Shows') ?></a>
       <?php foreach (($published_pages ?? []) as $pg): if (($pg['menu'] ?? 'header') !== 'header') continue; ?>
         <a class="pub-nav-link <?= (($route ?? '')==='page' && ($_GET['id']??'')===$pg['slug'])?'active':'' ?>" href="/p/<?= e($pg['slug']) ?>"><?= e($pg['title']) ?></a>
       <?php endforeach; ?>
     </nav>
-    <div class="row pub-header-actions" style="gap:10px">
+    <div class="row pub-header-actions" style="gap:10px;align-items:center">
       <?php 
       if (!function_exists('kp_current_user')) {
           require_once __DIR__ . '/auth.php';
@@ -135,8 +139,12 @@ if ($masto_url) {
       if (kp_current_user()): ?>
         <a class="pub-btn pub-btn-ghost" href="/admin">Studio →</a>
       <?php else: ?>
-        <a class="pub-btn pub-btn-ghost" href="/admin" title="Panel de Administración">Admin</a>
+        <a class="pub-btn pub-btn-ghost" href="/admin" title="<?= e(__('pub_admin_panel_title', 'Panel de Administración')) ?>"><?= __('pub_admin_panel', 'Admin') ?></a>
       <?php endif; ?>
+      <div class="row" style="gap:4px;align-items:center;margin-left:4px;font-size:11.5px;font-weight:700">
+        <a href="?lang=es" style="color:var(--pub-text);text-decoration:none;padding:2px 6px;border-radius:4px;<?= kp_detect_lang() === 'es' ? 'background:var(--accent);color:#fff;' : 'opacity:0.6;' ?>">ES</a>
+        <a href="?lang=en" style="color:var(--pub-text);text-decoration:none;padding:2px 6px;border-radius:4px;<?= kp_detect_lang() === 'en' ? 'background:var(--accent);color:#fff;' : 'opacity:0.6;' ?>">EN</a>
+      </div>
     </div>
   </div>
 
@@ -152,26 +160,26 @@ if ($masto_url) {
           <?php endif; ?>
           <div style="font-weight:700;font-size:15px;align-self:center"><?= e($inst['name'] ?: $inst['domain']) ?></div>
         </div>
-        <p style="font-size:13px;color:var(--pub-muted);line-height:1.6;max-width:320px"><?= e($inst['tagline'] ?: 'Publicado desde KutPod.') ?></p>
+        <p style="font-size:13px;color:var(--pub-muted);line-height:1.6;max-width:320px"><?= e($inst['tagline'] ?: __('pub_footer_published_from', 'Publicado desde KutPod.')) ?></p>
       </div>
-      <div><div class="pub-foot-h">Shows</div>
+      <div><div class="pub-foot-h"><?= __('pub_nav_shows', 'Shows') ?></div>
         <?php foreach (array_slice(kp_podcasts(), 0, 4) as $p): ?>
           <a class="pub-foot-link" href="/@<?= e($p['id']) ?>"><?= e($p['title']) ?></a>
         <?php endforeach; ?>
       </div>
-      <div><div class="pub-foot-h" style="visibility:hidden">Shows</div>
+      <div><div class="pub-foot-h" style="visibility:hidden"><?= __('pub_nav_shows', 'Shows') ?></div>
         <?php foreach (array_slice(kp_podcasts(), 4, 4) as $p): ?>
           <a class="pub-foot-link" href="/@<?= e($p['id']) ?>"><?= e($p['title']) ?></a>
         <?php endforeach; ?>
       </div>
-      <div><div class="pub-foot-h" style="visibility:hidden">Shows</div>
+      <div><div class="pub-foot-h" style="visibility:hidden"><?= __('pub_nav_shows', 'Shows') ?></div>
         <?php foreach (array_slice(kp_podcasts(), 8, 4) as $p): ?>
           <a class="pub-foot-link" href="/@<?= e($p['id']) ?>"><?= e($p['title']) ?></a>
         <?php endforeach; ?>
       </div>
     </div>
     <div class="row" style="justify-content:space-between;border-top:1px solid var(--pub-border);padding-top:24px;margin-top:40px;font-size:12px;color:var(--pub-muted)">
-      <span>© <?= e($inst['year']) ?><?= $inst['owner'] ? ' ' . e($inst['owner']) : '' ?>. Hecho con KutPod. · <a href="/admin" style="color:inherit;text-decoration:none">Administración</a></span><span>v<?= defined('KUTPOD_VERSION') ? KUTPOD_VERSION : '0.4.2' ?></span>
+      <span>© <?= e($inst['year']) ?><?= $inst['owner'] ? ' ' . e($inst['owner']) : '' ?>. <?= __('pub_footer_made_with', 'Hecho con KutPod.') ?> · <a href="/admin" style="color:inherit;text-decoration:none"><?= __('pub_footer_admin', 'Administración') ?></a></span><span>v<?= defined('KUTPOD_VERSION') ? KUTPOD_VERSION : '0.4.2' ?></span>
     </div>
   </div></footer>
 </div>

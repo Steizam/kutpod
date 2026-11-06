@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_form'] ?? '') === 'instan
       $set->execute([$k, $val]);
       if ($k === 'site_language') {
         kp_set_lang($val);
+        try { kp_cache_flush(); } catch (Throwable $e) {}
       }
     }
   }
@@ -209,8 +210,8 @@ $inst = kp_instance();
     <div class="field">
       <div class="label"><?= __('pref_language_title') ?></div>
       <select class="select" name="site_language">
-        <option value="es" <?= kp_detect_lang() === 'es' ? 'selected' : '' ?>><?= __('spanish') ?> (Spanish)</option>
-        <option value="en" <?= kp_detect_lang() === 'en' ? 'selected' : '' ?>><?= __('english') ?> (English)</option>
+        <option value="es" <?= kp_setting('site_language', 'es') === 'es' ? 'selected' : '' ?>><?= __('spanish') ?> (Spanish)</option>
+        <option value="en" <?= kp_setting('site_language', 'es') === 'en' ? 'selected' : '' ?>><?= __('english') ?> (English)</option>
       </select>
       <div class="help" style="margin-top:4px"><?= __('pref_language_desc') ?></div>
     </div>

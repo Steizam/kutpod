@@ -54,8 +54,8 @@ function pub_play_btn(array $ep, array $p, int $size = 14): string {
 }
 ?>
 <section class="pub-section"><div class="pub-container">
-  <h1 class="pub-h1" style="margin-bottom:12px">Últimos episodios</h1>
-  <p style="color:var(--pub-muted);font-size:15px;margin-bottom:40px;max-width:620px">Todos los episodios publicados recientemente en nuestra red.</p>
+  <h1 class="pub-h1" style="margin-bottom:12px"><?= __('pub_latest_episodes', 'Últimos episodios') ?></h1>
+  <p style="color:var(--pub-muted);font-size:15px;margin-bottom:40px;max-width:620px"><?= __('pub_episodes_all_desc', 'Todos los episodios publicados recientemente en nuestra red.') ?></p>
   
   <div class="pub-eps-grid">
     <?php foreach ($epsPage as $ep): $p = kp_podcast_or_placeholder($ep['podcast'] ?? ''); ?>
@@ -74,16 +74,16 @@ function pub_play_btn(array $ep, array $p, int $size = 14): string {
           <h3 class="pub-ep-title" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">
             <?= e($ep['title']) ?>
             <?php if (($p['parental'] ?? 'clean') === 'explicit'): ?>
-              <span style="display:inline-block;background:var(--border);color:var(--text-2);border-radius:4px;font-size:9px;padding:1px 3px;line-height:1;font-weight:800">E</span>
+              <span style="display:inline-block;background:var(--border);color:var(--text-2);border-radius:4px;font-size:9px;padding:1px 3px;line-height:1;font-weight:800" title="<?= __('pub_explicit_content', 'Contenido explícito') ?>">E</span>
             <?php endif; ?>
             <?php if ((int)kp_get_podcast_meta($p, 'premium_enabled', 0) || (int)kp_get_episode_meta($ep, 'premium_enabled', 0)): ?>
-              <span style="display:inline-block;background:#10b981;color:#fff;border-radius:4px;font-size:9px;padding:1px 3px;line-height:1;font-weight:800">$</span>
+              <span style="display:inline-block;background:#10b981;color:#fff;border-radius:4px;font-size:9px;padding:1px 3px;line-height:1;font-weight:800" title="<?= __('pub_premium_content', 'Contenido premium') ?>">$</span>
             <?php endif; ?>
           </h3>
           <?php if (!empty($ep['notes_md'])): ?>
             <p style="font-size:13.5px;color:var(--pub-text-2);margin:4px 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;opacity:0.8"><?= e(mb_strimwidth(strip_tags($ep['notes_md']), 0, 200, '...')) ?></p>
           <?php endif; ?>
-          <div style="font-size:12.5px;color:var(--pub-muted);margin-top:6px"><?= e($ep['duration']) ?> · <span data-kp-date="<?= e($ep['date_iso']) ?>">Publicado <?= e(kp_relative_time($ep['date_iso'])) ?></span></div>
+          <div style="font-size:12.5px;color:var(--pub-muted);margin-top:6px"><?= e($ep['duration']) ?> · <span data-kp-date="<?= e($ep['date_iso']) ?>"><?= __('pub_published_time', 'Publicado :time', ['time' => e(kp_relative_time($ep['date_iso']))]) ?></span></div>
         </div>
       </a>
     <?php endforeach; ?>

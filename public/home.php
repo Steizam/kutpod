@@ -7,7 +7,7 @@ $episodes = kp_episodes();
 // SEO: metadata para la página de inicio
 $inst_seo = kp_instance();
 $og_title = $inst_seo['name'] ?: $inst_seo['domain'];
-$og_description = $inst_seo['tagline'] ?? 'Plataforma de podcasts';
+$og_description = $inst_seo['tagline'] ?? __('pub_default_tagline', 'Plataforma de podcasts');
 $domain_seo = kp_handle_domain();
 $protocol_seo = kp_get_protocol();
 
@@ -47,9 +47,9 @@ function pub_play_btn(array $ep, array $p, int $size = 14): string {
 
 if (!$featured || !$featuredEp): ?>
 <section class="pub-hero"><div class="pub-container" style="padding:80px 0;text-align:center">
-  <h1 class="pub-h1" style="max-width:680px;margin:0 auto 16px">Tu instancia está lista.</h1>
-  <p class="pub-lede" style="max-width:520px;margin:0 auto 28px">Todavía no hay episodios publicados. Cuando subas el primero aparecerá aquí.</p>
-  <a class="pub-btn pub-btn-primary" href="/admin">Ir al Studio →</a>
+  <h1 class="pub-h1" style="max-width:680px;margin:0 auto 16px"><?= __('pub_home_ready_title', 'Tu instancia está lista.') ?></h1>
+  <p class="pub-lede" style="max-width:520px;margin:0 auto 28px"><?= __('pub_home_ready_desc', 'Todavía no hay episodios publicados. Cuando subas el primero aparecerá aquí.') ?></p>
+  <a class="pub-btn pub-btn-primary" href="/admin"><?= __('pub_home_go_studio', 'Ir al Studio →') ?></a>
 </div></section>
 <?php return; endif; ?>
 <?php
@@ -81,13 +81,13 @@ if (kp_plugin_is_active('premium')) {
 <section class="pub-hero"><div class="pub-container">
   <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:center">
     <div>
-      <div class="pub-eyebrow">Último episodio · <?= e($featured['title']) ?></div>
+      <div class="pub-eyebrow"><?= __('pub_home_latest_ep_show', 'Último episodio · :show', ['show' => $featured['title']]) ?></div>
       <h1 class="pub-h1"><?= e($featuredEp['title']) ?></h1>
       <p class="pub-lede"><?= e(mb_strimwidth(strip_tags($featuredEp['notes_md'] ?? ''), 0, 150, '...')) ?></p>
       <div class="row" style="gap:12px;margin-top:28px">
         <?php if ($featured_premium && !$user_has_access): ?>
           <a class="pub-btn pub-btn-primary" style="background: <?= e($featured['color']) ?>; border-color: <?= e($featured['color']) ?>; color: #fff; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;" href="/@<?= urlencode($featured['id']) ?>/<?= urlencode($featuredEp['id']) ?>">
-            <?= icon('lock',13) ?> Premium · <?= e($featuredEp['duration']) ?>
+            <?= icon('lock',13) ?> <?= __('pub_premium_badge', 'Premium') ?> · <?= e($featuredEp['duration']) ?>
           </a>
         <?php else: ?>
           <?php 
@@ -97,23 +97,23 @@ if (kp_plugin_is_active('premium')) {
             }
           ?>
           <button class="pub-btn pub-btn-primary" style="background: <?= e($featured['color']) ?>; border-color: <?= e($featured['color']) ?>; color: #fff;" data-kp-play data-src="<?= e($play_src) ?>" data-title="<?= e($featuredEp['title']) ?>" data-podcast="<?= e($featured['title']) ?>" data-color="<?= e($featured['color']) ?>" data-initial="<?= e($featured['initial']) ?>" data-cover="<?= e($featuredEp['cover'] ?: ($featured['cover'] ?? '')) ?>">
-            <?= icon('play',13) ?> Reproducir · <?= e($featuredEp['duration']) ?>
+            <?= icon('play',13) ?> <?= __('pub_play', 'Reproducir') ?> · <?= e($featuredEp['duration']) ?>
           </button>
         <?php endif; ?>
-        <a class="pub-btn pub-btn-ghost" href="/@<?= e($featured['id']) ?>/<?= e($featuredEp['id']) ?><?= !empty($tokenStr) ? '?token=' . urlencode($tokenStr) : '' ?>">Ver notas →</a>
+        <a class="pub-btn pub-btn-ghost" href="/@<?= e($featured['id']) ?>/<?= e($featuredEp['id']) ?><?= !empty($tokenStr) ? '?token=' . urlencode($tokenStr) : '' ?>"><?= __('pub_view_notes', 'Ver notas →') ?></a>
       </div>
       <div class="row" style="gap:10px;margin-top:32px;font-size:12.5px;color:var(--pub-muted);align-items:center">
         <?php if (($featuredEp['type'] ?? '') === 'trailer'): ?>
-          <span class="badge-promo">Trailer</span><span>·</span>
+          <span class="badge-promo"><?= __('pub_trailer', 'Trailer') ?></span><span>·</span>
         <?php elseif (($featuredEp['type'] ?? '') === 'bonus'): ?>
-          <span class="badge-extra">Bonus</span><span>·</span>
+          <span class="badge-extra"><?= __('pub_bonus', 'Bonus') ?></span><span>·</span>
         <?php else: ?>
           <?php if ((int)($featuredEp['s'] ?? 1) > 0): ?>
-            <span>Temporada <?= (int)$featuredEp['s'] ?></span><span>·</span>
+            <span><?= __('pub_season_num', 'Temporada :s', ['s' => (int)$featuredEp['s']]) ?></span><span>·</span>
           <?php endif; ?>
-          <span>Episodio <?= (int)$featuredEp['n'] ?></span><span>·</span>
+          <span><?= __('pub_episode_num', 'Episodio :n', ['n' => (int)$featuredEp['n']]) ?></span><span>·</span>
         <?php endif; ?>
-        <span data-kp-date="<?= e($featuredEp['date_iso']) ?>">Publicado <?= e(kp_relative_time($featuredEp['date_iso'])) ?></span>
+        <span data-kp-date="<?= e($featuredEp['date_iso']) ?>"><?= __('pub_published_time', 'Publicado :time', ['time' => e(kp_relative_time($featuredEp['date_iso']))]) ?></span>
       </div>
     </div>
     <?php if ($featured['cover']): ?>
@@ -139,8 +139,8 @@ if (kp_plugin_is_active('premium')) {
 
 <section class="pub-section"><div class="pub-container">
   <div class="row" style="justify-content:space-between;align-items:baseline;margin-bottom:28px">
-    <h2 class="pub-h2">Últimos episodios</h2>
-    <a class="pub-link" href="/episodes">Ver todos →</a>
+    <h2 class="pub-h2"><?= __('pub_latest_episodes', 'Últimos episodios') ?></h2>
+    <a class="pub-link" href="/episodes"><?= __('pub_view_all', 'Ver todos →') ?></a>
   </div>
   <div class="pub-eps-grid">
     <?php foreach ($latest as $ep): $p = kp_podcast_or_placeholder($ep['podcast'] ?? ''); ?>
@@ -165,7 +165,7 @@ if (kp_plugin_is_active('premium')) {
               <span style="display:inline-block;background:#10b981;color:#fff;border-radius:4px;font-size:9px;padding:1px 3px;line-height:1;font-weight:800">$</span>
             <?php endif; ?>
           </h3>
-          <div style="font-size:12.5px;color:var(--pub-muted);margin-top:6px"><?= e($ep['duration']) ?> · <span data-kp-date="<?= e($ep['date_iso']) ?>">Publicado <?= e(kp_relative_time($ep['date_iso'])) ?></span></div>
+          <div style="font-size:12.5px;color:var(--pub-muted);margin-top:6px"><?= e($ep['duration']) ?> · <span data-kp-date="<?= e($ep['date_iso']) ?>"><?= __('pub_published_time', 'Publicado :time', ['time' => e(kp_relative_time($ep['date_iso']))]) ?></span></div>
         </div>
       </a>
     <?php endforeach; ?>
@@ -174,8 +174,8 @@ if (kp_plugin_is_active('premium')) {
 
 <section class="pub-section pub-section-alt"><div class="pub-container">
   <div class="row" style="justify-content:space-between;align-items:baseline;margin-bottom:28px">
-    <h2 class="pub-h2">Mis shows</h2>
-    <a class="pub-link" href="/shows">Catálogo completo →</a>
+    <h2 class="pub-h2"><?= __('pub_my_shows', 'Mis shows') ?></h2>
+    <a class="pub-link" href="/shows"><?= __('pub_full_catalog', 'Catálogo completo →') ?></a>
   </div>
   <div class="pub-shows-grid">
     <?php foreach ($podcasts as $p): ?>
@@ -197,7 +197,7 @@ if (kp_plugin_is_active('premium')) {
               <span style="display:inline-block;background:#10b981;color:#fff;border-radius:4px;font-size:10px;padding:2px 4px;margin-left:4px;vertical-align:middle;line-height:1;font-weight:800">$</span>
             <?php endif; ?>
           </h3>
-          <div style="font-size:12.5px;color:var(--pub-muted);margin-top:4px"><?= (int)$p['episodes'] ?> episodios · <?= e($p['cat']) ?></div>
+          <div style="font-size:12.5px;color:var(--pub-muted);margin-top:4px"><?= __('pub_episodes_count', ':count episodios', ['count' => (int)$p['episodes']]) ?> · <?= e($p['cat']) ?></div>
         </div>
       </a>
     <?php endforeach; ?>

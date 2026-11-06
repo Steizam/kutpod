@@ -39,12 +39,12 @@ if (preg_match('#^/feed/([a-z0-9\-]+)(?:\.xml)?$#i', parse_url($_SERVER['REQUEST
     exit;
   } else {
     http_response_code(410);
-    $title = 'Feed no disponible';
+    $title = __('pub_feed_not_available_title', 'Feed no disponible');
     $body = '<div class="pub-container" style="padding:100px 24px; text-align:center; max-width:600px; margin:0 auto;">
         <div style="font-size:64px; margin-bottom:24px; color:var(--text-3);">' . icon('rss', 64) . '</div>
-        <h1 style="font-size:28px; margin-bottom:16px; font-weight:700;">Este feed ya no está activo</h1>
-        <p style="font-size:16px; color:var(--text-3); line-height:1.6; margin-bottom:32px;">El podcast que estás buscando no existe o ha sido eliminado de esta plataforma. Esta dirección de feed ya no está en funcionamiento.</p>
-        <a href="/shows" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:8px;">' . icon('globe', 16) . ' Explorar otros podcasts</a>
+        <h1 style="font-size:28px; margin-bottom:16px; font-weight:700;">' . e(__('pub_feed_inactive_h1', 'Este feed ya no está activo')) . '</h1>
+        <p style="font-size:16px; color:var(--text-3); line-height:1.6; margin-bottom:32px;">' . e(__('pub_feed_inactive_p', 'El podcast que estás buscando no existe o ha sido eliminado de esta plataforma. Esta dirección de feed ya no está en funcionamiento.')) . '</p>
+        <a href="/shows" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:8px;">' . icon('globe', 16) . ' ' . e(__('pub_explore_other_podcasts', 'Explorar otros podcasts')) . '</a>
     </div>';
     require __DIR__ . '/includes/public-layout.php';
     exit;
@@ -110,7 +110,8 @@ $is_logged_in = isset($_COOKIE['kp_sess']);
 $has_token = !empty($_GET['token']);
 $use_cache = (!$is_logged_in && !$has_token);
 
-$cache_key = 'site_' . $route . '_' . md5(json_encode($_GET));
+$cur_lang = kp_detect_lang();
+$cache_key = 'site_' . $route . '_' . $cur_lang . '_' . md5(json_encode($_GET));
 $cached_html = $use_cache ? kp_cache_get($cache_key) : null;
 
 if ($cached_html) {
