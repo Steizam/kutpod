@@ -1,8 +1,10 @@
 {
   "id": "premium",
   "name": "Suscripciones Premium",
+  "name_en": "Premium Subscriptions",
   "version": "1.0.0",
   "description": "Monetiza tus podcasts y episodios individuales con cobros mediante Stripe o PayPal, protegiendo tus archivos de audio y feeds RSS.",
+  "description_en": "Monetize your podcasts and individual episodes with Stripe or PayPal payments, protecting your audio files and RSS feeds.",
   "author": "Antigravity",
   "main": "premium.php"
 }

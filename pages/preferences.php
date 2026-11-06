@@ -498,17 +498,30 @@ $inst = kp_instance();
     <pre id="rw_report" style="display:none;background:var(--surface-2);padding:14px;border-radius:8px;margin-top:14px;font-size:12px;overflow:auto;max-height:300px;font-family:ui-monospace,monospace;white-space:pre-wrap;color:var(--text)"></pre>
 
     <div style="font-size:12px;color:var(--text-3);margin-top:14px;line-height:1.55">
-      <strong style="color:var(--text-2)">Qué se reescribe:</strong> portadas y banners de podcasts ·
-      audio_url, cover, transcripciones, capítulos y notas de episodios · bloques de páginas estáticas ·
-      custom tags XML del RSS. <strong style="color:var(--text-2)">No se toca:</strong> contraseñas, tokens,
-      contadores ni datos de OP3 (los hashes son irreversibles).
-      Recomendado: <em>simular</em> primero para ver qué cambia.
+      <strong style="color:var(--text-2)"><?= __('pref_rw_what_rewritten', 'Qué se reescribe:') ?></strong> <?= __('pref_rw_what_desc', 'portadas y banners de podcasts · audio_url, cover, transcripciones, capítulos y notas de episodios · bloques de páginas estáticas · custom tags XML del RSS.') ?>
+      <strong style="color:var(--text-2)"><?= __('pref_rw_not_touched', 'No se toca:') ?></strong> <?= __('pref_rw_not_touched_desc', 'contraseñas, tokens, contadores ni datos de OP3 (los hashes son irreversibles). Recomendado: <em>simular</em> primero para ver qué cambia.') ?>
     </div>
   </div>
   </div>
 </div>
 
 <script>
+const PREF_I18N = {
+  ffmpegDownloading: <?= json_encode(__('pref_ffmpeg_downloading', 'Descargando y extrayendo FFmpeg... (Puede tomar varios minutos)')) ?>,
+  ffmpegNetError: <?= json_encode(__('pref_ffmpeg_net_error', '❌ Error de red o timeout al descargar')) ?>,
+  op3Downloading: <?= json_encode(__('pref_op3_downloading', 'Descargando bots.ts…')) ?>,
+  op3SyncStartedBg: <?= json_encode(__('pref_op3_sync_started_bg', '✓ Sincronización iniciada en background')) ?>,
+  op3SyncUpdated: <?= json_encode(__('pref_op3_sync_updated', '✓ {hashes} hashes + {patterns} patrones actualizados')) ?>,
+  rwFillBoth: <?= json_encode(__('pref_rw_fill_both', '❌ Rellena ambos campos')) ?>,
+  rwConfirm: <?= json_encode(__('pref_rw_confirm', '¿Reescribir TODO el contenido de {from} → {to}? Esto es irreversible.')) ?>,
+  rwSimulating: <?= json_encode(__('pref_rw_simulating', 'Simulando…')) ?>,
+  rwRewriting: <?= json_encode(__('pref_rw_rewriting', 'Reescribiendo…')) ?>,
+  rwIdenticalNoop: <?= json_encode(__('pref_rw_identical_noop', 'Las URLs son idénticas, nada que hacer')) ?>,
+  rwSimResult: <?= json_encode(__('pref_rw_sim_result', '✓ Simulación · {count} filas se modificarían')) ?>,
+  rwMigrationCompleted: <?= json_encode(__('pref_rw_migration_completed', '✓ Migración completada · {count} filas actualizadas')) ?>,
+  rwNone: <?= json_encode(__('pref_rw_none', '(ninguno)')) ?>
+};
+
 const logoInput = document.getElementById('instance_logo');
 const logoCancel = document.getElementById('instance_logo_cancel');
 
@@ -526,25 +539,25 @@ logoCancel?.addEventListener('click', function() {
 });
 function kpInstallFFmpeg(btn){
   const status = document.getElementById('ffmpeg-status');
-  btn.disabled = true; status.textContent = 'Descargando y extrayendo FFmpeg... (Puede tomar varios minutos)';
+  btn.disabled = true; status.textContent = PREF_I18N.ffmpegDownloading;
   fetch('/install-ffmpeg.php', {method:'POST'})
     .then(r => r.json())
     .then(j => {
       if (j.error) { status.textContent = '❌ ' + j.error; btn.disabled = false; }
       else { status.textContent = '✓ ' + j.message; setTimeout(()=>location.reload(), 2000); }
     })
-    .catch(e => { status.textContent = '❌ Error de red o timeout al descargar'; btn.disabled = false; });
+    .catch(e => { status.textContent = PREF_I18N.ffmpegNetError; btn.disabled = false; });
 }
 
 function kpOp3Sync(btn){
   const status = document.getElementById('op3-sync-status');
-  btn.disabled = true; status.textContent = 'Descargando bots.ts…';
+  btn.disabled = true; status.textContent = PREF_I18N.op3Downloading;
   fetch('/op3-sync.php', {method:'POST'})
     .then(r => r.json())
     .then(j => {
       if (j.error) { status.textContent = '❌ ' + j.error; }
-      else if (j.starting) { status.textContent = '✓ Sincronización iniciada en background'; }
-      else { status.textContent = `✓ ${j.hashes||0} hashes + ${j.patterns||0} patrones actualizados`; setTimeout(()=>location.reload(), 1200); }
+      else if (j.starting) { status.textContent = PREF_I18N.op3SyncStartedBg; }
+      else { status.textContent = PREF_I18N.op3SyncUpdated.replace('{hashes}', j.hashes||0).replace('{patterns}', j.patterns||0); setTimeout(()=>location.reload(), 1200); }
     })
     .catch(e => status.textContent = '❌ ' + e.message)
     .finally(() => btn.disabled = false);
@@ -555,9 +568,9 @@ function kpRewriteBaseUrl(dry){
   const to   = document.getElementById('rw_to').value.trim();
   const status = document.getElementById('rw_status');
   const report = document.getElementById('rw_report');
-  if (!from || !to) { status.textContent = '❌ Rellena ambos campos'; return; }
-  if (!dry && !confirm(`¿Reescribir TODO el contenido de ${from} → ${to}? Esto es irreversible.`)) return;
-  status.textContent = dry ? 'Simulando…' : 'Reescribiendo…';
+  if (!from || !to) { status.textContent = PREF_I18N.rwFillBoth; return; }
+  if (!dry && !confirm(PREF_I18N.rwConfirm.replace('{from}', from).replace('{to}', to))) return;
+  status.textContent = dry ? PREF_I18N.rwSimulating : PREF_I18N.rwRewriting;
   report.style.display = 'none';
   const body = new URLSearchParams({from, to});
   if (dry) body.set('dry', '1');
@@ -565,13 +578,13 @@ function kpRewriteBaseUrl(dry){
     .then(r => r.json())
     .then(j => {
       if (j.error) { status.textContent = '❌ ' + j.error; return; }
-      if (j.noop) { status.textContent = 'Las URLs son idénticas, nada que hacer'; return; }
+      if (j.noop) { status.textContent = PREF_I18N.rwIdenticalNoop; return; }
       const changes = j.changes || {};
       const lines = Object.entries(changes).map(([k,v]) => `  ${k}: ${v}`).join('\n');
       status.textContent = dry
-        ? `✓ Simulación · ${j.total||0} filas se modificarían`
-        : `✓ Migración completada · ${j.total||0} filas actualizadas`;
-      report.textContent = `${j.from}  →  ${j.to}\n\nCambios:\n${lines || '  (ninguno)'}`;
+        ? PREF_I18N.rwSimResult.replace('{count}', j.total||0)
+        : PREF_I18N.rwMigrationCompleted.replace('{count}', j.total||0);
+      report.textContent = `${j.from}  →  ${j.to}\n\nCambios:\n${lines || '  ' + PREF_I18N.rwNone}`;
       report.style.display = 'block';
     })
     .catch(e => status.textContent = '❌ ' + e.message);

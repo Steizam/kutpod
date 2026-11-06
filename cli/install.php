@@ -16,6 +16,65 @@ $LOCK = $ROOT . '/storage/install.lock';
 $ENV  = $ROOT . '/.env';
 $cli  = php_sapi_name() === 'cli';
 
+$lang = (isset($_GET['lang']) && in_array($_GET['lang'], ['en', 'es']))
+  ? $_GET['lang']
+  : ((isset($_POST['lang']) && in_array($_POST['lang'], ['en', 'es']))
+    ? $_POST['lang']
+    : (str_contains($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '', 'en') ? 'en' : 'es'));
+
+$t = [
+  'es' => [
+    'title' => 'Instalar KutPod',
+    'already_installed' => 'KutPod ya está instalado.',
+    'delete_lock' => 'Borra <code>storage/install.lock</code> para reinstalar.',
+    'config_instance' => 'Configura tu instancia. Esto se ejecuta una sola vez.',
+    'instance_name' => 'Nombre de la instancia',
+    'domain' => 'Dominio',
+    'your_name' => 'Tu nombre',
+    'admin_email' => 'Email de admin',
+    'password' => 'Contraseña',
+    'min_8' => 'mín. 8 caracteres',
+    'install_btn' => 'Instalar',
+    'installing' => 'Instalando KutPod…',
+    'installed_title' => '✓ KutPod instalado',
+    'login_with' => 'Inicia sesión con',
+    'password_as_set' => 'contraseña la que pusiste arriba.',
+    'go_to_studio' => 'Ir al Studio →',
+    'view_public_site' => 'Ver sitio público',
+    'next_steps' => 'Próximos pasos',
+    'step_cron' => 'Configura el cron:',
+    'step_op3' => 'Entra a <strong>Preferencias → OP3</strong> y haz click en <em>Sincronizar reglas</em> para descargar la lista completa de bot-IPs.',
+    'step_geolite' => '(Opcional) Descarga GeoLite2-City.mmdb a <code>storage/geoip/</code> si no estás detrás de Cloudflare.',
+    'step_protect' => 'Borra o protege <code>cli/install.php</code> para mayor seguridad.',
+    'invalid_data' => 'Datos inválidos. Email válido y contraseña ≥ 8 caracteres.',
+  ],
+  'en' => [
+    'title' => 'Install KutPod',
+    'already_installed' => 'KutPod is already installed.',
+    'delete_lock' => 'Delete <code>storage/install.lock</code> to reinstall.',
+    'config_instance' => 'Configure your instance. This only runs once.',
+    'instance_name' => 'Instance name',
+    'domain' => 'Domain',
+    'your_name' => 'Your name',
+    'admin_email' => 'Admin email',
+    'password' => 'Password',
+    'min_8' => 'min. 8 characters',
+    'install_btn' => 'Install',
+    'installing' => 'Installing KutPod…',
+    'installed_title' => '✓ KutPod installed',
+    'login_with' => 'Log in with',
+    'password_as_set' => 'password configured above.',
+    'go_to_studio' => 'Go to Studio →',
+    'view_public_site' => 'View public site',
+    'next_steps' => 'Next steps',
+    'step_cron' => 'Set up cron job:',
+    'step_op3' => 'Go to <strong>Preferences → OP3</strong> and click <em>Synchronize rules</em> to download the full bot-IP list.',
+    'step_geolite' => '(Optional) Download GeoLite2-City.mmdb to <code>storage/geoip/</code> if not behind Cloudflare.',
+    'step_protect' => 'Delete or protect <code>cli/install.php</code> for added security.',
+    'invalid_data' => 'Invalid data. Valid email and password ≥ 8 characters required.',
+  ]
+][$lang];
+
 function out(string $msg, string $tag = 'info'): void {
   global $cli;
   if ($cli) { echo "[" . str_pad($tag, 5) . "] $msg\n"; return; }
@@ -37,25 +96,32 @@ function ask(string $q, string $default = ''): string {
 if (!$cli && $_SERVER['REQUEST_METHOD'] !== 'POST') {
   if (file_exists($LOCK)) {
     http_response_code(403);
-    exit('<h1>KutPod ya está instalado.</h1><p>Borra <code>storage/install.lock</code> para reinstalar.</p>');
+    exit('<h1>' . $t['already_installed'] . '</h1><p>' . $t['delete_lock'] . '</p>');
   }
   ?>
-  <!doctype html><html lang="es"><head><meta charset="utf-8"><title>Instalar KutPod</title>
+  <!doctype html><html lang="<?= htmlspecialchars($lang) ?>"><head><meta charset="utf-8"><title><?= htmlspecialchars($t['title']) ?></title>
   <style>body{font-family:system-ui;max-width:520px;margin:60px auto;padding:0 24px;color:#222}
   h1{font-size:28px;letter-spacing:-0.02em}label{display:block;margin:14px 0 4px;font-size:13px;font-weight:600}
   input{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box}
   button{margin-top:20px;padding:12px 20px;background:#5b8def;color:white;border:0;border-radius:8px;font-weight:600;cursor:pointer;font-size:14px}
   small{color:#888}</style></head><body>
-  <h1>Instalar KutPod</h1>
-  <p>Configura tu instancia. Esto se ejecuta una sola vez.</p>
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <h1 style="margin:0"><?= htmlspecialchars($t['title']) ?></h1>
+    <div style="font-size:12px">
+      <a href="?lang=es" style="<?= $lang === 'es' ? 'font-weight:700;color:#5b8def;background:#eef4ff;' : 'color:#888;' ?>text-decoration:none;padding:4px 8px;border-radius:4px;border:1px solid <?= $lang === 'es' ? '#5b8def' : '#ddd' ?>">ES</a>
+      <a href="?lang=en" style="<?= $lang === 'en' ? 'font-weight:700;color:#5b8def;background:#eef4ff;' : 'color:#888;' ?>text-decoration:none;padding:4px 8px;border-radius:4px;border:1px solid <?= $lang === 'en' ? '#5b8def' : '#ddd' ?>;margin-left:4px">EN</a>
+    </div>
+  </div>
+  <p><?= htmlspecialchars($t['config_instance']) ?></p>
   <form method="POST">
-    <label>Nombre de la instancia</label><input name="instance" value="KutPod" required>
-    <label>Dominio</label><input name="domain" value="<?= htmlspecialchars($_SERVER['HTTP_HOST'] ?? 'www.tupodcast.com') ?>" required>
-    <label>Tu nombre</label><input name="name" required>
-    <label>Email de admin</label><input name="email" type="email" required>
-    <label>Contraseña <small>(mín. 8 caracteres)</small></label><input name="password" type="password" minlength="8" required>
+    <input type="hidden" name="lang" value="<?= htmlspecialchars($lang) ?>">
+    <label><?= htmlspecialchars($t['instance_name']) ?></label><input name="instance" value="KutPod" required>
+    <label><?= htmlspecialchars($t['domain']) ?></label><input name="domain" value="<?= htmlspecialchars($_SERVER['HTTP_HOST'] ?? 'www.tupodcast.com') ?>" required>
+    <label><?= htmlspecialchars($t['your_name']) ?></label><input name="name" required>
+    <label><?= htmlspecialchars($t['admin_email']) ?></label><input name="email" type="email" required>
+    <label><?= htmlspecialchars($t['password']) ?> <small>(<?= htmlspecialchars($t['min_8']) ?>)</small></label><input name="password" type="password" minlength="8" required>
     <!-- Sin podcast demo: el instalador deja la BD lista para datos reales. -->
-    <button type="submit">Instalar</button>
+    <button type="submit"><?= htmlspecialchars($t['install_btn']) ?></button>
   </form></body></html>
   <?php
   exit;
@@ -64,7 +130,7 @@ if (!$cli && $_SERVER['REQUEST_METHOD'] !== 'POST') {
 // ---------------------------------------------------------------------------
 // Ejecución
 // ---------------------------------------------------------------------------
-if (!$cli) echo "<!doctype html><body style='background:#fafafa;padding:40px;font-family:system-ui'><h1>Instalando KutPod…</h1>";
+if (!$cli) echo "<!doctype html><body style='background:#fafafa;padding:40px;font-family:system-ui'><h1>" . htmlspecialchars($t['installing']) . "</h1>";
 
 if (file_exists($LOCK)) { out('Ya instalado. Borra storage/install.lock para reinstalar.', 'err'); exit(1); }
 
@@ -85,7 +151,7 @@ $name     = $cli ? ask('Tu nombre')                          : ($_POST['name']  
 $email    = $cli ? ask('Email de admin')                     : ($_POST['email']    ?? '');
 $password = $cli ? ask('Contraseña (mín. 8)')                : ($_POST['password'] ?? '');
 if (!$name || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) < 8) {
-  out('Datos inválidos. Email válido y contraseña ≥ 8 caracteres.', 'err'); exit(1);
+  out($t['invalid_data'], 'err'); exit(1);
 }
 
 // BD
@@ -129,6 +195,7 @@ $set->execute(['instance_name', $instance]);
 $set->execute(['instance_domain', $domain]);
 $set->execute(['owner_name', $name]);
 $set->execute(['owner_email', $email]);
+$set->execute(['site_language', $lang]);
 $set->execute(['installed_at', date('c')]);
 out('settings cargadas', 'ok');
 
@@ -146,18 +213,18 @@ out('install.lock escrito · instalador desactivado', 'ok');
 // Resumen final
 if (!$cli) {
   echo "<div style='background:#0a7;color:white;padding:20px 24px;border-radius:12px;margin-top:24px;font-family:system-ui'>
-        <h2 style='margin:0 0 8px'>✓ KutPod instalado</h2>
-        <p style='margin:0 0 16px'>Inicia sesión con <strong>$email</strong> · contraseña la que pusiste arriba.</p>
-        <a href='/admin' style='display:inline-block;padding:10px 16px;background:white;color:#0a7;border-radius:8px;text-decoration:none;font-weight:600'>Ir al Studio →</a>
-        <a href='/' style='display:inline-block;padding:10px 16px;color:white;border:1px solid rgba(255,255,255,0.4);border-radius:8px;text-decoration:none;font-weight:600;margin-left:8px'>Ver sitio público</a>
+        <h2 style='margin:0 0 8px'>" . htmlspecialchars($t['installed_title']) . "</h2>
+        <p style='margin:0 0 16px'>" . htmlspecialchars($t['login_with']) . " <strong>" . htmlspecialchars($email) . "</strong> · " . htmlspecialchars($t['password_as_set']) . "</p>
+        <a href='/admin' style='display:inline-block;padding:10px 16px;background:white;color:#0a7;border-radius:8px;text-decoration:none;font-weight:600'>" . htmlspecialchars($t['go_to_studio']) . "</a>
+        <a href='/' style='display:inline-block;padding:10px 16px;color:white;border:1px solid rgba(255,255,255,0.4);border-radius:8px;text-decoration:none;font-weight:600;margin-left:8px'>" . htmlspecialchars($t['view_public_site']) . "</a>
         </div>
         <details style='margin-top:24px;font-family:system-ui;font-size:13px;color:#666'>
-        <summary>Próximos pasos</summary>
+        <summary>" . htmlspecialchars($t['next_steps']) . "</summary>
         <ol>
-          <li>Configura el cron: <code>*/15 * * * * php " . realpath($ROOT . '/cli/op3-worker.php') . "</code></li>
-          <li>Entra a <strong>Preferencias → OP3</strong> y haz click en <em>Sincronizar reglas</em> para descargar la lista completa de bot-IPs.</li>
-          <li>(Opcional) Descarga GeoLite2-City.mmdb a <code>storage/geoip/</code> si no estás detrás de Cloudflare.</li>
-          <li>Borra o protege <code>cli/install.php</code> para mayor seguridad.</li>
+          <li>" . htmlspecialchars($t['step_cron']) . " <code>*/15 * * * * php " . realpath($ROOT . '/cli/op3-worker.php') . "</code></li>
+          <li>" . $t['step_op3'] . "</li>
+          <li>" . $t['step_geolite'] . "</li>
+          <li>" . $t['step_protect'] . "</li>
         </ol>
         </details></body>";
 } else {

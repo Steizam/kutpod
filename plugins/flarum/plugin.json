@@ -1,8 +1,10 @@
 {
   "id": "flarum",
   "name": "Foro Flarum",
+  "name_en": "Flarum Forum",
   "version": "1.0.0",
   "description": "Publicación automática de discusiones en Flarum al publicar episodios.",
+  "description_en": "Automatic discussion publishing on Flarum when episodes are published.",
   "author": "Ernesto Acosta",
   "main": "flarum.php"
 }

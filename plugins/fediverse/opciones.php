@@ -32,15 +32,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 kp_update_setting('admin_mastodon_handle', $handle);
                 kp_update_setting('admin_mastodon_actor', $actor['id']);
                 kp_update_setting('admin_mastodon_inbox', $actor['inbox']);
-                $msg = 'Cuenta Mastodon enlazada correctamente';
+                $msg = __('fedi_msg_linked', 'Cuenta Mastodon enlazada correctamente');
             } else {
-                $msg = 'Error: No se pudo resolver la cuenta de Mastodon en el Fediverso';
+                $msg = __('fedi_msg_resolve_err', 'Error: No se pudo resolver la cuenta de Mastodon en el Fediverso');
             }
         } else {
             kp_update_setting('admin_mastodon_handle', '');
             kp_update_setting('admin_mastodon_actor', '');
             kp_update_setting('admin_mastodon_inbox', '');
-            $msg = $url ? 'Ajustes de verificación actualizados' : 'Cuenta Mastodon desvinculada';
+            $msg = $url ? __('fedi_msg_verified_updated', 'Ajustes de verificación actualizados') : __('fedi_msg_unlinked', 'Cuenta Mastodon desvinculada');
         }
         
         setcookie('kp_flash', $msg, time() + 30, '/');
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->exec("DELETE FROM ap_delivery");
         $pdo->exec("DELETE FROM ap_keys");
         
-        setcookie('kp_flash', 'Fediverso reiniciado (claves, seguidores y bandeja de salida eliminados)', time() + 30, '/');
+        setcookie('kp_flash', __('fedi_msg_reset', 'Fediverso reiniciado (claves, seguidores y bandeja de salida eliminados)'), time() + 30, '/');
         header('Location: ' . admin_url('plugins?action=settings&plugin=fediverse'));
         exit;
     }
@@ -71,8 +71,8 @@ $admin_mastodon_url = kp_setting('admin_mastodon_url', '');
   <div class="card span-12">
     <div class="card-head" style="margin-bottom:18px">
       <div>
-        <h2 style="margin:0">Enlace de Administrador (Mastodon)</h2>
-        <p class="help" style="margin:4px 0 0 0">Permite recibir notificaciones privadas y verificar la propiedad en la red federada.</p>
+        <h2 style="margin:0"><?= __('fedi_admin_link_title', 'Enlace de Administrador (Mastodon)') ?></h2>
+        <p class="help" style="margin:4px 0 0 0"><?= __('fedi_admin_link_sub', 'Permite recibir notificaciones privadas y verificar la propiedad en la red federada.') ?></p>
       </div>
     </div>
     
@@ -80,29 +80,29 @@ $admin_mastodon_url = kp_setting('admin_mastodon_url', '');
       <input type="hidden" name="_form" value="fediverse_settings">
       
       <div class="field">
-        <label class="label">Tu dirección de Mastodon</label>
+        <label class="label"><?= __('fedi_masto_address', 'Tu dirección de Mastodon') ?></label>
         <input class="input" name="admin_mastodon_handle" id="admin_mastodon_handle" value="<?= e($admin_mastodon_handle) ?>" placeholder="@nombre_usuario@mastodon.social">
         <div class="help" style="margin-top:4px">
-          KutPod te enviará un Mensaje Directo privado cada vez que alguien comente en tus episodios federados.
+          <?= __('fedi_masto_address_help', 'KutPod te enviará un Mensaje Directo privado cada vez que alguien comente en tus episodios federados.') ?>
         </div>
       </div>
       
       <div class="field" style="margin-top:16px">
-        <label class="label">URL de tu Perfil de Mastodon</label>
+        <label class="label"><?= __('fedi_masto_url', 'URL de tu Perfil de Mastodon') ?></label>
         <input class="input" name="admin_mastodon_url" value="<?= e($admin_mastodon_url) ?>" placeholder="https://mastodon.social/@nombre_usuario">
         <div class="help" style="margin-top:4px">
-          Sirve para añadir la etiqueta invisible <code>rel="me"</code> en la cabecera pública de KutPod, logrando la verificación verde de tu sitio en Mastodon.
+          <?= __('fedi_masto_url_help', 'Sirve para añadir la etiqueta invisible :tag en la cabecera pública de KutPod, logrando la verificación verde de tu sitio en Mastodon.', ['tag' => '<code>rel="me"</code>']) ?>
         </div>
       </div>
       
       <div style="margin-top:24px; display:flex; gap:12px; align-items:center">
-        <button class="btn btn-primary" type="submit">Guardar y Vincular</button>
+        <button class="btn btn-primary" type="submit"><?= __('fedi_btn_save_link', 'Guardar y Vincular') ?></button>
         <?php if ($admin_mastodon_handle): ?>
           <button class="btn btn-ghost" type="button" onclick="document.getElementById('admin_mastodon_handle').value=''; this.form.submit();" style="color:var(--text-3)">
-            Desvincular Cuenta
+            <?= __('fedi_btn_unlink', 'Desvincular Cuenta') ?>
           </button>
         <?php endif; ?>
-        <a class="btn" href="<?= admin_url('plugins') ?>">Volver a Plugins</a>
+        <a class="btn" href="<?= admin_url('plugins') ?>"><?= __('btn_back_plugins', 'Volver a Plugins') ?></a>
       </div>
     </form>
   </div>
@@ -111,22 +111,19 @@ $admin_mastodon_url = kp_setting('admin_mastodon_url', '');
   <div class="card span-12" style="border-color:rgba(248, 113, 113, 0.2)">
     <div class="card-head" style="margin-bottom:12px">
       <div>
-        <h2 style="margin:0; color:var(--red)">Zona de Peligro: Reiniciar Federación</h2>
-        <p class="help" style="margin:4px 0 0 0">Esta acción purga todos los datos de red de los podcasts y seguidores.</p>
+        <h2 style="margin:0; color:var(--red)"><?= __('fedi_danger_title', 'Zona de Peligro: Reiniciar Federación') ?></h2>
+        <p class="help" style="margin:4px 0 0 0"><?= __('fedi_danger_sub', 'Esta acción purga todos los datos de red de los podcasts y seguidores.') ?></p>
       </div>
     </div>
     
     <p style="font-size:12.5px; color:var(--text-2); line-height:1.5; margin-bottom:16px">
-      Si reinicias el Fediverso:
-      <br>• Se eliminarán permanentemente todos tus seguidores actuales en otras instancias.
-      <br>• Se borrará el historial de envíos de la bandeja de salida.
-      <br>• Se regenerarán las claves criptográficas RSA para todos los podcasts.
+      <?= __('fedi_danger_list', "Si reinicias el Fediverso:\n<br>• Se eliminarán permanentemente todos tus seguidores actuales en otras instancias.\n<br>• Se borrará el historial de envíos de la bandeja de salida.\n<br>• Se regenerarán las claves criptográficas RSA para todos los podcasts.") ?>
     </p>
 
-    <form method="POST" onsubmit="return confirm('¡PELIGRO! ¿Seguro que deseas reiniciar el Fediverso? Esta acción no se puede deshacer y perderás la conexión con tus seguidores reales.');">
+    <form method="POST" onsubmit="return confirm(<?= json_encode(__('fedi_danger_confirm', '¡PELIGRO! ¿Seguro que deseas reiniciar el Fediverso? Esta acción no se puede deshacer y perderás la conexión con tus seguidores reales.')) ?>);">
       <input type="hidden" name="_form" value="fediverse_reset">
       <button class="btn btn-danger" type="submit" style="font-weight:600">
-        <?= icon('shield', 13) ?> Resetear Fediverso Completo
+        <?= icon('shield', 13) ?> <?= __('fedi_btn_reset_full', 'Resetear Fediverso Completo') ?>
       </button>
     </form>
   </div>

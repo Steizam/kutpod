@@ -463,7 +463,7 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
           });
           if (empty($leaders)):
         ?>
-          <div class="muted" style="padding:24px 0;text-align:center">Sin datos de descargas acumuladas todavía</div>
+          <div class="muted" style="padding:24px 0;text-align:center"><?= __('analytics_no_accumulated_data', 'Sin datos de descargas acumuladas todavía') ?></div>
         <?php else: ?>
           <div class="kp-paginated-items col" style="gap:12px">
             <?php foreach ($leaders as $idx => $lead):
@@ -489,7 +489,7 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
                 </div>
                 <div class="tabular" style="text-align:right">
                   <div style="font-size:13.5px;font-weight:600"><?= fmt_num((int)$ep['downloads']) ?></div>
-                  <div style="font-size:10.5px;color:var(--text-3);margin-top:1px">descargas</div>
+                  <div style="font-size:10.5px;color:var(--text-3);margin-top:1px"><?= __('analytics_downloads_label', 'descargas') ?></div>
                 </div>
               </div>
             <?php endforeach; ?>
@@ -735,43 +735,43 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
     <div class="stat-grid stat-grid-5" style="margin-bottom: 24px;">
       <div class="stat">
         <div class="stat-head">
-          <div class="stat-label">Visualizaciones</div>
+          <div class="stat-label"><?= __('yt_views', 'Visualizaciones') ?></div>
           <div class="stat-icon" style="color:#ef4444"><?= icon('play', 14) ?></div>
         </div>
         <div class="stat-value tabular" style="color:#ef4444"><?= number_format($yt_summary['total_views']) ?></div>
-        <div class="stat-sub">Reproducciones en YouTube</div>
+        <div class="stat-sub"><?= __('yt_sub_views', 'Reproducciones en YouTube') ?></div>
       </div>
       <div class="stat">
         <div class="stat-head">
-          <div class="stat-label">Me gusta (Likes)</div>
+          <div class="stat-label"><?= __('yt_likes', 'Me gusta (Likes)') ?></div>
           <div class="stat-icon"><?= icon('star', 14) ?></div>
         </div>
         <div class="stat-value tabular"><?= number_format($yt_summary['total_likes']) ?></div>
-        <div class="stat-sub">Interacciones positivas</div>
+        <div class="stat-sub"><?= __('yt_sub_likes', 'Interacciones positivas') ?></div>
       </div>
       <div class="stat">
         <div class="stat-head">
-          <div class="stat-label">Comentarios</div>
+          <div class="stat-label"><?= __('yt_comments', 'Comentarios') ?></div>
           <div class="stat-icon"><?= icon('inbox', 14) ?></div>
         </div>
         <div class="stat-value tabular"><?= number_format($yt_summary['total_comments']) ?></div>
-        <div class="stat-sub">Opiniones de la audiencia</div>
+        <div class="stat-sub"><?= __('yt_sub_comments', 'Opiniones de la audiencia') ?></div>
       </div>
       <div class="stat">
         <div class="stat-head">
-          <div class="stat-label">Engagement</div>
+          <div class="stat-label"><?= __('yt_engagement', 'Engagement') ?></div>
           <div class="stat-icon"><?= icon('award', 14) ?></div>
         </div>
         <div class="stat-value tabular"><?= $engagement_rate ?>%</div>
-        <div class="stat-sub">Tasa de interacción global</div>
+        <div class="stat-sub"><?= __('yt_sub_engagement', 'Tasa de interacción global') ?></div>
       </div>
       <div class="stat">
         <div class="stat-head">
-          <div class="stat-label">Episodios Sincronizados</div>
+          <div class="stat-label"><?= __('yt_synced_episodes', 'Episodios Sincronizados') ?></div>
           <div class="stat-icon"><?= icon('check', 14) ?></div>
         </div>
         <div class="stat-value tabular"><?= number_format($yt_summary['total_episodes']) ?></div>
-        <div class="stat-sub">De tus listas RSS</div>
+        <div class="stat-sub"><?= __('yt_from_rss', 'De tus listas RSS') ?></div>
       </div>
     </div>
 
@@ -786,22 +786,22 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
         <div>
           <div class="card-title" style="display:flex; align-items:center; gap:8px;">
             <span style="color:#ef4444; display:inline-flex; align-items:center;"><?= icon('play', 16) ?></span>
-            <span>Visualizaciones en YouTube · últimos <?= count($series) ?> días</span>
+            <span><?= __raw('yt_views_last_days', 'Visualizaciones en YouTube · últimos :count días', ['count' => count($series)]) ?></span>
           </div>
           <div class="page-sub" style="margin-top:4px; font-size:12.5px;">
-            Actividad y visualizaciones sincronizadas desde tu canal de YouTube
+            <?= __('yt_views_sub', 'Actividad y visualizaciones sincronizadas desde tu canal de YouTube') ?>
           </div>
         </div>
         <div class="row" style="gap:6px; font-size:12px; font-weight:600; color:#ef4444;">
           <span style="width:10px; height:10px; border-radius:3px; background:#ef4444;"></span>
-          ▶️ Vistas de YouTube
+          ▶️ <?= __('yt_views_label', 'Vistas de YouTube') ?>
         </div>
       </div>
 
       <div style="position:relative; height:220px; margin-top:24px; display:flex; align-items:flex-end; gap:5px;">
         <?php foreach ($yt_chart_series as $d => $yv):
           $yh = $yt_chart_max > 0 ? ($yv / $yt_chart_max) * 100 : 0;
-          $ytip = e($d) . ': ' . number_format($yv) . ' visualizaciones en YouTube';
+          $ytip = e($d) . ': ' . number_format($yv) . ' ' . __('yt_views_count', 'visualizaciones en YouTube');
         ?>
           <div class="chart-day-bar-wrap" data-tooltip="<?= $ytip ?>" data-label="<?= e($d) ?>" data-count="<?= number_format($yv) ?>">
             <div class="chart-day-bar" style="height:<?= max($yv > 0 ? 3 : 1, $yh) ?>%; background:#ef4444;" title="<?= $ytip ?>"></div>
@@ -814,20 +814,20 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
     <div class="card card-lg" style="padding: 24px;">
       <div class="card-head" style="margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
         <div>
-          <div class="card-title" style="font-size:16px;">Rendimiento de Episodios en YouTube</div>
-          <div class="help" style="margin-top:4px;">Episodios ordenados por volumen de visualizaciones con sus interacciones correspondientes.</div>
+          <div class="card-title" style="font-size:16px;"><?= __('yt_episodes_perf', 'Rendimiento de Episodios en YouTube') ?></div>
+          <div class="help" style="margin-top:4px;"><?= __('yt_episodes_perf_sub', 'Episodios ordenados por volumen de visualizaciones con sus interacciones correspondientes.') ?></div>
         </div>
         <a class="btn btn-ghost" href="/admin/plugins?action=settings&plugin=youtube_stats" style="font-size:12.5px; display:inline-flex; align-items:center; gap:6px;">
-          <?= icon('settings', 13) ?> Ajustes del Plugin
+          <?= icon('settings', 13) ?> <?= __('yt_plugin_settings', 'Ajustes del Plugin') ?>
         </a>
       </div>
 
       <?php if (empty($yt_episodes)): ?>
         <div class="muted" style="padding: 40px 0; text-align: center;">
           <?= icon('play', 32) ?>
-          <p style="margin-top:12px; font-size:14px;">No hay episodios sincronizados con YouTube todavía.</p>
+          <p style="margin-top:12px; font-size:14px;"><?= __('yt_no_episodes_yet', 'No hay episodios sincronizados con YouTube todavía.') ?></p>
           <a class="btn btn-primary" href="/admin/plugins?action=settings&plugin=youtube_stats" style="margin-top:8px;">
-            Configurar Playlist y Sincronizar
+            <?= __('yt_config_sync', 'Configurar Playlist y Sincronizar') ?>
           </a>
         </div>
       <?php else: ?>
@@ -835,10 +835,10 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
           <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
             <thead>
               <tr style="border-bottom: 1px solid var(--border); color: var(--text-3); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;">
-                <th style="padding: 10px 12px; width: 45%;">Episodio</th>
-                <th style="padding: 10px 12px; width: 25%;">Visualizaciones</th>
-                <th style="padding: 10px 12px; text-align: right; width: 15%;">Me gusta</th>
-                <th style="padding: 10px 12px; text-align: right; width: 15%;">Comentarios</th>
+                <th style="padding: 10px 12px; width: 45%;"><?= __('nav_episodes', 'Episodio') ?></th>
+                <th style="padding: 10px 12px; width: 25%;"><?= __('yt_views', 'Visualizaciones') ?></th>
+                <th style="padding: 10px 12px; text-align: right; width: 15%;"><?= __('yt_likes', 'Me gusta') ?></th>
+                <th style="padding: 10px 12px; text-align: right; width: 15%;"><?= __('yt_comments', 'Comentarios') ?></th>
               </tr>
             </thead>
             <tbody>
@@ -850,7 +850,7 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
                   if (!empty($yep['season']) && !empty($yep['number'])) {
                     $epNum = 'T' . $yep['season'] . ' · E' . $yep['number'];
                   } elseif (!empty($yep['number'])) {
-                    $epNum = 'Episodio ' . $yep['number'];
+                    $epNum = __('pub_episode_num', 'Episodio :n', ['n' => (int)$yep['number']]);
                   }
                 ?>
                 <tr style="border-bottom: 1px solid var(--border); transition: background 0.12s;" onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background='transparent'">
@@ -912,6 +912,18 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
 
   <!-- Script interactivo: Pestañas, Mapa interactivo & Tooltips en barras -->
   <script>
+  const AN_I18N = {
+    downloads: <?= json_encode(__('analytics_downloads_label', 'descargas')) ?>,
+    ofWorldTotal: <?= json_encode(__('analytics_pct_of_world_total', 'del total mundial')) ?>,
+    noDownloadsInPeriod: <?= json_encode(__('analytics_no_downloads_in_period', 'Sin descargas registradas en este período')) ?>,
+    showingRange: <?= json_encode(__('pager_showing_range', 'Mostrando {from}–{to} de {total}')) ?>,
+    viewAll: <?= json_encode(__('pager_view_all', 'Ver todos ({total})')) ?>,
+    prevPage: <?= json_encode(__('pager_prev_page', 'Página anterior')) ?>,
+    nextPage: <?= json_encode(__('pager_next_page', 'Página siguiente')) ?>,
+    showingAll: <?= json_encode(__('pager_showing_all', 'Mostrando todos ({total})')) ?>,
+    viewTop: <?= json_encode(__('pager_view_top', 'Ver top {count}')) ?>
+  };
+
   // 1. GESTOR DE PESTAÑAS
   (function initStatsTabs() {
     const tabBtns = document.querySelectorAll('.stats-tab-btn');
@@ -1122,13 +1134,13 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
       let bodyHtml = '';
       if (val > 0) {
         bodyHtml = `
-          <div class="tooltip-downloads">${Number(val).toLocaleString()} descargas</div>
-          <div class="tooltip-pct"><strong>${pct}%</strong> del total mundial</div>
+          <div class="tooltip-downloads">${Number(val).toLocaleString()} ${AN_I18N.downloads}</div>
+          <div class="tooltip-pct"><strong>${pct}%</strong> ${AN_I18N.ofWorldTotal}</div>
         `;
       } else {
         bodyHtml = `
-          <div class="tooltip-downloads" style="color:var(--text-3);font-size:13px">0 descargas (0%)</div>
-          <div class="tooltip-pct" style="color:var(--text-3)">Sin descargas registradas en este período</div>
+          <div class="tooltip-downloads" style="color:var(--text-3);font-size:13px">0 ${AN_I18N.downloads} (0%)</div>
+          <div class="tooltip-pct" style="color:var(--text-3)">${AN_I18N.noDownloadsInPeriod}</div>
         `;
       }
 
@@ -1284,12 +1296,12 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
       const footer = document.createElement('div');
       footer.className = 'kp-paginated-footer';
       footer.innerHTML = `
-        <span class="kp-pager-info">Mostrando 1–${pageSize} de ${total}</span>
+        <span class="kp-pager-info">${AN_I18N.showingRange.replace('{from}', '1').replace('{to}', pageSize).replace('{total}', total)}</span>
         <div class="kp-pager-controls">
-          <button type="button" class="kp-pager-toggle-btn">Ver todos (${total})</button>
-          <button type="button" class="kp-pager-btn kp-pager-prev" title="Página anterior" disabled>‹</button>
+          <button type="button" class="kp-pager-toggle-btn">${AN_I18N.viewAll.replace('{total}', total)}</button>
+          <button type="button" class="kp-pager-btn kp-pager-prev" title="${AN_I18N.prevPage}" disabled>‹</button>
           <span class="kp-pager-pages" style="font-size:11.5px;color:var(--text-2);padding:0 4px">1 / ${totalPages}</span>
-          <button type="button" class="kp-pager-btn kp-pager-next" title="Página siguiente">›</button>
+          <button type="button" class="kp-pager-btn kp-pager-next" title="${AN_I18N.nextPage}">›</button>
         </div>
       `;
       card.appendChild(footer);
@@ -1303,8 +1315,8 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
       function updateView() {
         if (showAll) {
           items.forEach(el => el.style.display = '');
-          infoEl.textContent = `Mostrando todos (${total})`;
-          toggleBtn.textContent = 'Ver top ' + pageSize;
+          infoEl.textContent = AN_I18N.showingAll.replace('{total}', total);
+          toggleBtn.textContent = AN_I18N.viewTop.replace('{count}', pageSize);
           prevBtn.style.display = 'none';
           nextBtn.style.display = 'none';
           pagesSpan.style.display = 'none';
@@ -1312,7 +1324,7 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
           prevBtn.style.display = '';
           nextBtn.style.display = '';
           pagesSpan.style.display = '';
-          toggleBtn.textContent = `Ver todos (${total})`;
+          toggleBtn.textContent = AN_I18N.viewAll.replace('{total}', total);
 
           const start = (currentPage - 1) * pageSize;
           const end = Math.min(start + pageSize, total);
@@ -1321,7 +1333,7 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
             el.style.display = (idx >= start && idx < end) ? '' : 'none';
           });
 
-          infoEl.textContent = `Mostrando ${start + 1}–${end} de ${total}`;
+          infoEl.textContent = AN_I18N.showingRange.replace('{from}', start + 1).replace('{to}', end).replace('{total}', total);
           pagesSpan.textContent = `${currentPage} / ${totalPages}`;
           prevBtn.disabled = currentPage <= 1;
           nextBtn.disabled = currentPage >= totalPages;

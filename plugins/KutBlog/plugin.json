@@ -1,7 +1,9 @@
 {
   "id": "kutblog",
   "name": "KutBlog Webhook Publisher",
+  "name_en": "KutBlog Webhook Publisher",
   "description": "Envía automáticamente los episodios publicados o actualizados de KutPod a tu blog KutBlog mediante webhooks.",
+  "description_en": "Automatically sends published or updated KutPod episodes to your KutBlog blog via webhooks.",
   "version": "1.0.0",
   "author": "KutStudio"
 }

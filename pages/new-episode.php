@@ -267,31 +267,31 @@ $sections = [
 
       <!-- 2.1 Archivo & metadatos -->
       <section id="s2-1" class="card card-lg">
-        <header class="section-head"><h2>Archivo de audio &amp; metadatos</h2></header>
+        <header class="section-head"><h2><?= __('ep_audio_meta_title', 'Archivo de audio & metadatos') ?></h2></header>
         <div class="tab-strip" role="tablist">
-          <button type="button" class="tab active" data-source="upload"><?= icon('upload',13) ?> Subir archivo</button>
-          <button type="button" class="tab" data-source="record"><?= icon('mic',13) ?> Grabar</button>
-          <button type="button" class="tab" data-source="url"><?= icon('globe',13) ?> Desde URL</button>
+          <button type="button" class="tab active" data-source="upload"><?= icon('upload',13) ?> <?= __('ep_upload_file', 'Subir archivo') ?></button>
+          <button type="button" class="tab" data-source="record"><?= icon('mic',13) ?> <?= __('ep_record', 'Grabar') ?></button>
+          <button type="button" class="tab" data-source="url"><?= icon('globe',13) ?> <?= __('ep_from_url', 'Desde URL') ?></button>
         </div>
         <div class="source-panel" data-panel="upload">
           <label for="audio" style="display:block;border:2px dashed var(--border);border-radius:14px;padding:36px;text-align:center;cursor:pointer">
             <?= icon('upload',32) ?>
-            <div id="audio-filename" style="margin-top:12px;font-weight:500">Arrastra tu MP3/WAV aquí</div>
-            <div class="help" style="margin-top:4px">o haz click · máx. 500MB · también vía Kut Editor / Hindenburg Pro / API</div>
+            <div id="audio-filename" style="margin-top:12px;font-weight:500"><?= __('ep_drag_audio', 'Arrastra tu MP3/WAV aquí') ?></div>
+            <div class="help" style="margin-top:4px"><?= __('ep_audio_help', 'o haz click · máx. 500MB · también vía Kut Editor / Hindenburg Pro / API') ?></div>
             <input id="audio" type="file" name="audio" accept="audio/mpeg,audio/mp3,audio/wav,audio/x-m4a" hidden>
           </label>
           <div id="audio-preview-container" hidden style="margin-top:14px;background:var(--surface-2);border-radius:10px;padding:12px;border:1px solid var(--border)">
             <audio id="audio-preview" controls style="width:100%;height:40px;border-radius:8px"></audio>
-            <button type="button" class="btn btn-ghost" onclick="document.getElementById('audio').value=''; document.getElementById('audio').dispatchEvent(new Event('change'));" style="margin-top:8px;color:var(--red);padding:4px 8px"><?= icon('x',13) ?> Descartar audio</button>
+            <button type="button" class="btn btn-ghost" onclick="document.getElementById('audio').value=''; document.getElementById('audio').dispatchEvent(new Event('change'));" style="margin-top:8px;color:var(--red);padding:4px 8px"><?= icon('x',13) ?> <?= __('ep_discard_audio', 'Descartar audio') ?></button>
           </div>
         </div>
         <div class="source-panel" data-panel="record" hidden>
           <div class="recorder" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px 20px;gap:12px;background:var(--surface-2);border-radius:14px;border:1px solid var(--border);text-align:center">
             <div class="recorder-time tabular" style="font-size:26px;font-family:ui-monospace,monospace;font-weight:600;color:var(--text);letter-spacing:.05em">00:00</div>
-            <div id="rec-status-label" style="font-size:13px;color:var(--text-3)">Pulsa para iniciar la grabación</div>
+            <div id="rec-status-label" style="font-size:13px;color:var(--text-3)"><?= __('ep_press_to_record', 'Pulsa para iniciar la grabación') ?></div>
             
             <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin:4px 0">
-              <button type="button" class="rec-btn-circle record-btn" id="record-btn-trigger" title="Iniciar grabación">
+              <button type="button" class="rec-btn-circle record-btn" id="record-btn-trigger" title="<?= __('ep_start_recording', 'Iniciar grabación') ?>">
                 <svg id="recIconMic" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
                 <svg id="recIconStop" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>
               </button>
@@ -303,18 +303,18 @@ $sections = [
           </div>
         </div>
         <div class="source-panel" data-panel="url" hidden>
-          <div class="field"><label class="label">URL del audio</label><input class="input" type="url" name="audio_url" placeholder="https://cdn.ejemplo.com/ep.mp3"></div>
+          <div class="field"><label class="label"><?= __('ep_audio_url_label', 'URL del audio') ?></label><input class="input" type="url" name="audio_url" placeholder="https://cdn.ejemplo.com/ep.mp3"></div>
         </div>
 
         <div class="grid-12" style="margin-top:18px">
           <div class="field span-4 col">
-            <label class="label">Portada del episodio</label>
+            <label class="label"><?= __('ep_cover_label', 'Portada del episodio') ?></label>
             <label for="ep_cover" id="ep_cover_label" style="display:block;aspect-ratio:1;border-radius:12px;background:var(--surface-2);border:1px dashed var(--border);display:grid;place-items:center;color:var(--text-3);cursor:pointer;background-size:cover;background-position:center;<?= !empty($ep['cover']) ? 'background-image:url('.e($ep['cover']).');' : '' ?>">
               <?= empty($ep['cover']) ? icon('image',28) : '' ?>
             </label>
             <input id="ep_cover" type="file" name="cover" accept="image/png,image/jpeg,image/gif,image/webp" hidden>
-            <div class="help" style="margin-top:6px">Hereda la del show si la dejas vacía.</div>
-            <button id="ep_cover-cancel" type="button" class="btn btn-ghost" style="margin-top:8px;font-size:12px;display:none;color:var(--red);align-self:flex-start;"><?= icon('x',12) ?> Cancelar selección</button>
+            <div class="help" style="margin-top:6px"><?= __('ep_cover_help', 'Hereda la del show si la dejas vacía.') ?></div>
+            <button id="ep_cover-cancel" type="button" class="btn btn-ghost" style="margin-top:8px;font-size:12px;display:none;color:var(--red);align-self:flex-start;"><?= icon('x',12) ?> <?= __('ep_cancel_selection', 'Cancelar selección') ?></button>
           </div>
           <div class="col span-8" style="display:flex;flex-direction:column;gap:22px">
             <div class="field">
@@ -322,32 +322,32 @@ $sections = [
               <div style="display:flex;align-items:center;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:0 12px;overflow:hidden;width:100%">
                 <span class="muted" style="font-size:14px;white-space:nowrap;user-select:none"><?= (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . e(kp_setting('instance_domain', $_SERVER['HTTP_HOST'] ?? '')) ?>/@<?= e($p['slug'] ?? $p['id']) ?>/</span>
                 <input type="text" id="permalink_input" name="custom_slug" class="input" value="<?= e($ep['slug'] ?? '') ?>" style="border:none;background:transparent;padding-left:4px;width:100%;font-weight:600;box-shadow:none;outline:none" placeholder="titulo-del-episodio">
-                <button type="button" class="btn btn-ghost" id="btn-copy-url" style="border:none;padding:8px;margin-left:4px;cursor:pointer;display:flex;align-items:center;background:transparent" title="Copiar URL completa">
+                <button type="button" class="btn btn-ghost" id="btn-copy-url" style="border:none;padding:8px;margin-left:4px;cursor:pointer;display:flex;align-items:center;background:transparent" title="<?= __('ep_copy_full_url', 'Copiar URL completa') ?>">
                   <?= icon('copy', 14) ?>
                 </button>
               </div>
             </div>
             <div class="field">
-              <label class="label">Título <span class="req">*</span></label>
-              <input class="input" name="title" required placeholder="Ej: Entrevista a John Doe" value="<?= e($ep['title'] ?? '') ?>" style="font-size:16px;font-weight:500" oninput="if(!manualSlug) { const s = slugify(this.value); document.getElementById('permalink_input').value = s; const emb = document.getElementById('embed_slug_input'); if(emb) emb.value = s; }">
+              <label class="label"><?= __('ep_title_label', 'Título') ?> <span class="req">*</span></label>
+              <input class="input" name="title" required placeholder="<?= __('ep_title_placeholder', 'Ej: Entrevista a John Doe') ?>" value="<?= e($ep['title'] ?? '') ?>" style="font-size:16px;font-weight:500" oninput="if(!manualSlug) { const s = slugify(this.value); document.getElementById('permalink_input').value = s; const emb = document.getElementById('embed_slug_input'); if(emb) emb.value = s; }">
             </div>
             <div class="field">
               <div class="grid-12">
-                <div class="field span-2"><div class="label">Temporada</div><input type="number" name="season" class="input" value="<?= e($ep['season'] ?? $default_season) ?>"></div>
-                <div class="field span-2"><div class="label">Episodio</div><input type="number" name="number" class="input" value="<?= e($ep['number'] ?? $default_number) ?>"></div>
-                <div class="field span-3"><div class="label">Tipo</div>
+                <div class="field span-2"><div class="label"><?= __('ep_season', 'Temporada') ?></div><input type="number" name="season" class="input" value="<?= e($ep['season'] ?? $default_season) ?>"></div>
+                <div class="field span-2"><div class="label"><?= __('ep_episode', 'Episodio') ?></div><input type="number" name="number" class="input" value="<?= e($ep['number'] ?? $default_number) ?>"></div>
+                <div class="field span-3"><div class="label"><?= __('ep_type', 'Tipo') ?></div>
                   <select class="select" name="ep_type">
-                    <option value="full" <?= ($ep['ep_type']??'')==='full'?'selected':'' ?>>Full (Completo)</option>
-                    <option value="trailer" <?= ($ep['ep_type']??'')==='trailer'?'selected':'' ?>>Trailer</option>
-                    <option value="bonus" <?= ($ep['ep_type']??'')==='bonus'?'selected':'' ?>>Bonus (Extra)</option>
+                    <option value="full" <?= ($ep['ep_type']??'')==='full'?'selected':'' ?>><?= __('ep_type_full', 'Full (Completo)') ?></option>
+                    <option value="trailer" <?= ($ep['ep_type']??'')==='trailer'?'selected':'' ?>><?= __('ep_type_trailer', 'Trailer') ?></option>
+                    <option value="bonus" <?= ($ep['ep_type']??'')==='bonus'?'selected':'' ?>><?= __('ep_type_bonus', 'Bonus (Extra)') ?></option>
                   </select>
                 </div>
-                <div class="field span-5"><label class="label">Publicación</label><input class="input" type="datetime-local" id="publish_at_input" name="publish_at" value="<?= e(isset($ep['publish_at']) && $ep['publish_at'] ? date('Y-m-d\TH:i', kp_db_strtotime($ep['publish_at'])) : '') ?>"></div>
+                <div class="field span-5"><label class="label"><?= __('ep_publish_date', 'Publicación') ?></label><input class="input" type="datetime-local" id="publish_at_input" name="publish_at" value="<?= e(isset($ep['publish_at']) && $ep['publish_at'] ? date('Y-m-d\TH:i', kp_db_strtotime($ep['publish_at'])) : '') ?>"></div>
               </div>
             </div>
             <div class="field">
-              <label class="label">Personas (Host, Invitados)</label>
-              <div style="font-size:12px;color:var(--text-3);margin-bottom:6px">Selecciona quién participa en este episodio. Se añadirán etiquetas <code>&lt;podcast:person&gt;</code> al RSS.</div>
+              <label class="label"><?= __('ep_persons_title', 'Personas (Host, Invitados)') ?></label>
+              <div style="font-size:12px;color:var(--text-3);margin-bottom:6px"><?= __('ep_persons_help', 'Selecciona quién participa en este episodio. Se añadirán etiquetas <code>&lt;podcast:person&gt;</code> al RSS.') ?></div>
               <?php
               $all_users = kp_q("SELECT id, name, avatar FROM users ORDER BY name");
               $ep_persons = !empty($ep['persons_json']) ? json_decode($ep['persons_json'], true) : [];
@@ -379,15 +379,15 @@ $sections = [
               </div>
             </div>
             <div class="field">
-              <label class="label">Reproductor embebido</label>
+              <label class="label"><?= __('ep_embed_player', 'Reproductor embebido') ?></label>
               <div style="display:flex;align-items:center;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:0 12px;overflow:hidden;width:100%">
                 <span class="muted" style="font-size:14px;white-space:nowrap;user-select:none"><?= (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . e(kp_setting('instance_domain', $_SERVER['HTTP_HOST'] ?? '')) ?>/embed/@<?= e($p['slug'] ?? $p['id']) ?>/</span>
                 <input type="text" id="embed_slug_input" readonly class="input" value="<?= e($ep['slug'] ?? '') ?>" style="border:none;background:transparent;padding-left:4px;width:100%;font-weight:600;box-shadow:none;outline:none;cursor:default" placeholder="titulo-del-episodio">
-                <button type="button" class="btn btn-ghost" id="btn-copy-embed" style="border:none;padding:8px;margin-left:4px;cursor:pointer;display:flex;align-items:center;background:transparent" title="Copiar código iframe del reproductor embebido">
+                <button type="button" class="btn btn-ghost" id="btn-copy-embed" style="border:none;padding:8px;margin-left:4px;cursor:pointer;display:flex;align-items:center;background:transparent" title="<?= __('ep_copy_iframe_code', 'Copiar código iframe del reproductor embebido') ?>">
                   <?= icon('copy', 14) ?>
                 </button>
               </div>
-              <div class="help" style="margin-top:6px">Copia el código iframe para incrustar el reproductor en páginas web externas o blogs.</div>
+              <div class="help" style="margin-top:6px"><?= __('ep_embed_help', 'Copia el código iframe para incrustar el reproductor en páginas web externas o blogs.') ?></div>
             </div>
           </div>
         </div>
@@ -396,11 +396,11 @@ $sections = [
       <!-- 2.2 Notas Markdown -->
       <section id="s2-2" class="card card-lg">
         <header class="section-head">
-          <h2>Notas del episodio</h2>
+          <h2><?= __('ep_notes_title', 'Notas del episodio') ?></h2>
           <div class="tab-strip md-tabs">
-            <button type="button" class="tab active" data-md="edit">Editar</button>
-            <button type="button" class="tab" data-md="preview">Vista previa</button>
-            <button type="button" class="tab" data-md="split">Dividida</button>
+            <button type="button" class="tab active" data-md="edit"><?= __('ep_edit', 'Editar') ?></button>
+            <button type="button" class="tab" data-md="preview"><?= __('ep_preview', 'Vista previa') ?></button>
+            <button type="button" class="tab" data-md="split"><?= __('ep_split', 'Dividida') ?></button>
           </div>
         </header>
         <div class="md-toolbar">
@@ -413,25 +413,25 @@ $sections = [
           <button type="button" data-md-cmd="code">{ }</button>
         </div>
         <div class="md-editor">
-          <textarea class="textarea md-source" name="notes_md" style="min-height:280px" placeholder="Escribe aquí las notas del episodio. Puedes usar Markdown." oninput="updatePreview(this.value)"><?= e($ep['notes_md'] ?? '') ?></textarea>
+          <textarea class="textarea md-source" name="notes_md" style="min-height:280px" placeholder="<?= __('ep_notes_placeholder', 'Escribe aquí las notas del episodio. Puedes usar Markdown.') ?>" oninput="updatePreview(this.value)"><?= e($ep['notes_md'] ?? '') ?></textarea>
           <div class="md-preview prose" hidden></div>
         </div>
         <div class="md-foot">
-          <span class="help"><span class="md-count">0</span> caracteres · Soporta Markdown estándar + tablas + footnotes.</span>
+          <span class="help"><span class="md-count">0</span> <?= __('ep_chars_supported_md', 'caracteres · Soporta Markdown estándar + tablas + footnotes.') ?></span>
         </div>
       </section>
 
       <!-- 2.3 Premium & ubicación -->
       <section id="s2-3" class="card card-lg">
-        <header class="section-head"><h2>Premium &amp; ubicación</h2></header>
+        <header class="section-head"><h2><?= __('ep_premium_loc_title', 'Premium & ubicación') ?></h2></header>
         <?php $is_podcast_premium = (int)kp_get_podcast_meta($p, 'premium_enabled', 0); ?>
         <label class="toggle-row">
-          <span><strong>Episodio Premium</strong><br>
+          <span><strong><?= __('ep_premium_episode', 'Episodio Premium') ?></strong><br>
             <span class="help">
               <?php if ($is_podcast_premium): ?>
-                El podcast completo está marcado como Premium. Todos los episodios son premium.
+                <?= __('ep_podcast_is_premium', 'El podcast completo está marcado como Premium. Todos los episodios son premium.') ?>
               <?php else: ?>
-                Solo accesible para suscriptores.
+                <?= __('ep_only_subscribers', 'Solo accesible para suscriptores.') ?>
               <?php endif; ?>
             </span>
           </span>
@@ -442,39 +442,39 @@ $sections = [
         </label>
         <div class="field-row" style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px">
           <div class="field">
-            <label class="label">Precio de suscripción mensual del podcast (USD)</label>
+            <label class="label"><?= __('ep_price_monthly_label', 'Precio de suscripción mensual del podcast (USD)') ?></label>
             <input class="input tabular" type="number" min="0" step="0.01" name="premium_price" value="<?= e(kp_get_podcast_meta($p, 'premium_price', 5.00)) ?>">
-            <span class="help" style="margin-top:4px; display:inline-block">Precio mensual estándar.</span>
+            <span class="help" style="margin-top:4px; display:inline-block"><?= __('ep_price_monthly_help', 'Precio mensual estándar.') ?></span>
           </div>
           <?php $premium_price_year = (float)kp_get_podcast_meta($p, 'premium_price_year', 0.00); ?>
           <div class="field">
-            <label class="label">Precio de suscripción anual del podcast (USD)</label>
+            <label class="label"><?= __('ep_price_annual_label', 'Precio de suscripción anual del podcast (USD)') ?></label>
             <input class="input tabular" type="number" min="0" step="0.01" name="premium_price_year" value="<?= $premium_price_year > 0 ? e($premium_price_year) : '' ?>" placeholder="Ej: 50.00">
-            <span class="help" style="margin-top:4px; display:inline-block">Precio anual opcional (con descuento).</span>
+            <span class="help" style="margin-top:4px; display:inline-block"><?= __('ep_price_annual_help', 'Precio anual opcional (con descuento).') ?></span>
           </div>
         </div>
         <div class="field-row" style="margin-top:-6px; margin-bottom:6px">
           <div class="field">
-            <span class="help" style="color:var(--text-muted)">Los oyentes pagan esta cuota para acceder a todos los episodios premium de este podcast. Puedes modificarla aquí o en los ajustes del show.</span>
+            <span class="help" style="color:var(--text-muted)"><?= __('ep_premium_fee_help', 'Los oyentes pagan esta cuota para acceder a todos los episodios premium de este podcast. Puedes modificarla aquí o en los ajustes del show.') ?></span>
           </div>
         </div>
         <div class="field-row" style="margin-top:14px">
-          <div class="field"><label class="label">Ubicación del episodio</label><input class="input" name="ep_location" value="<?= e($ep['location_name'] ?? '') ?>" placeholder="Caracas, Venezuela"></div>
-          <div class="field"><label class="label">Lat, Lon</label><input class="input tabular" name="ep_latlon" value="<?= (!empty($ep['lat']) && !empty($ep['lon'])) ? e($ep['lat'] . ', ' . $ep['lon']) : '' ?>" placeholder="10.4806, -66.9036"></div>
+          <div class="field"><label class="label"><?= __('ep_location_label', 'Ubicación del episodio') ?></label><input class="input" name="ep_location" value="<?= e($ep['location_name'] ?? '') ?>" placeholder="Caracas, Venezuela"></div>
+          <div class="field"><label class="label"><?= __('ep_latlon_label', 'Lat, Lon') ?></label><input class="input tabular" name="ep_latlon" value="<?= (!empty($ep['lat']) && !empty($ep['lon'])) ? e($ep['lat'] . ', ' . $ep['lon']) : '' ?>" placeholder="10.4806, -66.9036"></div>
         </div>
       </section>
 
       <!-- 2.4 Transcripción & capítulos -->
       <section id="s2-4" class="card card-lg">
-        <header class="section-head"><h2>Transcripción &amp; capítulos</h2></header>
+        <header class="section-head"><h2><?= __('ep_transcript_chapters_title', 'Transcripción & capítulos') ?></h2></header>
         <div class="field-row">
-          <div class="field"><label class="label">Transcripción (.srt / .vtt)</label>
-            <label for="transcript" id="transcript-label" class="btn" style="width:100%;cursor:pointer"><?= icon('file',13) ?> Subir archivo</label>
+          <div class="field"><label class="label"><?= __('ep_transcript_label', 'Transcripción (.srt / .vtt)') ?></label>
+            <label for="transcript" id="transcript-label" class="btn" style="width:100%;cursor:pointer"><?= icon('file',13) ?> <?= __('ep_upload_file_btn', 'Subir archivo') ?></label>
             <input id="transcript" type="file" name="transcript" accept=".srt,.vtt,text/vtt" hidden>
-            <div class="help" style="margin-top:6px">Se publica vía <code>&lt;podcast:transcript&gt;</code> en el feed.</div>
+            <div class="help" style="margin-top:6px"><?= __('ep_transcript_feed_help', 'Se publica vía <code>&lt;podcast:transcript&gt;</code> en el feed.') ?></div>
           </div>
-          <div class="field"><label class="label">Capítulos (.json · podcasting 2.0)</label>
-            <label for="chapters" id="chapters-label" class="btn" style="width:100%;cursor:pointer"><?= icon('file',13) ?> Subir capítulos</label>
+          <div class="field"><label class="label"><?= __('ep_chapters_label', 'Capítulos (.json · podcasting 2.0)') ?></label>
+            <label for="chapters" id="chapters-label" class="btn" style="width:100%;cursor:pointer"><?= icon('file',13) ?> <?= __('ep_upload_chapters_btn', 'Subir capítulos') ?></label>
             <input id="chapters" type="file" name="chapters" accept="application/json,.json" hidden>
             <div class="help" style="margin-top:6px">Spec: <a href="https://podcasting2.org/podcast-namespace/tags/chapters" target="_blank" style="color:var(--accent);text-decoration:none">podcasting2.org</a></div>
           </div>
@@ -483,10 +483,10 @@ $sections = [
 
       <!-- 2.5 Avanzados -->
       <section id="s2-5" class="card card-lg">
-        <header class="section-head"><h2>Avanzados</h2></header>
-        <div class="field"><label class="label">Custom tags (XML)</label><textarea class="textarea" name="custom_tags" rows="3" placeholder="&lt;podcast:funding url=...&gt;" style="font-family:ui-monospace,monospace;font-size:12.5px"></textarea></div>
+        <header class="section-head"><h2><?= __('ep_advanced_title', 'Avanzados') ?></h2></header>
+        <div class="field"><label class="label"><?= __('ep_custom_tags_label', 'Custom tags (XML)') ?></label><textarea class="textarea" name="custom_tags" rows="3" placeholder="&lt;podcast:funding url=...&gt;" style="font-family:ui-monospace,monospace;font-size:12.5px"></textarea></div>
         <?php kp_do_action('episode_form_advanced', $ep); ?>
-        <label class="toggle-row" style="margin-top:14px"><span><strong>Ocultar episodio</strong><br><span class="help">No mostrar este episodio en el feed público ni en el sitio web</span></span><label class="toggle"><input type="checkbox" name="hidden" <?= ($e['hidden']??0)?'checked':'' ?>><span class="toggle-track"></span></label></label>
+        <label class="toggle-row" style="margin-top:14px"><span><strong><?= __('ep_hide_episode', 'Ocultar episodio') ?></strong><br><span class="help"><?= __('ep_hide_episode_help', 'No mostrar este episodio en el feed público ni en el sitio web') ?></span></span><label class="toggle"><input type="checkbox" name="hidden" <?= ($e['hidden']??0)?'checked':'' ?>><span class="toggle-track"></span></label></label>
       </section>
 
     </div>

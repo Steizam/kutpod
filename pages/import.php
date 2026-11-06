@@ -75,6 +75,14 @@ $targets = kp_q("SELECT id, title FROM podcasts ORDER BY title");
 </style>
 
 <script>
+const IMP_I18N = {
+  analyzing: <?= json_encode(__('imp_analyzing', 'Analizando…')) ?>,
+  untitled: <?= json_encode(__('untitled', '(sin título)')) ?>,
+  episodes: <?= json_encode(__('nav_episodes', 'episodios')) ?>,
+  language: <?= json_encode(__('language', 'Idioma')) ?>,
+  author: <?= json_encode(__('author', 'Autor')) ?>,
+  enterUrlFirst: <?= json_encode(__('imp_enter_url_first', 'Pon una URL primero')) ?>
+};
 window.KP_IMP = (function () {
   let jobId = null, pollId = null;
   const $ = s => document.querySelector(s);
@@ -88,7 +96,7 @@ window.KP_IMP = (function () {
   async function analyze() {
     const url = $('#imp_url').value.trim();
     if (!url) return;
-    $('#imp_preview').innerHTML = '<div class="help">Analizando…</div>';
+    $('#imp_preview').innerHTML = `<div class="help">${IMP_I18N.analyzing}</div>`;
     const fd = new FormData(); fd.append('url', url);
     const r = await fetch('/import-api.php?action=analyze', { method: 'POST', body: fd }).then(r => r.json());
     if (r.error) { $('#imp_preview').innerHTML = `<div class="error">${r.error}</div>`; return; }
@@ -96,12 +104,12 @@ window.KP_IMP = (function () {
       <div class="row" style="gap:14px;align-items:flex-start">
         ${r.image ? `<img src="${r.image}" style="width:96px;height:96px;border-radius:10px;object-fit:cover">` : ''}
         <div style="flex:1">
-          <div style="font-weight:600;font-size:15px">${r.title || '(sin título)'}</div>
+          <div style="font-weight:600;font-size:15px">${r.title || IMP_I18N.untitled}</div>
           <div class="help" style="margin-top:4px">${r.description || ''}</div>
           <div class="row" style="gap:18px;margin-top:10px;font-size:12.5px">
-            <span><strong>${r.items}</strong> episodios</span>
-            <span>Idioma: <strong>${r.language || '—'}</strong></span>
-            <span>Autor: <strong>${r.author || '—'}</strong></span>
+            <span><strong>${r.items}</strong> ${IMP_I18N.episodes}</span>
+            <span>${IMP_I18N.language}: <strong>${r.language || '—'}</strong></span>
+            <span>${IMP_I18N.author}: <strong>${r.author || '—'}</strong></span>
           </div>
           <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
             ${(r.namespaces||[]).map(n => `<span class="tag">${n}</span>`).join('')}
@@ -112,7 +120,7 @@ window.KP_IMP = (function () {
 
   async function start() {
     const url = $('#imp_url').value.trim();
-    if (!url) return alert('Pon una URL primero');
+    if (!url) return alert(IMP_I18N.enterUrlFirst);
     const fd = new FormData();
     fd.append('url', url);
     fd.append('target_id', $('#imp_target').value);

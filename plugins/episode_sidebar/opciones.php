@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_once __DIR__ . '/../../includes/cache.php';
     kp_cache_clear();
 
-    setcookie('kp_flash', 'Configuración de la barra lateral guardada correctamente', time() + 30, '/');
+    setcookie('kp_flash', __('sidebar_flash_saved', 'Configuración de la barra lateral guardada correctamente'), time() + 30, '/');
     header('Location: ' . admin_url('plugins?action=settings&plugin=episode_sidebar'));
     exit;
 }
@@ -76,10 +76,10 @@ $widgetsOrder = $cfg['widgets_order'] ?? ['platforms', 'navigation', 'persons', 
 <div class="card span-12" style="max-width:840px; margin:0 auto">
   <div class="card-head" style="margin-bottom:24px; display:flex; justify-content:space-between; align-items:flex-start">
     <div>
-      <h2 style="margin:0 0 6px 0">Configuración · Barra Lateral de Episodios</h2>
-      <p class="help" style="margin:0; font-size:13px">Personaliza qué bloques se muestran en el sidebar y arrastra las tarjetas para cambiar su orden.</p>
+      <h2 style="margin:0 0 6px 0"><?= __('sidebar_cfg_title', 'Configuración · Barra Lateral de Episodios') ?></h2>
+      <p class="help" style="margin:0; font-size:13px"><?= __('sidebar_cfg_sub', 'Personaliza qué bloques se muestran en el sidebar y arrastra las tarjetas para cambiar su orden.') ?></p>
     </div>
-    <span class="badge" style="background:rgba(16,185,129,0.12); color:#10b981; font-weight:600; font-size:11px; padding:4px 8px; border-radius:6px">Activo</span>
+    <span class="badge" style="background:rgba(16,185,129,0.12); color:#10b981; font-weight:600; font-size:11px; padding:4px 8px; border-radius:6px"><?= __('plug_active', 'Activo') ?></span>
   </div>
 
   <form method="POST" id="sidebarConfigForm">
@@ -88,23 +88,23 @@ $widgetsOrder = $cfg['widgets_order'] ?? ['platforms', 'navigation', 'persons', 
 
     <!-- 1. Regla de Visualización -->
     <div style="background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:18px 20px; margin-bottom:28px">
-      <div style="font-weight:700; font-size:14px; margin-bottom:6px">Regla de visualización</div>
-      <p class="help" style="margin:0 0 14px 0; font-size:12.5px">Elige cuándo deben mostrarse estos widgets en la página del episodio.</p>
+      <div style="font-weight:700; font-size:14px; margin-bottom:6px"><?= __('sidebar_display_rule', 'Regla de visualización') ?></div>
+      <p class="help" style="margin:0 0 14px 0; font-size:12.5px"><?= __('sidebar_display_rule_sub', 'Elige cuándo deben mostrarse estos widgets en la página del episodio.') ?></p>
 
       <div style="display:flex; flex-direction:column; gap:10px">
         <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer">
           <input type="radio" name="mode" value="no_chapters" <?= $cfg['mode'] === 'no_chapters' ? 'checked' : '' ?> style="margin-top:3px; accent-color:var(--accent)">
           <div>
-            <div style="font-size:13px; font-weight:600">Solo cuando el episodio NO tenga capítulos <span style="font-size:11px; color:var(--accent); font-weight:700; margin-left:4px">(Recomendado)</span></div>
-            <div style="font-size:12px; color:var(--text-3); margin-top:2px">Cubre el espacio en blanco bajo la carátula sin competir con la lista de capítulos.</div>
+            <div style="font-size:13px; font-weight:600"><?= __('sidebar_mode_no_chapters', 'Solo cuando el episodio NO tenga capítulos') ?> <span style="font-size:11px; color:var(--accent); font-weight:700; margin-left:4px"><?= __('sidebar_recommended', '(Recomendado)') ?></span></div>
+            <div style="font-size:12px; color:var(--text-3); margin-top:2px"><?= __('sidebar_mode_no_chapters_desc', 'Cubre el espacio en blanco bajo la carátula sin competir con la lista de capítulos.') ?></div>
           </div>
         </label>
 
         <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer">
           <input type="radio" name="mode" value="always" <?= $cfg['mode'] === 'always' ? 'checked' : '' ?> style="margin-top:3px; accent-color:var(--accent)">
           <div>
-            <div style="font-size:13px; font-weight:600">Siempre visible</div>
-            <div style="font-size:12px; color:var(--text-3); margin-top:2px">Si el episodio tiene capítulos, estos widgets se mostrarán ordenadamente debajo de los capítulos.</div>
+            <div style="font-size:13px; font-weight:600"><?= __('sidebar_mode_always', 'Siempre visible') ?></div>
+            <div style="font-size:12px; color:var(--text-3); margin-top:2px"><?= __('sidebar_mode_always_desc', 'Si el episodio tiene capítulos, estos widgets se mostrarán ordenadamente debajo de los capítulos.') ?></div>
           </div>
         </label>
       </div>
@@ -113,8 +113,8 @@ $widgetsOrder = $cfg['widgets_order'] ?? ['platforms', 'navigation', 'persons', 
     <!-- 2. Bloques Configurables con Drag & Drop -->
     <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px">
       <div>
-        <div style="font-weight:700; font-size:15px">Bloques y Widgets</div>
-        <div class="help" style="font-size:12px; margin-top:2px">Arrastra cualquier tarjeta desde el icono <span style="font-family:monospace; font-weight:bold">⋮⋮</span> o usa las flechas ▲ / ▼ para ordenar cómo aparecen en la página.</div>
+        <div style="font-weight:700; font-size:15px"><?= __('sidebar_blocks_widgets', 'Bloques y Widgets') ?></div>
+        <div class="help" style="font-size:12px; margin-top:2px"><?= __('sidebar_drag_help', 'Arrastra cualquier tarjeta desde el icono <span style="font-family:monospace; font-weight:bold">⋮⋮</span> o usa las flechas ▲ / ▼ para ordenar cómo aparecen en la página.') ?></div>
       </div>
     </div>
 
@@ -125,32 +125,32 @@ $widgetsOrder = $cfg['widgets_order'] ?? ['platforms', 'navigation', 'persons', 
           <div class="widget-drag-card" data-widget-key="platforms" draggable="true" style="border:1px solid var(--border); border-radius:12px; padding:16px 18px; background:var(--surface); transition:box-shadow 0.15s ease, border-color 0.15s ease">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
               <div style="display:flex; align-items:center; gap:10px">
-                <div class="drag-handle" title="Arrastra para reordenar" style="cursor:grab; display:flex; align-items:center; justify-content:center; color:var(--text-3); width:28px; height:28px; border-radius:6px; background:var(--surface-2); border:1px solid var(--border)">
+                <div class="drag-handle" title="<?= __('sidebar_drag_to_reorder', 'Arrastra para reordenar') ?>" style="cursor:grab; display:flex; align-items:center; justify-content:center; color:var(--text-3); width:28px; height:28px; border-radius:6px; background:var(--surface-2); border:1px solid var(--border)">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="5" r="1.5"></circle><circle cx="9" cy="12" r="1.5"></circle><circle cx="9" cy="19" r="1.5"></circle><circle cx="15" cy="5" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="15" cy="19" r="1.5"></circle></svg>
                 </div>
                 <span class="widget-order-badge" style="font-size:11px; font-weight:700; background:rgba(99,102,241,0.12); color:#6366f1; padding:2px 8px; border-radius:6px">#<span class="order-num"><?= $idx + 1 ?></span></span>
                 <div style="display:flex; gap:3px">
-                  <button type="button" class="btn-order-move btn-order-up" title="Subir posición" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▲</button>
-                  <button type="button" class="btn-order-move btn-order-down" title="Bajar posición" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▼</button>
+                  <button type="button" class="btn-order-move btn-order-up" title="<?= __('sidebar_move_up', 'Subir posición') ?>" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▲</button>
+                  <button type="button" class="btn-order-move btn-order-down" title="<?= __('sidebar_move_down', 'Bajar posición') ?>" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▼</button>
                 </div>
               </div>
               <label class="toggle">
                 <input type="checkbox" name="show_platforms" value="1" <?= !empty($cfg['show_platforms']) ? 'checked' : '' ?>>
                 <span class="toggle-track"></span>
-                <span class="toggle-label" style="font-weight:600">Plataformas de escucha («Escúchalo en...»)</span>
+                <span class="toggle-label" style="font-weight:600"><?= __('sidebar_widget_platforms', 'Plataformas de escucha («Escúchalo en...»)') ?></span>
               </label>
             </div>
-            <p class="help" style="margin:0 0 12px 0; font-size:12px">Muestra las apps donde está distribuido el podcast (Spotify, Apple Podcasts, etc.).</p>
+            <p class="help" style="margin:0 0 12px 0; font-size:12px"><?= __('sidebar_platforms_desc', 'Muestra las apps donde está distribuido el podcast (Spotify, Apple Podcasts, etc.).') ?></p>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:center">
               <div class="field">
-                <label class="label" style="font-size:11.5px">Título del bloque</label>
+                <label class="label" style="font-size:11.5px"><?= __('sidebar_block_title', 'Título del bloque') ?></label>
                 <input class="input" name="title_platforms" value="<?= e($cfg['title_platforms']) ?>" placeholder="Escúchalo en">
               </div>
               <div style="padding-top:18px">
                 <label class="checkbox">
                   <input type="checkbox" name="show_rss" value="1" <?= !empty($cfg['show_rss']) ? 'checked' : '' ?>>
                   <span class="check-box"></span>
-                  <span style="font-size:12.5px">Incluir botón directo al Feed RSS</span>
+                  <span style="font-size:12.5px"><?= __('sidebar_include_rss_btn', 'Incluir botón directo al Feed RSS') ?></span>
                 </label>
               </div>
             </div>
@@ -161,24 +161,24 @@ $widgetsOrder = $cfg['widgets_order'] ?? ['platforms', 'navigation', 'persons', 
           <div class="widget-drag-card" data-widget-key="navigation" draggable="true" style="border:1px solid var(--border); border-radius:12px; padding:16px 18px; background:var(--surface); transition:box-shadow 0.15s ease, border-color 0.15s ease">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
               <div style="display:flex; align-items:center; gap:10px">
-                <div class="drag-handle" title="Arrastra para reordenar" style="cursor:grab; display:flex; align-items:center; justify-content:center; color:var(--text-3); width:28px; height:28px; border-radius:6px; background:var(--surface-2); border:1px solid var(--border)">
+                <div class="drag-handle" title="<?= __('sidebar_drag_to_reorder', 'Arrastra para reordenar') ?>" style="cursor:grab; display:flex; align-items:center; justify-content:center; color:var(--text-3); width:28px; height:28px; border-radius:6px; background:var(--surface-2); border:1px solid var(--border)">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="5" r="1.5"></circle><circle cx="9" cy="12" r="1.5"></circle><circle cx="9" cy="19" r="1.5"></circle><circle cx="15" cy="5" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="15" cy="19" r="1.5"></circle></svg>
                 </div>
                 <span class="widget-order-badge" style="font-size:11px; font-weight:700; background:rgba(99,102,241,0.12); color:#6366f1; padding:2px 8px; border-radius:6px">#<span class="order-num"><?= $idx + 1 ?></span></span>
                 <div style="display:flex; gap:3px">
-                  <button type="button" class="btn-order-move btn-order-up" title="Subir posición" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▲</button>
-                  <button type="button" class="btn-order-move btn-order-down" title="Bajar posición" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▼</button>
+                  <button type="button" class="btn-order-move btn-order-up" title="<?= __('sidebar_move_up', 'Subir posición') ?>" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▲</button>
+                  <button type="button" class="btn-order-move btn-order-down" title="<?= __('sidebar_move_down', 'Bajar posición') ?>" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▼</button>
                 </div>
               </div>
               <label class="toggle">
                 <input type="checkbox" name="show_navigation" value="1" <?= !empty($cfg['show_navigation']) ? 'checked' : '' ?>>
                 <span class="toggle-track"></span>
-                <span class="toggle-label" style="font-weight:600">Navegación entre episodios (Anterior / Siguiente)</span>
+                <span class="toggle-label" style="font-weight:600"><?= __('sidebar_widget_nav', 'Navegación entre episodios (Anterior / Siguiente)') ?></span>
               </label>
             </div>
-            <p class="help" style="margin:0 0 12px 0; font-size:12px">Permite saltar rápidamente al episodio anterior o siguiente del podcast.</p>
+            <p class="help" style="margin:0 0 12px 0; font-size:12px"><?= __('sidebar_nav_desc', 'Permite saltar rápidamente al episodio anterior o siguiente del podcast.') ?></p>
             <div class="field" style="max-width:320px">
-              <label class="label" style="font-size:11.5px">Título del bloque</label>
+              <label class="label" style="font-size:11.5px"><?= __('sidebar_block_title', 'Título del bloque') ?></label>
               <input class="input" name="title_navigation" value="<?= e($cfg['title_navigation']) ?>" placeholder="Navegación">
             </div>
           </div>
@@ -188,24 +188,24 @@ $widgetsOrder = $cfg['widgets_order'] ?? ['platforms', 'navigation', 'persons', 
           <div class="widget-drag-card" data-widget-key="persons" draggable="true" style="border:1px solid var(--border); border-radius:12px; padding:16px 18px; background:var(--surface); transition:box-shadow 0.15s ease, border-color 0.15s ease">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
               <div style="display:flex; align-items:center; gap:10px">
-                <div class="drag-handle" title="Arrastra para reordenar" style="cursor:grab; display:flex; align-items:center; justify-content:center; color:var(--text-3); width:28px; height:28px; border-radius:6px; background:var(--surface-2); border:1px solid var(--border)">
+                <div class="drag-handle" title="<?= __('sidebar_drag_to_reorder', 'Arrastra para reordenar') ?>" style="cursor:grab; display:flex; align-items:center; justify-content:center; color:var(--text-3); width:28px; height:28px; border-radius:6px; background:var(--surface-2); border:1px solid var(--border)">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="5" r="1.5"></circle><circle cx="9" cy="12" r="1.5"></circle><circle cx="9" cy="19" r="1.5"></circle><circle cx="15" cy="5" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="15" cy="19" r="1.5"></circle></svg>
                 </div>
                 <span class="widget-order-badge" style="font-size:11px; font-weight:700; background:rgba(99,102,241,0.12); color:#6366f1; padding:2px 8px; border-radius:6px">#<span class="order-num"><?= $idx + 1 ?></span></span>
                 <div style="display:flex; gap:3px">
-                  <button type="button" class="btn-order-move btn-order-up" title="Subir posición" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▲</button>
-                  <button type="button" class="btn-order-move btn-order-down" title="Bajar posición" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▼</button>
+                  <button type="button" class="btn-order-move btn-order-up" title="<?= __('sidebar_move_up', 'Subir posición') ?>" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▲</button>
+                  <button type="button" class="btn-order-move btn-order-down" title="<?= __('sidebar_move_down', 'Bajar posición') ?>" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▼</button>
                 </div>
               </div>
               <label class="toggle">
                 <input type="checkbox" name="show_persons" value="1" <?= !empty($cfg['show_persons']) ? 'checked' : '' ?>>
                 <span class="toggle-track"></span>
-                <span class="toggle-label" style="font-weight:600">Participantes / Invitados</span>
+                <span class="toggle-label" style="font-weight:600"><?= __('sidebar_widget_persons', 'Participantes / Invitados') ?></span>
               </label>
             </div>
-            <p class="help" style="margin:0 0 12px 0; font-size:12px">Muestra las personas vinculadas al episodio con su avatar, nombre y rol.</p>
+            <p class="help" style="margin:0 0 12px 0; font-size:12px"><?= __('sidebar_persons_desc', 'Muestra las personas vinculadas al episodio con su avatar, nombre y rol.') ?></p>
             <div class="field" style="max-width:320px">
-              <label class="label" style="font-size:11.5px">Título del bloque</label>
+              <label class="label" style="font-size:11.5px"><?= __('sidebar_block_title', 'Título del bloque') ?></label>
               <input class="input" name="title_persons" value="<?= e($cfg['title_persons']) ?>" placeholder="Participantes">
             </div>
           </div>
@@ -215,37 +215,37 @@ $widgetsOrder = $cfg['widgets_order'] ?? ['platforms', 'navigation', 'persons', 
           <div class="widget-drag-card" data-widget-key="meta" draggable="true" style="border:1px solid var(--border); border-radius:12px; padding:16px 18px; background:var(--surface); transition:box-shadow 0.15s ease, border-color 0.15s ease">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
               <div style="display:flex; align-items:center; gap:10px">
-                <div class="drag-handle" title="Arrastra para reordenar" style="cursor:grab; display:flex; align-items:center; justify-content:center; color:var(--text-3); width:28px; height:28px; border-radius:6px; background:var(--surface-2); border:1px solid var(--border)">
+                <div class="drag-handle" title="<?= __('sidebar_drag_to_reorder', 'Arrastra para reordenar') ?>" style="cursor:grab; display:flex; align-items:center; justify-content:center; color:var(--text-3); width:28px; height:28px; border-radius:6px; background:var(--surface-2); border:1px solid var(--border)">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="5" r="1.5"></circle><circle cx="9" cy="12" r="1.5"></circle><circle cx="9" cy="19" r="1.5"></circle><circle cx="15" cy="5" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="15" cy="19" r="1.5"></circle></svg>
                 </div>
                 <span class="widget-order-badge" style="font-size:11px; font-weight:700; background:rgba(99,102,241,0.12); color:#6366f1; padding:2px 8px; border-radius:6px">#<span class="order-num"><?= $idx + 1 ?></span></span>
                 <div style="display:flex; gap:3px">
-                  <button type="button" class="btn-order-move btn-order-up" title="Subir posición" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▲</button>
-                  <button type="button" class="btn-order-move btn-order-down" title="Bajar posición" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▼</button>
+                  <button type="button" class="btn-order-move btn-order-up" title="<?= __('sidebar_move_up', 'Subir posición') ?>" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▲</button>
+                  <button type="button" class="btn-order-move btn-order-down" title="<?= __('sidebar_move_down', 'Bajar posición') ?>" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▼</button>
                 </div>
               </div>
               <label class="toggle">
                 <input type="checkbox" name="show_meta" value="1" <?= !empty($cfg['show_meta']) ? 'checked' : '' ?>>
                 <span class="toggle-track"></span>
-                <span class="toggle-label" style="font-weight:600">Ficha técnica y Descarga</span>
+                <span class="toggle-label" style="font-weight:600"><?= __('sidebar_widget_meta', 'Ficha técnica y Descarga') ?></span>
               </label>
             </div>
-            <p class="help" style="margin:0 0 12px 0; font-size:12px">Muestra duración, tamaño del archivo en MB, tipo y fecha de publicación.</p>
+            <p class="help" style="margin:0 0 12px 0; font-size:12px"><?= __('sidebar_meta_desc', 'Muestra duración, tamaño del archivo en MB, tipo y fecha de publicación.') ?></p>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:center">
               <div class="field">
-                <label class="label" style="font-size:11.5px">Título del bloque</label>
+                <label class="label" style="font-size:11.5px"><?= __('sidebar_block_title', 'Título del bloque') ?></label>
                 <input class="input" name="title_meta" value="<?= e($cfg['title_meta']) ?>" placeholder="Detalles del episodio">
               </div>
               <div style="display:flex; flex-direction:column; gap:8px; padding-top:12px">
                 <label class="checkbox">
                   <input type="checkbox" name="show_download" value="1" <?= !empty($cfg['show_download']) ? 'checked' : '' ?>>
                   <span class="check-box"></span>
-                  <span style="font-size:12.5px">Mostrar botón de Descarga directa (MP3)</span>
+                  <span style="font-size:12.5px"><?= __('sidebar_show_dl_btn', 'Mostrar botón de Descarga directa (MP3)') ?></span>
                 </label>
                 <label class="checkbox">
                   <input type="checkbox" name="show_transcript" value="1" <?= !empty($cfg['show_transcript']) ? 'checked' : '' ?>>
                   <span class="check-box"></span>
-                  <span style="font-size:12.5px">Mostrar enlace a la Transcripción (si existe)</span>
+                  <span style="font-size:12.5px"><?= __('sidebar_show_transcript_link', 'Mostrar enlace a la Transcripción (si existe)') ?></span>
                 </label>
               </div>
             </div>
@@ -256,24 +256,24 @@ $widgetsOrder = $cfg['widgets_order'] ?? ['platforms', 'navigation', 'persons', 
           <div class="widget-drag-card" data-widget-key="support" draggable="true" style="border:1px solid var(--border); border-radius:12px; padding:16px 18px; background:var(--surface); transition:box-shadow 0.15s ease, border-color 0.15s ease">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
               <div style="display:flex; align-items:center; gap:10px">
-                <div class="drag-handle" title="Arrastra para reordenar" style="cursor:grab; display:flex; align-items:center; justify-content:center; color:var(--text-3); width:28px; height:28px; border-radius:6px; background:var(--surface-2); border:1px solid var(--border)">
+                <div class="drag-handle" title="<?= __('sidebar_drag_to_reorder', 'Arrastra para reordenar') ?>" style="cursor:grab; display:flex; align-items:center; justify-content:center; color:var(--text-3); width:28px; height:28px; border-radius:6px; background:var(--surface-2); border:1px solid var(--border)">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="5" r="1.5"></circle><circle cx="9" cy="12" r="1.5"></circle><circle cx="9" cy="19" r="1.5"></circle><circle cx="15" cy="5" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="15" cy="19" r="1.5"></circle></svg>
                 </div>
                 <span class="widget-order-badge" style="font-size:11px; font-weight:700; background:rgba(99,102,241,0.12); color:#6366f1; padding:2px 8px; border-radius:6px">#<span class="order-num"><?= $idx + 1 ?></span></span>
                 <div style="display:flex; gap:3px">
-                  <button type="button" class="btn-order-move btn-order-up" title="Subir posición" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▲</button>
-                  <button type="button" class="btn-order-move btn-order-down" title="Bajar posición" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▼</button>
+                  <button type="button" class="btn-order-move btn-order-up" title="<?= __('sidebar_move_up', 'Subir posición') ?>" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▲</button>
+                  <button type="button" class="btn-order-move btn-order-down" title="<?= __('sidebar_move_down', 'Bajar posición') ?>" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▼</button>
                 </div>
               </div>
               <label class="toggle">
                 <input type="checkbox" name="show_support" value="1" <?= !empty($cfg['show_support']) ? 'checked' : '' ?>>
                 <span class="toggle-track"></span>
-                <span class="toggle-label" style="font-weight:600">Apoyo y Comunidad</span>
+                <span class="toggle-label" style="font-weight:600"><?= __('sidebar_widget_support', 'Apoyo y Comunidad') ?></span>
               </label>
             </div>
-            <p class="help" style="margin:0 0 12px 0; font-size:12px">Muestra enlaces a plataformas de mecenazgo (Patreon, Buy Me a Coffee) y redes sociales del show.</p>
+            <p class="help" style="margin:0 0 12px 0; font-size:12px"><?= __('sidebar_support_desc', 'Muestra enlaces a plataformas de mecenazgo (Patreon, Buy Me a Coffee) y redes sociales del show.') ?></p>
             <div class="field" style="max-width:320px">
-              <label class="label" style="font-size:11.5px">Título del bloque</label>
+              <label class="label" style="font-size:11.5px"><?= __('sidebar_block_title', 'Título del bloque') ?></label>
               <input class="input" name="title_support" value="<?= e($cfg['title_support']) ?>" placeholder="Apoyo y Comunidad">
             </div>
           </div>
@@ -283,24 +283,24 @@ $widgetsOrder = $cfg['widgets_order'] ?? ['platforms', 'navigation', 'persons', 
           <div class="widget-drag-card" data-widget-key="fediverse_likes" draggable="true" style="border:1px solid var(--border); border-radius:12px; padding:16px 18px; background:var(--surface); transition:box-shadow 0.15s ease, border-color 0.15s ease">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
               <div style="display:flex; align-items:center; gap:10px">
-                <div class="drag-handle" title="Arrastra para reordenar" style="cursor:grab; display:flex; align-items:center; justify-content:center; color:var(--text-3); width:28px; height:28px; border-radius:6px; background:var(--surface-2); border:1px solid var(--border)">
+                <div class="drag-handle" title="<?= __('sidebar_drag_to_reorder', 'Arrastra para reordenar') ?>" style="cursor:grab; display:flex; align-items:center; justify-content:center; color:var(--text-3); width:28px; height:28px; border-radius:6px; background:var(--surface-2); border:1px solid var(--border)">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="5" r="1.5"></circle><circle cx="9" cy="12" r="1.5"></circle><circle cx="9" cy="19" r="1.5"></circle><circle cx="15" cy="5" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="15" cy="19" r="1.5"></circle></svg>
                 </div>
                 <span class="widget-order-badge" style="font-size:11px; font-weight:700; background:rgba(99,102,241,0.12); color:#6366f1; padding:2px 8px; border-radius:6px">#<span class="order-num"><?= $idx + 1 ?></span></span>
                 <div style="display:flex; gap:3px">
-                  <button type="button" class="btn-order-move btn-order-up" title="Subir posición" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▲</button>
-                  <button type="button" class="btn-order-move btn-order-down" title="Bajar posición" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▼</button>
+                  <button type="button" class="btn-order-move btn-order-up" title="<?= __('sidebar_move_up', 'Subir posición') ?>" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▲</button>
+                  <button type="button" class="btn-order-move btn-order-down" title="<?= __('sidebar_move_down', 'Bajar posición') ?>" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▼</button>
                 </div>
               </div>
               <label class="toggle">
                 <input type="checkbox" name="show_fediverse_likes" value="1" <?= !empty($cfg['show_fediverse_likes']) ? 'checked' : '' ?>>
                 <span class="toggle-track"></span>
-                <span class="toggle-label" style="font-weight:600">Likes del Fediverso (ActivityPub)</span>
+                <span class="toggle-label" style="font-weight:600"><?= __('sidebar_widget_fedi_likes', 'Likes del Fediverso (ActivityPub)') ?></span>
               </label>
             </div>
-            <p class="help" style="margin:0 0 12px 0; font-size:12px">Muestra los avatares y la cantidad de likes recibidos desde Mastodon y otras instancias federadas para este episodio.</p>
+            <p class="help" style="margin:0 0 12px 0; font-size:12px"><?= __('sidebar_fedi_likes_desc', 'Muestra los avatares y la cantidad de likes recibidos desde Mastodon y otras instancias federadas para este episodio.') ?></p>
             <div class="field" style="max-width:320px">
-              <label class="label" style="font-size:11.5px">Título del bloque</label>
+              <label class="label" style="font-size:11.5px"><?= __('sidebar_block_title', 'Título del bloque') ?></label>
               <input class="input" name="title_fediverse_likes" value="<?= e($cfg['title_fediverse_likes'] ?? 'Me gusta en el Fediverso') ?>" placeholder="Me gusta en el Fediverso">
             </div>
           </div>
@@ -310,24 +310,24 @@ $widgetsOrder = $cfg['widgets_order'] ?? ['platforms', 'navigation', 'persons', 
           <div class="widget-drag-card" data-widget-key="embed" draggable="true" style="border:1px solid var(--border); border-radius:12px; padding:16px 18px; background:var(--surface); transition:box-shadow 0.15s ease, border-color 0.15s ease">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
               <div style="display:flex; align-items:center; gap:10px">
-                <div class="drag-handle" title="Arrastra para reordenar" style="cursor:grab; display:flex; align-items:center; justify-content:center; color:var(--text-3); width:28px; height:28px; border-radius:6px; background:var(--surface-2); border:1px solid var(--border)">
+                <div class="drag-handle" title="<?= __('sidebar_drag_to_reorder', 'Arrastra para reordenar') ?>" style="cursor:grab; display:flex; align-items:center; justify-content:center; color:var(--text-3); width:28px; height:28px; border-radius:6px; background:var(--surface-2); border:1px solid var(--border)">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="5" r="1.5"></circle><circle cx="9" cy="12" r="1.5"></circle><circle cx="9" cy="19" r="1.5"></circle><circle cx="15" cy="5" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="15" cy="19" r="1.5"></circle></svg>
                 </div>
                 <span class="widget-order-badge" style="font-size:11px; font-weight:700; background:rgba(99,102,241,0.12); color:#6366f1; padding:2px 8px; border-radius:6px">#<span class="order-num"><?= $idx + 1 ?></span></span>
                 <div style="display:flex; gap:3px">
-                  <button type="button" class="btn-order-move btn-order-up" title="Subir posición" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▲</button>
-                  <button type="button" class="btn-order-move btn-order-down" title="Bajar posición" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▼</button>
+                  <button type="button" class="btn-order-move btn-order-up" title="<?= __('sidebar_move_up', 'Subir posición') ?>" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▲</button>
+                  <button type="button" class="btn-order-move btn-order-down" title="<?= __('sidebar_move_down', 'Bajar posición') ?>" style="background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:9px; cursor:pointer; color:var(--text-2)">▼</button>
                 </div>
               </div>
               <label class="toggle">
                 <input type="checkbox" name="show_embed" value="1" <?= !empty($cfg['show_embed']) ? 'checked' : '' ?>>
                 <span class="toggle-track"></span>
-                <span class="toggle-label" style="font-weight:600">Incrustar reproductor (Widget de Compartir)</span>
+                <span class="toggle-label" style="font-weight:600"><?= __('sidebar_widget_embed', 'Incrustar reproductor (Widget de Compartir)') ?></span>
               </label>
             </div>
-            <p class="help" style="margin:0 0 12px 0; font-size:12px">Muestra una caja con el código HTML <code>&lt;iframe&gt;</code> para copiar e incrustar el reproductor en blogs o sitios web externos.</p>
+            <p class="help" style="margin:0 0 12px 0; font-size:12px"><?= __('sidebar_embed_desc', 'Muestra una caja con el código HTML <code>&lt;iframe&gt;</code> para copiar e incrustar el reproductor en blogs o sitios web externos.') ?></p>
             <div class="field" style="max-width:320px">
-              <label class="label" style="font-size:11.5px">Título del bloque</label>
+              <label class="label" style="font-size:11.5px"><?= __('sidebar_block_title', 'Título del bloque') ?></label>
               <input class="input" name="title_embed" value="<?= e($cfg['title_embed'] ?? 'Incrustar reproductor') ?>" placeholder="Incrustar reproductor">
             </div>
           </div>
@@ -337,8 +337,8 @@ $widgetsOrder = $cfg['widgets_order'] ?? ['platforms', 'navigation', 'persons', 
 
     <!-- Botones de Acción -->
     <div style="display:flex; gap:12px; align-items:center; padding-top:8px; border-top:1px solid var(--border)">
-      <button class="btn btn-primary" type="submit">Guardar Configuración</button>
-      <a class="btn" href="<?= admin_url('plugins') ?>">Volver a Plugins</a>
+      <button class="btn btn-primary" type="submit"><?= __('btn_save_settings', 'Guardar Configuración') ?></button>
+      <a class="btn" href="<?= admin_url('plugins') ?>"><?= __('btn_back_plugins', 'Volver a Plugins') ?></a>
     </div>
   </form>
 </div>

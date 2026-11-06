@@ -45,6 +45,38 @@ function kp_get_available_plugins(): array {
     return $plugins;
 }
 
+/**
+ * Devuelve el título del plugin traducido al idioma activo.
+ */
+function kp_plugin_title(array $plugin): string {
+    $id = $plugin['id'] ?? '';
+    $key = 'plugin_' . $id . '_name';
+    $name = __($key, '');
+    if ($name !== '' && $name !== $key) {
+        return $name;
+    }
+    if (kp_detect_lang() === 'en' && !empty($plugin['name_en'])) {
+        return $plugin['name_en'];
+    }
+    return $plugin['name'] ?? $id;
+}
+
+/**
+ * Devuelve la descripción del plugin traducida al idioma activo.
+ */
+function kp_plugin_desc(array $plugin): string {
+    $id = $plugin['id'] ?? '';
+    $key = 'plugin_' . $id . '_desc';
+    $desc = __($key, '');
+    if ($desc !== '' && $desc !== $key) {
+        return $desc;
+    }
+    if (kp_detect_lang() === 'en' && !empty($plugin['description_en'])) {
+        return $plugin['description_en'];
+    }
+    return $plugin['description'] ?? '';
+}
+
 // ── Procesamiento de POST ───────────────────────────────────────────────────
 
 // Activar o desactivar plugins
@@ -61,10 +93,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         if (!in_array($plugin_id, $active)) {
             $active[] = $plugin_id;
         }
-        $msg = 'Plugin activado exitosamente';
+        $msg = __('plug_msg_activated', 'Plugin activado exitosamente');
     } else {
         $active = array_values(array_diff($active, [$plugin_id]));
-        $msg = 'Plugin desactivado exitosamente';
+        $msg = __('plug_msg_deactivated', 'Plugin desactivado exitosamente');
     }
 
     kp_update_setting('active_plugins', json_encode($active));
@@ -82,25 +114,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'upload') {
     // Restringir a rol owner
     if (($current_user['role'] ?? '') !== 'owner') {
-        setcookie('kp_flash', 'Error: Solo el propietario de la instancia puede instalar plugins.', time() + 30, '/');
+        setcookie('kp_flash', __('plug_err_owner_only', 'Error: Solo el propietario de la instancia puede instalar plugins.'), time() + 30, '/');
         header('Location: ' . admin_url('plugins'));
         exit;
     }
 
     if (empty($_FILES['zip']) || $_FILES['zip']['error'] !== UPLOAD_ERR_OK) {
-        setcookie('kp_flash', 'Error al subir el archivo. Selecciona un archivo ZIP válido.', time() + 30, '/');
+        setcookie('kp_flash', __('plug_err_upload_zip', 'Error al subir el archivo. Selecciona un archivo ZIP válido.'), time() + 30, '/');
         header('Location: ' . admin_url('plugins'));
         exit;
     }
 
     if (!is_writable($pluginsDir)) {
-        setcookie('kp_flash', 'Error de escritura en el servidor. Verifica los permisos de la carpeta plugins/.', time() + 30, '/');
+        setcookie('kp_flash', __('plug_err_perm_dir', 'Error de escritura en el servidor. Verifica los permisos de la carpeta plugins/.'), time() + 30, '/');
         header('Location: ' . admin_url('plugins'));
         exit;
     }
 
     if (!class_exists('ZipArchive')) {
-        setcookie('kp_flash', 'Error: La extensión PHP ZipArchive no está habilitada en tu servidor.', time() + 30, '/');
+        setcookie('kp_flash', __('plug_err_zip_ext', 'Error: La extensión PHP ZipArchive no está habilitada en tu servidor.'), time() + 30, '/');
         header('Location: ' . admin_url('plugins'));
         exit;
     }
@@ -126,14 +158,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
         if ($invalid_path) {
             $zip->close();
-            setcookie('kp_flash', 'Error de seguridad: El archivo ZIP contiene rutas relativas no válidas.', time() + 30, '/');
+            setcookie('kp_flash', __('plug_err_traversal', 'Error de seguridad: El archivo ZIP contiene rutas relativas no válidas.'), time() + 30, '/');
             header('Location: ' . admin_url('plugins'));
             exit;
         }
 
         if (!$has_json) {
             $zip->close();
-            setcookie('kp_flash', 'Error: El ZIP no contiene un archivo metadata plugin.json obligatorio.', time() + 30, '/');
+            setcookie('kp_flash', __('plug_err_no_json', 'Error: El ZIP no contiene un archivo metadata plugin.json obligatorio.'), time() + 30, '/');
             header('Location: ' . admin_url('plugins'));
             exit;
         }
@@ -142,11 +174,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $zip->extractTo($pluginsDir);
         $zip->close();
 
-        setcookie('kp_flash', 'Plugin instalado con éxito', time() + 30, '/');
+        setcookie('kp_flash', __('plug_msg_installed', 'Plugin instalado con éxito'), time() + 30, '/');
         header('Location: ' . admin_url('plugins'));
         exit;
     } else {
-        setcookie('kp_flash', 'Error al procesar el archivo ZIP.', time() + 30, '/');
+        setcookie('kp_flash', __('plug_err_zip_process', 'Error al procesar el archivo ZIP.'), time() + 30, '/');
         header('Location: ' . admin_url('plugins'));
         exit;
     }
@@ -176,7 +208,7 @@ if ($pluginId === 'brisacms') {
 // Enrutador de opciones para el plugin
 if ($action === 'settings' && $pluginId !== '') {
     if (!isset($available_plugins[$pluginId])) {
-        setcookie('kp_flash', 'Plugin no encontrado.', time() + 30, '/');
+        setcookie('kp_flash', __('plug_err_not_found', 'Plugin no encontrado.'), time() + 30, '/');
         header('Location: ' . admin_url('plugins'));
         exit;
     }
@@ -195,7 +227,7 @@ if ($action === 'settings' && $pluginId !== '') {
         require $optionsFile;
         return;
     } else {
-        setcookie('kp_flash', 'Este plugin no tiene opciones de configuración.', time() + 30, '/');
+        setcookie('kp_flash', __('plug_err_no_options', 'Este plugin no tiene opciones de configuración.'), time() + 30, '/');
         header('Location: ' . admin_url('plugins'));
         exit;
     }
@@ -262,13 +294,13 @@ if ($action === 'settings' && $pluginId !== '') {
               </div>
               <div style="flex:1; min-width:0">
                 <div style="display:flex; align-items:center; gap:8px">
-                  <h3 style="margin:0; font-size:15px; font-weight:600"><?= e($plugin['name']) ?></h3>
+                  <h3 style="margin:0; font-size:15px; font-weight:600"><?= e(kp_plugin_title($plugin)) ?></h3>
                   <span class="tag <?= $is_active ? 'published' : 'draft' ?>" style="font-size:10.5px">
                     <?= $is_active ? __('plug_active', 'Activo') : __('plug_inactive', 'Inactivo') ?>
                   </span>
                 </div>
                 <p style="margin:6px 0; font-size:13px; color:var(--text-2); line-height:1.4">
-                  <?= e($plugin['description'] ?? __('plug_no_desc', 'Sin descripción.')) ?>
+                  <?= e(kp_plugin_desc($plugin) ?: __('plug_no_desc', 'Sin descripción.')) ?>
                 </p>
                 <div style="display:flex; gap:12px; font-size:11.5px; color:var(--text-3)">
                   <span><?= __('plug_version', 'Versión:') ?> <strong><?= e($plugin['version'] ?? '1.0') ?></strong></span>

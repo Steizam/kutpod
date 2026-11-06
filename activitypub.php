@@ -14,7 +14,7 @@
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/helpers.php';
 
-if (!kp_plugin_is_active('fediverse')) {
+if (!kp_plugin_is_active('fediverse') && ((isset($_SERVER['SCRIPT_FILENAME']) && realpath(__FILE__) === realpath($_SERVER['SCRIPT_FILENAME'])) || isset($_GET['ap']))) {
     http_response_code(404);
     exit('El Fediverso está desactivado.');
 }

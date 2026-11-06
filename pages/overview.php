@@ -189,13 +189,13 @@ try {
     foreach ([0.25, 0.5, 0.75] as $g) echo '<line x1="0" x2="'.$W.'" y1="'.($H*$g).'" y2="'.($H*$g).'" stroke="var(--border)" stroke-dasharray="2 4"/>';
     
     if ($all_zero && !$has_yt_data) {
-      echo '<text x="'.($W/2).'" y="'.($H/2).'" text-anchor="middle" fill="var(--text-3)" font-size="13" font-family="Inter,system-ui">Esperando datos…</text>';
+      echo '<text x="'.($W/2).'" y="'.($H/2).'" text-anchor="middle" fill="var(--text-3)" font-size="13" font-family="Inter,system-ui">'.e(__('chart_waiting_data', 'Esperando datos…')).'</text>';
     } else {
       foreach ($all_series as $s) {
         $pts = [];
         $circles = [];
         $is_yt = !empty($s['p']['is_youtube']);
-        $unit_str = $is_yt ? 'vistas' : 'descargas';
+        $unit_str = $is_yt ? __('analytics_views', 'vistas') : __('analytics_downloads_label', 'descargas');
         $prefix_str = $is_yt ? '▶️ ' : '';
         foreach ($s['pts'] as $k => $pt) {
           $x = ($k / max(1, $period - 1)) * $W;
@@ -458,6 +458,14 @@ try {
 </div>
 
 <script>
+const OV_I18N = {
+  showingRange: <?= json_encode(__('pager_showing_range', 'Mostrando {from}–{to} de {total}')) ?>,
+  viewAll: <?= json_encode(__('pager_view_all', 'Ver todos ({total})')) ?>,
+  prevPage: <?= json_encode(__('pager_prev_page', 'Página anterior')) ?>,
+  nextPage: <?= json_encode(__('pager_next_page', 'Página siguiente')) ?>,
+  showingAll: <?= json_encode(__('pager_showing_all', 'Mostrando todos ({total})')) ?>,
+  viewTop: <?= json_encode(__('pager_view_top', 'Ver top {count}')) ?>
+};
 (function initOverviewInteractions() {
   // 1. Tooltip universal para puntos de gráfico y rebanadas de donut
   let tooltip = document.querySelector('.kp-universal-tooltip');
@@ -557,12 +565,12 @@ try {
     const footer = document.createElement('div');
     footer.className = 'kp-paginated-footer';
     footer.innerHTML = `
-      <span class="kp-pager-info">Mostrando 1–${pageSize} de ${total}</span>
+      <span class="kp-pager-info">${OV_I18N.showingRange.replace('{from}', '1').replace('{to}', pageSize).replace('{total}', total)}</span>
       <div class="kp-pager-controls">
-        <button type="button" class="kp-pager-toggle-btn">Ver todos (${total})</button>
-        <button type="button" class="kp-pager-btn kp-pager-prev" title="Página anterior" disabled>‹</button>
+        <button type="button" class="kp-pager-toggle-btn">${OV_I18N.viewAll.replace('{total}', total)}</button>
+        <button type="button" class="kp-pager-btn kp-pager-prev" title="${OV_I18N.prevPage}" disabled>‹</button>
         <span class="kp-pager-pages" style="font-size:11.5px;color:var(--text-2);padding:0 4px">1 / ${totalPages}</span>
-        <button type="button" class="kp-pager-btn kp-pager-next" title="Página siguiente">›</button>
+        <button type="button" class="kp-pager-btn kp-pager-next" title="${OV_I18N.nextPage}">›</button>
       </div>
     `;
     card.appendChild(footer);
@@ -578,8 +586,8 @@ try {
       if (showAll) {
         if (parentGrid) parentGrid.classList.add('is-expanded');
         items.forEach(el => el.style.display = '');
-        infoEl.textContent = `Mostrando todos (${total})`;
-        toggleBtn.textContent = 'Ver top ' + pageSize;
+        infoEl.textContent = OV_I18N.showingAll.replace('{total}', total);
+        toggleBtn.textContent = OV_I18N.viewTop.replace('{count}', pageSize);
         prevBtn.style.display = 'none';
         nextBtn.style.display = 'none';
         pagesSpan.style.display = 'none';
@@ -588,7 +596,7 @@ try {
         prevBtn.style.display = '';
         nextBtn.style.display = '';
         pagesSpan.style.display = '';
-        toggleBtn.textContent = `Ver todos (${total})`;
+        toggleBtn.textContent = OV_I18N.viewAll.replace('{total}', total);
 
         const start = (currentPage - 1) * pageSize;
         const end = Math.min(start + pageSize, total);
@@ -597,7 +605,7 @@ try {
           el.style.display = (idx >= start && idx < end) ? '' : 'none';
         });
 
-        infoEl.textContent = `Mostrando ${start + 1}–${end} de ${total}`;
+        infoEl.textContent = OV_I18N.showingRange.replace('{from}', start + 1).replace('{to}', end).replace('{total}', total);
         pagesSpan.textContent = `${currentPage} / ${totalPages}`;
         prevBtn.disabled = currentPage <= 1;
         nextBtn.disabled = currentPage >= totalPages;

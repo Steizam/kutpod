@@ -233,7 +233,7 @@ window.KP_PAGES = (function () {
   }
 
   function del() {
-    if (!confirm('¿Estás seguro de que quieres eliminar esta página de forma permanente?')) return;
+    if (!confirm(<?= json_encode(__('pages_confirm_delete', '¿Estás seguro de que quieres eliminar esta página de forma permanente?')) ?>)) return;
     document.getElementById('pg_action').value = 'delete';
     document.getElementById('pg_form').submit();
   }

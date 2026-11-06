@@ -250,18 +250,18 @@ $sections = kp_apply_filters('podcast_form_sections', $sections);
               <?= empty($p['cover']) ? icon('image',28) : '' ?>
             </label>
             <input id="cover" name="cover" type="file" accept="image/png,image/jpeg,image/gif,image/webp" hidden>
-            <div class="help" style="margin-top:8px;text-align:center">PNG/JPG · mín. 1400×1400</div>
-            <button id="cover-cancel" type="button" class="btn btn-ghost" style="margin-top:8px;font-size:12px;display:none;color:var(--red);width:100%;justify-content:center;"><?= icon('x',12) ?> Cancelar selección</button>
+            <div class="help" style="margin-top:8px;text-align:center"><?= __('pod_cover_min_size', 'PNG/JPG · mín. 1400×1400') ?></div>
+            <button id="cover-cancel" type="button" class="btn btn-ghost" style="margin-top:8px;font-size:12px;display:none;color:var(--red);width:100%;justify-content:center;"><?= icon('x',12) ?> <?= __('pod_cancel_selection', 'Cancelar selección') ?></button>
           </div>
           <div style="flex:1" class="col">
-            <div class="field"><label class="label">Título <span class="req">*</span></label><input class="input" name="title" id="title" required value="<?= e($p['title'] ?? '') ?>" placeholder="Mi nuevo podcast" oninput="updateSlugs(this.value)"></div>
+            <div class="field"><label class="label"><?= __('pod_title_label', 'Título') ?> <span class="req">*</span></label><input class="input" name="title" id="title" required value="<?= e($p['title'] ?? '') ?>" placeholder="<?= __('pod_title_placeholder', 'Mi nuevo podcast') ?>" oninput="updateSlugs(this.value)"></div>
             <div class="field" style="margin-top:14px">
               <label class="label">Slug · URL del feed</label>
               <div class="input-affix"><span><?= e(kp_setting('instance_domain', $_SERVER['HTTP_HOST'] ?? '')) ?>/@</span><input class="input" name="slug" id="slug" value="<?= e($p['id'] ?? '') ?>" pattern="[a-zA-Z0-9\-]+" style="font-family:ui-monospace,monospace" oninput="this.dataset.manual=1"></div>
-              <div class="help">Solo minúsculas, números y guiones.</div>
+              <div class="help"><?= __('pod_slug_help', 'Solo minúsculas, números y guiones.') ?></div>
             </div>
             <div class="field" style="margin-top:14px">
-              <label class="label">Color del Podcast</label>
+              <label class="label"><?= __('pod_color_label', 'Color del Podcast') ?></label>
               <style>
               .color-swatch input[type="radio"]:checked + svg { display: block !important; }
               </style>
@@ -273,13 +273,13 @@ $sections = kp_apply_filters('podcast_form_sections', $sections);
                   </label>
                 <?php endforeach; ?>
               </div>
-              <div class="help" style="margin-top:8px">Selecciona el color de acento principal. Si no eliges, se asignará uno aleatorio.</div>
+              <div class="help" style="margin-top:8px"><?= __('pod_color_help', 'Selecciona el color de acento principal. Si no eliges, se asignará uno aleatorio.') ?></div>
             </div>
-            <div class="field" style="margin-top:14px"><label class="label">Descripción <span class="req">*</span></label><textarea class="textarea" name="description" required rows="4" placeholder="Una conversación semanal sobre…"><?= e($p['description'] ?? '') ?></textarea></div>
-            <div class="field" style="margin-top:14px"><label class="label">Notas fijas</label><textarea class="textarea" name="fixed_notes" rows="4" placeholder="Texto que aparecerá siempre al final de cada episodio. Ej: enlaces de contacto, redes sociales, créditos…" style="font-size:13.5px"><?= e($p['fixed_notes'] ?? '') ?></textarea><div class="help" style="margin-top:4px">Este texto se añadirá automáticamente debajo de las notas de cada episodio. Soporta Markdown.</div>
+            <div class="field" style="margin-top:14px"><label class="label"><?= __('description', 'Descripción') ?> <span class="req">*</span></label><textarea class="textarea" name="description" required rows="4" placeholder="<?= __('pod_desc_placeholder', 'Una conversación semanal sobre…') ?>"><?= e($p['description'] ?? '') ?></textarea></div>
+            <div class="field" style="margin-top:14px"><label class="label"><?= __('pod_fixed_notes_label', 'Notas fijas') ?></label><textarea class="textarea" name="fixed_notes" rows="4" placeholder="<?= __('pod_fixed_notes_placeholder', 'Texto que aparecerá siempre al final de cada episodio. Ej: enlaces de contacto, redes sociales, créditos…') ?>" style="font-size:13.5px"><?= e($p['fixed_notes'] ?? '') ?></textarea><div class="help" style="margin-top:4px"><?= __('pod_fixed_notes_help', 'Este texto se añadirá automáticamente debajo de las notas de cada episodio. Soporta Markdown.') ?></div>
             <?php if ($mode === 'edit' && !empty($p['fixed_notes'])): ?>
-            <button type="submit" name="action" value="strip_fixed_notes" formnovalidate class="btn" style="margin-top:8px;font-size:12px" onclick="return confirm('Esto eliminará el texto de las notas fijas de las notas individuales de todos los episodios de este podcast. ¿Continuar?')"><?= icon('trash',12) ?> Limpiar de episodios existentes</button>
-            <div class="help" style="margin-top:4px">Si importaste episodios que ya incluyen este texto en sus notas, usa este botón para eliminarlo y evitar duplicados.</div>
+            <button type="submit" name="action" value="strip_fixed_notes" formnovalidate class="btn" style="margin-top:8px;font-size:12px" onclick="return confirm('<?= __('pod_clean_confirm', 'Esto eliminará el texto de las notas fijas de las notas individuales de todos los episodios de este podcast. ¿Continuar?') ?>')"><?= icon('trash',12) ?> <?= __('pod_clean_existing_notes', 'Limpiar de episodios existentes') ?></button>
+            <div class="help" style="margin-top:4px"><?= __('pod_clean_help', 'Si importaste episodios que ya incluyen este texto en sus notas, usa este botón para eliminarlo y evitar duplicados.') ?></div>
             <?php endif; ?>
             </div>
           </div>
@@ -327,37 +327,37 @@ $sections = kp_apply_filters('podcast_form_sections', $sections);
           </div>
         </div>
         <div class="field-row-3" style="margin-top:14px">
-          <div class="field"><label class="label">Tipo de podcast</label>
-            <select class="select" name="type"><option value="episodic" <?= ($p['type']??'episodic')==='episodic'?'selected':'' ?>>Episódico</option><option value="serial" <?= ($p['type']??'')==='serial'?'selected':'' ?>>Serial</option></select>
+          <div class="field"><label class="label"><?= __('pod_type_label', 'Tipo de podcast') ?></label>
+            <select class="select" name="type"><option value="episodic" <?= ($p['type']??'episodic')==='episodic'?'selected':'' ?>><?= __('pod_type_episodic', 'Episódico') ?></option><option value="serial" <?= ($p['type']??'')==='serial'?'selected':'' ?>><?= __('pod_type_serial', 'Serial') ?></option></select>
           </div>
-          <div class="field"><label class="label">Frecuencia de actualización</label>
+          <div class="field"><label class="label"><?= __('pod_freq_label', 'Frecuencia de actualización') ?></label>
             <?php $curr_freq = strtolower(trim($p['update_frequency'] ?? '')); ?>
             <select class="select" name="update_frequency">
-              <option value="" <?= ($curr_freq === '' || $curr_freq === 'auto') ? 'selected' : '' ?>>Automático (detectar ritmo)</option>
-              <option value="daily" <?= ($curr_freq === 'daily' || $curr_freq === 'diario') ? 'selected' : '' ?>>Diario</option>
-              <option value="weekly" <?= ($curr_freq === 'weekly' || $curr_freq === 'semanal') ? 'selected' : '' ?>>Semanal</option>
-              <option value="biweekly" <?= ($curr_freq === 'biweekly' || $curr_freq === 'quincenal') ? 'selected' : '' ?>>Quincenal</option>
-              <option value="monthly" <?= ($curr_freq === 'monthly' || $curr_freq === 'mensual') ? 'selected' : '' ?>>Mensual</option>
+              <option value="" <?= ($curr_freq === '' || $curr_freq === 'auto') ? 'selected' : '' ?>><?= __('pod_freq_auto', 'Automático (detectar ritmo)') ?></option>
+              <option value="daily" <?= ($curr_freq === 'daily' || $curr_freq === 'diario') ? 'selected' : '' ?>><?= __('pod_freq_daily', 'Diario') ?></option>
+              <option value="weekly" <?= ($curr_freq === 'weekly' || $curr_freq === 'semanal') ? 'selected' : '' ?>><?= __('pod_freq_weekly', 'Semanal') ?></option>
+              <option value="biweekly" <?= ($curr_freq === 'biweekly' || $curr_freq === 'quincenal') ? 'selected' : '' ?>><?= __('pod_freq_biweekly', 'Quincenal') ?></option>
+              <option value="monthly" <?= ($curr_freq === 'monthly' || $curr_freq === 'mensual') ? 'selected' : '' ?>><?= __('pod_freq_monthly', 'Mensual') ?></option>
             </select>
-            <div class="help">Etiqueta <code>podcast:updateFrequency</code>. Si no se escoge nada manual, se detecta el ritmo automáticamente.</div>
+            <div class="help"><?= __('pod_freq_help', 'Etiqueta <code>podcast:updateFrequency</code>. Si no se escoge nada manual, se detecta el ritmo automáticamente.') ?></div>
           </div>
-          <div class="field"><label class="label">Parental advisory</label>
-            <select class="select" name="parental"><option value="clean" <?= ($p['parental']??'clean')==='clean'?'selected':'' ?>>Apto para todos</option><option value="explicit" <?= ($p['parental']??'')==='explicit'?'selected':'' ?>>Explícito</option></select>
+          <div class="field"><label class="label"><?= __('pod_parental_label', 'Parental advisory') ?></label>
+            <select class="select" name="parental"><option value="clean" <?= ($p['parental']??'clean')==='clean'?'selected':'' ?>><?= __('pod_parental_clean', 'Apto para todos') ?></option><option value="explicit" <?= ($p['parental']??'')==='explicit'?'selected':'' ?>><?= __('pod_parental_explicit', 'Explícito') ?></option></select>
           </div>
         </div>
       </section>
 
       <!-- 1.3 Autor & Licencia -->
       <section id="s1-3" class="card card-lg">
-        <header class="section-head"><h2>Autor &amp; Licencia</h2></header>
+        <header class="section-head"><h2><?= __('pod_author_license_title', 'Autor & Licencia') ?></h2></header>
         <div class="field-row">
-          <div class="field"><label class="label">Nombre del autor</label><input class="input" id="podcast_author" name="author" value="<?= e($p['author'] ?? kp_setting('owner_name', '')) ?>"></div>
-          <div class="field"><label class="label">Publisher / editorial</label><input class="input" name="publisher" value="<?= e($p['publisher'] ?? '') ?>" placeholder="Independiente"></div>
+          <div class="field"><label class="label"><?= __('pod_author_name', 'Nombre del autor') ?></label><input class="input" id="podcast_author" name="author" value="<?= e($p['author'] ?? kp_setting('owner_name', '')) ?>"></div>
+          <div class="field"><label class="label"><?= __('pod_publisher', 'Publisher / editorial') ?></label><input class="input" name="publisher" value="<?= e($p['publisher'] ?? '') ?>" placeholder="Independiente"></div>
         </div>
         <div class="field-row" style="margin-top:14px">
-          <div class="field"><label class="label">Email del owner (iTunes)</label><input class="input" type="email" name="owner_email" value="<?= e($p['owner_email'] ?? '') ?>" placeholder="owner@ejemplo.com"></div>
+          <div class="field"><label class="label"><?= __('pod_owner_email', 'Email del owner (iTunes)') ?></label><input class="input" type="email" name="owner_email" value="<?= e($p['owner_email'] ?? '') ?>" placeholder="owner@ejemplo.com"></div>
           <div class="field">
-            <label class="label">Licencia (Podcasting 2.0)</label>
+            <label class="label"><?= __('pod_license_label', 'Licencia (Podcasting 2.0)') ?></label>
             <?php
               $curr_license = $p['license'] ?? '';
               if ($curr_license === '') {
@@ -382,25 +382,25 @@ $sections = kp_apply_filters('podcast_form_sections', $sections);
               }
             ?>
             <select class="select" id="podcast_license" name="license">
-              <option value="all-rights-reserved" <?= $curr_license === 'all-rights-reserved' ? 'selected' : '' ?>>Todos los derechos reservados (All Rights Reserved)</option>
-              <option value="cc-by-4.0" <?= $curr_license === 'cc-by-4.0' ? 'selected' : '' ?>>Creative Commons Atribución (CC BY 4.0)</option>
-              <option value="cc-by-sa-4.0" <?= $curr_license === 'cc-by-sa-4.0' ? 'selected' : '' ?>>Creative Commons Atribución - CompartirIgual (CC BY-SA 4.0)</option>
-              <option value="cc-by-nc-4.0" <?= $curr_license === 'cc-by-nc-4.0' ? 'selected' : '' ?>>Creative Commons Atribución - NoComercial (CC BY-NC 4.0)</option>
-              <option value="cc-by-nc-sa-4.0" <?= $curr_license === 'cc-by-nc-sa-4.0' ? 'selected' : '' ?>>Creative Commons Atribución - NoComercial - CompartirIgual (CC BY-NC-SA 4.0)</option>
-              <option value="cc-by-nd-4.0" <?= $curr_license === 'cc-by-nd-4.0' ? 'selected' : '' ?>>Creative Commons Atribución - SinDerivadas (CC BY-ND 4.0)</option>
-              <option value="cc-by-nc-nd-4.0" <?= $curr_license === 'cc-by-nc-nd-4.0' ? 'selected' : '' ?>>Creative Commons Atribución - NoComercial - SinDerivadas (CC BY-NC-ND 4.0)</option>
-              <option value="cc0-1.0" <?= $curr_license === 'cc0-1.0' ? 'selected' : '' ?>>Dominio Público (Creative Commons CC0 1.0)</option>
-              <option value="custom" <?= $curr_license === 'custom' ? 'selected' : '' ?>>Otra / Personalizada</option>
+              <option value="all-rights-reserved" <?= $curr_license === 'all-rights-reserved' ? 'selected' : '' ?>><?= __('pod_license_all_rights', 'Todos los derechos reservados (All Rights Reserved)') ?></option>
+              <option value="cc-by-4.0" <?= $curr_license === 'cc-by-4.0' ? 'selected' : '' ?>><?= __('pod_license_cc_by', 'Creative Commons Atribución (CC BY 4.0)') ?></option>
+              <option value="cc-by-sa-4.0" <?= $curr_license === 'cc-by-sa-4.0' ? 'selected' : '' ?>><?= __('pod_license_cc_by_sa', 'Creative Commons Atribución - CompartirIgual (CC BY-SA 4.0)') ?></option>
+              <option value="cc-by-nc-4.0" <?= $curr_license === 'cc-by-nc-4.0' ? 'selected' : '' ?>><?= __('pod_license_cc_by_nc', 'Creative Commons Atribución - NoComercial (CC BY-NC 4.0)') ?></option>
+              <option value="cc-by-nc-sa-4.0" <?= $curr_license === 'cc-by-nc-sa-4.0' ? 'selected' : '' ?>><?= __('pod_license_cc_by_nc_sa', 'Creative Commons Atribución - NoComercial - CompartirIgual (CC BY-NC-SA 4.0)') ?></option>
+              <option value="cc-by-nd-4.0" <?= $curr_license === 'cc-by-nd-4.0' ? 'selected' : '' ?>><?= __('pod_license_cc_by_nd', 'Creative Commons Atribución - SinDerivadas (CC BY-ND 4.0)') ?></option>
+              <option value="cc-by-nc-nd-4.0" <?= $curr_license === 'cc-by-nc-nd-4.0' ? 'selected' : '' ?>><?= __('pod_license_cc_by_nc_nd', 'Creative Commons Atribución - NoComercial - SinDerivadas (CC BY-NC-ND 4.0)') ?></option>
+              <option value="cc0-1.0" <?= $curr_license === 'cc0-1.0' ? 'selected' : '' ?>><?= __('pod_license_cc0', 'Dominio Público (Creative Commons CC0 1.0)') ?></option>
+              <option value="custom" <?= $curr_license === 'custom' ? 'selected' : '' ?>><?= __('pod_license_custom', 'Otra / Personalizada') ?></option>
             </select>
-            <div class="help">Define los derechos de uso en apps Podcasting 2.0. Al cambiar la opción se sugerirá el texto legal correspondiente.</div>
+            <div class="help"><?= __('pod_license_help', 'Define los derechos de uso en apps Podcasting 2.0. Al cambiar la opción se sugerirá el texto legal correspondiente.') ?></div>
           </div>
         </div>
         <div class="field" style="margin-top:14px">
-          <label class="label">Aviso de Copyright</label>
+          <label class="label"><?= __('pod_copyright_notice', 'Aviso de Copyright') ?></label>
           <input class="input" id="podcast_copyright" name="copyright" value="<?= e($p['copyright'] ?? '© ' . date('Y') . ' ' . ($p['author'] ?? kp_setting('owner_name', ''))) ?>">
-          <div class="help">Texto de copyright tradicional visible en Apple Podcasts, Spotify y agregadores (<code>&lt;copyright&gt;</code>).</div>
+          <div class="help"><?= __('pod_copyright_help', 'Texto de copyright tradicional visible en Apple Podcasts, Spotify y agregadores (<code>&lt;copyright&gt;</code>).') ?></div>
         </div>
-        <label class="toggle-row" style="margin-top:14px"><span><strong>Ocultar email</strong><br><span class="help">No incluir tu dirección de email en el feed RSS público</span></span><label class="toggle"><input type="checkbox" name="remove_email" <?= ($p['remove_email']??0)?'checked':'' ?>><span class="toggle-track"></span></label></label>
+        <label class="toggle-row" style="margin-top:14px"><span><strong><?= __('pod_hide_email', 'Ocultar email') ?></strong><br><span class="help"><?= __('pod_hide_email_help', 'No incluir tu dirección de email en el feed RSS público') ?></span></span><label class="toggle"><input type="checkbox" name="remove_email" <?= ($p['remove_email']??0)?'checked':'' ?>><span class="toggle-track"></span></label></label>
       </section>
 
       <?php kp_do_action('podcast_form_sections_render', $p); ?>
@@ -409,11 +409,11 @@ $sections = kp_apply_filters('podcast_form_sections', $sections);
 
       <!-- 1.9 Equipo -->
       <section id="s1-9" class="card card-lg">
-        <header class="section-head"><h2>Equipo y Permisos</h2></header>
+        <header class="section-head"><h2><?= __('pod_team_permissions', 'Equipo y Permisos') ?></h2></header>
         <?php if (empty($team_users)): ?>
-          <div class="help" style="margin-top:14px">No hay usuarios con el rol de Editor o Autor en la plataforma.</div>
+          <div class="help" style="margin-top:14px"><?= __('pod_no_team_users', 'No hay usuarios con el rol de Editor o Autor en la plataforma.') ?></div>
         <?php else: ?>
-          <div class="help" style="margin-top:14px;margin-bottom:18px">Selecciona los usuarios que tendrán acceso para editar episodios en este podcast. Los Administradores y Owners tienen acceso global automático.</div>
+          <div class="help" style="margin-top:14px;margin-bottom:18px"><?= __('pod_team_users_help', 'Selecciona los usuarios que tendrán acceso para editar episodios en este podcast. Los Administradores y Owners tienen acceso global automático.') ?></div>
           <div class="col" style="gap:12px">
             <?php foreach ($team_users as $u): 
               $is_checked = in_array($u['id'], $assigned_users);
@@ -440,10 +440,10 @@ $sections = kp_apply_filters('podcast_form_sections', $sections);
 
       <!-- 1.6 OP3 -->
       <section id="s1-6" class="card card-lg">
-        <header class="section-head"><h2>Estadísticas · OP3</h2></header>
-        <label class="toggle-row"><span><strong>Auditoría con OP3</strong><br><span class="help">Antepone el prefijo <code>op3.dev/e/</code> a las URLs de audio del feed para auditar descargas.</span></span><label class="toggle"><input type="checkbox" name="op3" <?= (is_array($p) ? ($p['op3'] ?? 1) : 1) ? 'checked' : '' ?>><span class="toggle-track"></span></label></label>
+        <header class="section-head"><h2><?= __('pod_op3_stats_title', 'Estadísticas · OP3') ?></h2></header>
+        <label class="toggle-row"><span><strong><?= __('pod_op3_audit', 'Auditoría con OP3') ?></strong><br><span class="help"><?= __('pod_op3_help', 'Antepone el prefijo <code>op3.dev/e/</code> a las URLs de audio del feed para auditar descargas.') ?></span></span><label class="toggle"><input type="checkbox" name="op3" <?= (is_array($p) ? ($p['op3'] ?? 1) : 1) ? 'checked' : '' ?>><span class="toggle-track"></span></label></label>
         <div class="field" style="margin-top:14px">
-          <label class="label">Prefijo OP3</label>
+          <label class="label"><?= __('pod_op3_prefix_label', 'Prefijo OP3') ?></label>
           <?php
             $p_slug = is_array($p) ? ($p['id'] ?? 'slug') : 'slug';
             $p_guid = is_array($p) ? ($p['guid'] ?? '') : '';
@@ -457,32 +457,32 @@ $sections = kp_apply_filters('podcast_form_sections', $sections);
         <div class="field" style="margin-top:14px">
           <label class="label">Podcast GUID</label>
           <input class="input" name="guid" value="<?= e(is_array($p) ? ($p['guid'] ?? '') : '') ?>" placeholder="Ej: edc1dcff-dda4-5036-abdc-12dd1f71db7e" style="font-family:ui-monospace,monospace">
-          <div class="help">Identificador único y permanente del podcast (podcast:guid). Si lo dejas vacío, se generará uno automáticamente.</div>
+          <div class="help"><?= __('pod_guid_help', 'Identificador único y permanente del podcast (podcast:guid). Si lo dejas vacío, se generará uno automáticamente.') ?></div>
         </div>
       </section>
 
       <!-- 1.7 Ubicación -->
       <section id="s1-7" class="card card-lg">
         <header class="section-head">
-          <h2>Ubicación</h2>
+          <h2><?= __('pod_location_title', 'Ubicación') ?></h2>
         </header>
         <div class="help" style="margin-bottom:14px">
-          Indica la ubicación geográfica de tu podcast según el estándar Podcasting 2.0. Puedes buscar cualquier ciudad, estado o país para rellenar las coordenadas y el ID de OpenStreetMap automáticamente.
+          <?= __('pod_location_help', 'Indica la ubicación geográfica de tu podcast según el estándar Podcasting 2.0. Puedes buscar cualquier ciudad, estado o país para rellenar las coordenadas y el ID de OpenStreetMap automáticamente.') ?>
         </div>
 
         <div class="field">
-          <label class="label">Lugar o dirección</label>
+          <label class="label"><?= __('pod_location_name_label', 'Lugar o dirección') ?></label>
           <div style="display:flex;gap:8px">
-            <input class="input" id="loc_name" name="location_name" value="<?= e($p['location_name'] ?? '') ?>" placeholder="Ej: Texas, Estados Unidos">
+            <input class="input" id="loc_name" name="location_name" value="<?= e($p['location_name'] ?? '') ?>" placeholder="<?= __('pod_location_name_placeholder', 'Ej: Texas, Estados Unidos') ?>">
             <button type="button" id="btn-search-loc" class="btn" style="white-space:nowrap;display:inline-flex;align-items:center;gap:6px">
-              <?= icon('search', 13) ?> Buscar coordenadas
+              <?= icon('search', 13) ?> <?= __('pod_btn_search_coords', 'Buscar coordenadas') ?>
             </button>
-            <button type="button" id="btn-clear-loc" class="btn" title="Limpiar ubicación" style="display:inline-flex;align-items:center">
+            <button type="button" id="btn-clear-loc" class="btn" title="<?= __('pod_btn_clear_loc', 'Limpiar ubicación') ?>" style="display:inline-flex;align-items:center">
               <?= icon('trash', 13) ?>
             </button>
           </div>
           <div id="loc-spinner" style="display:none;margin-top:8px;font-size:12px;color:var(--text-muted)">
-            Buscando en OpenStreetMap...
+            <?= __('pod_searching_osm', 'Buscando en OpenStreetMap...') ?>
           </div>
           <div id="loc-results" style="display:none;margin-top:8px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-card);max-height:220px;overflow-y:auto;box-shadow:var(--shadow-md)"></div>
         </div>
@@ -491,14 +491,14 @@ $sections = kp_apply_filters('podcast_form_sections', $sections);
           <div class="field">
             <label class="label">OpenStreetMap ID (OSM ID)</label>
             <input class="input tabular" id="loc_osm_id" name="osm_id" value="<?= e($p['osm_id'] ?? '') ?>" placeholder="Ej: R114690">
-            <div class="help">Prefijo: <code>R</code> (relación), <code>W</code> (vía), o <code>N</code> (nodo).</div>
+            <div class="help"><?= __('pod_osm_id_help', 'Prefijo: <code>R</code> (relación), <code>W</code> (vía), o <code>N</code> (nodo).') ?></div>
           </div>
           <div class="field">
-            <label class="label">Latitud</label>
+            <label class="label"><?= __('pod_latitude', 'Latitud') ?></label>
             <input class="input tabular" id="loc_lat" type="number" step="any" name="lat" value="<?= (isset($p['lat']) && $p['lat'] !== null && $p['lat'] !== '') ? e($p['lat']) : '' ?>" placeholder="Ej: 31.2638">
           </div>
           <div class="field">
-            <label class="label">Longitud</label>
+            <label class="label"><?= __('pod_longitude', 'Longitud') ?></label>
             <input class="input tabular" id="loc_lon" type="number" step="any" name="lon" value="<?= (isset($p['lon']) && $p['lon'] !== null && $p['lon'] !== '') ? e($p['lon']) : '' ?>" placeholder="Ej: -98.5456">
           </div>
         </div>
@@ -506,20 +506,20 @@ $sections = kp_apply_filters('podcast_form_sections', $sections);
 
       <!-- 1.8 Avanzados -->
       <section id="s1-8" class="card card-lg">
-        <header class="section-head"><h2>Parámetros avanzados</h2></header>
+        <header class="section-head"><h2><?= __('pod_advanced_title', 'Parámetros avanzados') ?></h2></header>
 
         <div class="field" style="margin-top:14px"><label class="label">Custom tags (RSS XML)</label><textarea class="textarea" name="custom_tags" rows="4" placeholder="&lt;itunes:keywords&gt;...&lt;/itunes:keywords&gt;" style="font-family:ui-monospace,monospace;font-size:12.5px"><?= e($p['custom_tags'] ?? '') ?></textarea></div>
         <div class="field" style="margin-top:14px"><label class="label">podcast:txt (ownership)</label><input class="input" name="ownership_txt" value="<?= e($p['ownership_txt'] ?? '') ?>" placeholder="<?= bin2hex(random_bytes(8)) ?>" style="font-family:ui-monospace,monospace"></div>
         <div class="field" style="margin-top:14px">
-          <label class="label">Redirección de feed (Slug antiguo)</label>
+          <label class="label"><?= __('pod_feed_redirect_label', 'Redirección de feed (Slug antiguo)') ?></label>
           <div class="input-affix"><span><?= e(kp_setting('instance_domain', $_SERVER['HTTP_HOST'] ?? '')) ?>/feed/</span><input class="input" name="feed_redirect_slug" id="feed_redirect_slug" value="<?= e($p['feed_redirect_slug'] ?? '') ?>" pattern="[a-zA-Z0-9\-]*" style="font-family:ui-monospace,monospace"></div>
-          <div class="help">Si se configura, cualquier petición a <code>/feed/slug_antiguo</code> o <code>/feed/slug_antiguo.xml</code> será redireccionada permanentemente a este podcast.</div>
+          <div class="help"><?= __('pod_feed_redirect_help', 'Si se configura, cualquier petición a <code>/feed/slug_antiguo</code> o <code>/feed/slug_antiguo.xml</code> será redireccionada permanentemente a este podcast.') ?></div>
         </div>
         <?php kp_do_action('podcast_form_advanced', $p); ?>
         <div class="col" style="gap:10px;margin-top:14px">
-          <label class="toggle-row"><span><strong>Locked</strong><br><span class="help">Prohibir importar este feed en otros hosts</span></span><label class="toggle"><input type="checkbox" name="locked" <?= ($p['locked']??0)?'checked':'' ?>><span class="toggle-track"></span></label></label>
-          <label class="toggle-row"><span><strong>Hidden</strong><br><span class="help">No listar en directorios públicos</span></span><label class="toggle"><input type="checkbox" name="hidden" <?= ($p['hidden']??0)?'checked':'' ?>><span class="toggle-track"></span></label></label>
-          <label class="toggle-row"><span><strong>Complete</strong><br><span class="help">Marcar feed como finalizado</span></span><label class="toggle"><input type="checkbox" name="complete" <?= ($p['complete']??0)?'checked':'' ?>><span class="toggle-track"></span></label></label>
+          <label class="toggle-row"><span><strong>Locked</strong><br><span class="help"><?= __('pod_locked_help', 'Prohibir importar este feed en otros hosts') ?></span></span><label class="toggle"><input type="checkbox" name="locked" <?= ($p['locked']??0)?'checked':'' ?>><span class="toggle-track"></span></label></label>
+          <label class="toggle-row"><span><strong>Hidden</strong><br><span class="help"><?= __('pod_hidden_help', 'No listar en directorios públicos') ?></span></span><label class="toggle"><input type="checkbox" name="hidden" <?= ($p['hidden']??0)?'checked':'' ?>><span class="toggle-track"></span></label></label>
+          <label class="toggle-row"><span><strong>Complete</strong><br><span class="help"><?= __('pod_complete_help', 'Marcar feed como finalizado') ?></span></span><label class="toggle"><input type="checkbox" name="complete" <?= ($p['complete']??0)?'checked':'' ?>><span class="toggle-track"></span></label></label>
         </div>
       </section>
 
@@ -547,6 +547,10 @@ $sections = kp_apply_filters('podcast_form_sections', $sections);
 </form>
 
 <script>
+const POD_I18N = {
+  noResultsFor: <?= json_encode(__('pod_no_results_for', 'No se encontraron resultados para "{query}". Puedes escribir las coordenadas a mano.')) ?>,
+  osmError: <?= json_encode(__('pod_error_openstreetmap', 'No se pudo consultar el servicio de OpenStreetMap. Por favor verifica tu conexión o ingresa los datos manualmente.')) ?>
+};
 function slugify(s) {
   return (s||'').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
     .replace(/[^a-z0-9]/g,'');
@@ -682,7 +686,7 @@ bannerCancel?.addEventListener('click', resetBanner);
       spinner.style.display = 'none';
 
       if (!data || data.length === 0) {
-        resultsDiv.innerHTML = '<div style="padding:10px 14px;color:var(--text-muted);font-size:13px">No se encontraron resultados para "' + escapeHtml(q) + '". Puedes escribir las coordenadas a mano.</div>';
+        resultsDiv.innerHTML = '<div style="padding:10px 14px;color:var(--text-muted);font-size:13px">' + POD_I18N.noResultsFor.replace('{query}', escapeHtml(q)) + '</div>';
         resultsDiv.style.display = 'block';
         return;
       }
@@ -718,7 +722,7 @@ bannerCancel?.addEventListener('click', resetBanner);
 
     } catch (err) {
       spinner.style.display = 'none';
-      resultsDiv.innerHTML = '<div style="padding:10px 14px;color:var(--red, #e53e3e);font-size:13px">No se pudo consultar el servicio de OpenStreetMap. Por favor verifica tu conexión o ingresa los datos manualmente.</div>';
+      resultsDiv.innerHTML = '<div style="padding:10px 14px;color:var(--red, #e53e3e);font-size:13px">' + POD_I18N.osmError + '</div>';
       resultsDiv.style.display = 'block';
     }
   }

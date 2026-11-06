@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         kp_update_setting('youtube_stats_playlists', json_encode($cleanPlaylists));
 
-        $msg = 'Configuración de YouTube guardada correctamente.';
+        $msg = __('yt_msg_saved', 'Configuración de YouTube guardada correctamente.');
     } elseif ($action === 'sync_now') {
         $podId = (int)($_POST['sync_podcast_id'] ?? 0);
         $sync_results = [];
@@ -47,9 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $err = null;
             $res = kp_youtube_sync_podcast($podId, $err);
             if ($err) {
-                $error = "Error al sincronizar: " . htmlspecialchars($err);
+                $error = __('yt_err_sync', 'Error al sincronizar: :err', ['err' => htmlspecialchars($err)]);
             } else {
-                $msg = "Sincronización completada: {$res['matched']} vídeos emparejados con éxito (" . number_format($res['total_views']) . " reproducciones registradas).";
+                $msg = __('yt_msg_sync_done', 'Sincronización completada: :count vídeos emparejados con éxito (:views reproducciones registradas).', [
+                    'count' => $res['matched'],
+                    'views' => number_format($res['total_views'])
+                ]);
                 $sync_results = $res;
             }
         } else {
@@ -73,7 +76,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!empty($errors)) {
                 $error = implode('<br>', $errors);
             } else {
-                $msg = "Sincronización global completada: $totalMatched vídeos emparejados (" . number_format($totalViews) . " visualizaciones).";
+                $msg = __('yt_msg_sync_all_done', 'Sincronización global completada: :count vídeos emparejados (:views visualizaciones).', [
+                    'count' => $totalMatched,
+                    'views' => number_format($totalViews)
+                ]);
             }
         }
     }
@@ -94,16 +100,16 @@ $last_sync = (int)kp_setting('youtube_stats_last_sync', '0');
         <span style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:8px; background:rgba(239,68,68,0.15); color:#ef4444; font-size:18px">
           ▶️
         </span>
-        <h2 style="margin:0; font-size:1.35rem">Estadísticas de YouTube para Podcasts</h2>
+        <h2 style="margin:0; font-size:1.35rem"><?= __('yt_title', 'Estadísticas de YouTube para Podcasts') ?></h2>
       </div>
       <p class="help" style="margin:6px 0 0 0; font-size:0.88rem">
-        Sincroniza y suma las reproducciones, me gusta y comentarios de tus episodios publicados automáticamente en YouTube vía RSS.
+        <?= __('yt_sub', 'Sincroniza y suma las reproducciones, me gusta y comentarios de tus episodios publicados automáticamente en YouTube vía RSS.') ?>
       </p>
     </div>
 
     <?php if ($last_sync > 0): ?>
       <div style="font-size:12px; color:var(--text-3); text-align:right">
-        Última sincronización:<br>
+        <?= __('yt_last_sync', 'Última sincronización:') ?><br>
         <strong style="color:var(--text-1)"><?= date('d/m/Y H:i', $last_sync) ?></strong>
       </div>
     <?php endif; ?>
@@ -134,25 +140,25 @@ $last_sync = (int)kp_setting('youtube_stats_last_sync', '0');
   ?>
   <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin-bottom:24px">
     <div style="background:var(--surface2, rgba(255,255,255,0.03)); border:1px solid var(--border); border-radius:10px; padding:14px 16px">
-      <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-3)">Vistas en YouTube</div>
+      <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-3)"><?= __('yt_metric_views', 'Vistas en YouTube') ?></div>
       <div style="font-size:22px; font-weight:700; color:#ef4444; margin-top:4px">
         <?= number_format($globalStats['total_views'] ?? 0) ?>
       </div>
     </div>
     <div style="background:var(--surface2, rgba(255,255,255,0.03)); border:1px solid var(--border); border-radius:10px; padding:14px 16px">
-      <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-3)">Me gusta (Likes)</div>
+      <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-3)"><?= __('yt_metric_likes', 'Me gusta (Likes)') ?></div>
       <div style="font-size:22px; font-weight:700; color:var(--text-1); margin-top:4px">
         <?= number_format($globalStats['total_likes'] ?? 0) ?>
       </div>
     </div>
     <div style="background:var(--surface2, rgba(255,255,255,0.03)); border:1px solid var(--border); border-radius:10px; padding:14px 16px">
-      <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-3)">Comentarios</div>
+      <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-3)"><?= __('yt_metric_comments', 'Comentarios') ?></div>
       <div style="font-size:22px; font-weight:700; color:var(--text-1); margin-top:4px">
         <?= number_format($globalStats['total_comments'] ?? 0) ?>
       </div>
     </div>
     <div style="background:var(--surface2, rgba(255,255,255,0.03)); border:1px solid var(--border); border-radius:10px; padding:14px 16px">
-      <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-3)">Episodios Vinculados</div>
+      <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-3)"><?= __('yt_metric_episodes', 'Episodios Vinculados') ?></div>
       <div style="font-size:22px; font-weight:700; color:var(--accent); margin-top:4px">
         <?= number_format($globalStats['total_episodes'] ?? 0) ?>
       </div>
@@ -167,22 +173,22 @@ $last_sync = (int)kp_setting('youtube_stats_last_sync', '0');
     <div class="field-row">
       <div class="field">
         <label class="label" style="display:flex; justify-content:space-between; align-items:center">
-          <span>YouTube Data API v3 Key</span>
+          <span><?= __('yt_api_key_label', 'YouTube Data API v3 Key') ?></span>
           <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" style="font-size:12px; color:var(--accent); text-decoration:none">
-            Obtener clave en Google Cloud &rarr;
+            <?= __('yt_api_key_get', 'Obtener clave en Google Cloud →') ?>
           </a>
         </label>
         <input class="input" name="youtube_stats_api_key" value="<?= e($api_key) ?>" placeholder="AIzaSy..." style="font-family:ui-monospace,monospace" required>
         <div class="help" style="margin-top:4px">
-          API Key pública de Google Cloud con la biblioteca <strong>YouTube Data API v3</strong> habilitada (cuota gratuita de 10.000 unidades diarias).
+          <?= __('yt_api_key_help', 'API Key pública de Google Cloud con la biblioteca :lib habilitada (cuota gratuita de 10.000 unidades diarias).', ['lib' => '<strong>YouTube Data API v3</strong>']) ?>
         </div>
       </div>
     </div>
 
     <div style="margin-top:22px">
-      <label class="label" style="margin-bottom:8px; display:block">Playlists de YouTube por Podcast</label>
+      <label class="label" style="margin-bottom:8px; display:block"><?= __('yt_playlists_title', 'Playlists de YouTube por Podcast') ?></label>
       <div class="help" style="margin-bottom:12px">
-        Pega el <strong>ID de la Playlist</strong> (ej. <code>PL4n0g6c6a...</code>) o la <strong>URL completa</strong> de la lista de reproducción que YouTube Studio genera automáticamente para cada podcast.
+        <?= __('yt_playlists_help', 'Pega el <strong>ID de la Playlist</strong> (ej. <code>PL4n0g6c6a...</code>) o la <strong>URL completa</strong> de la lista de reproducción que YouTube Studio genera automáticamente para cada podcast.') ?>
       </div>
 
       <div style="display:flex; flex-direction:column; gap:10px">
@@ -193,7 +199,7 @@ $last_sync = (int)kp_setting('youtube_stats_last_sync', '0');
               🎙️ <?= e($pod['title']) ?>
             </div>
             <div style="flex:1">
-              <input class="input" name="playlists[<?= (int)$pod['id'] ?>]" value="<?= e($currentPl) ?>" placeholder="https://www.youtube.com/playlist?list=PL... o ID" style="font-size:12.5px; font-family:ui-monospace,monospace">
+              <input class="input" name="playlists[<?= (int)$pod['id'] ?>]" value="<?= e($currentPl) ?>" placeholder="<?= __('yt_playlists_ph', 'https://www.youtube.com/playlist?list=PL... o ID') ?>" style="font-size:12.5px; font-family:ui-monospace,monospace">
             </div>
           </div>
         <?php endforeach; ?>
@@ -204,39 +210,39 @@ $last_sync = (int)kp_setting('youtube_stats_last_sync', '0');
       <div style="display:flex; align-items:center; gap:8px">
         <input type="checkbox" id="yt_auto_sync" name="youtube_stats_auto_sync" value="1" <?= $auto_sync ? 'checked' : '' ?>>
         <label for="yt_auto_sync" style="font-size:13.5px; cursor:pointer">
-          Sincronizar automáticamente en segundo plano
+          <?= __('yt_auto_sync_label', 'Sincronizar automáticamente en segundo plano') ?>
         </label>
       </div>
 
       <div style="display:flex; align-items:center; gap:8px">
-        <label style="font-size:12.5px; color:var(--text-2)">Frecuencia:</label>
+        <label style="font-size:12.5px; color:var(--text-2)"><?= __('yt_frequency_label', 'Frecuencia:') ?></label>
         <select class="input" name="youtube_stats_interval_hours" style="width:auto; padding:4px 10px; font-size:12.5px">
-          <option value="3" <?= $interval_hours === 3 ? 'selected' : '' ?>>Cada 3 horas</option>
-          <option value="6" <?= $interval_hours === 6 ? 'selected' : '' ?>>Cada 6 horas (Recomendado)</option>
-          <option value="12" <?= $interval_hours === 12 ? 'selected' : '' ?>>Cada 12 horas</option>
-          <option value="24" <?= $interval_hours === 24 ? 'selected' : '' ?>>Una vez al día</option>
+          <option value="3" <?= $interval_hours === 3 ? 'selected' : '' ?>><?= __('yt_freq_3h', 'Cada 3 horas') ?></option>
+          <option value="6" <?= $interval_hours === 6 ? 'selected' : '' ?>><?= __('yt_freq_6h', 'Cada 6 horas (Recomendado)') ?></option>
+          <option value="12" <?= $interval_hours === 12 ? 'selected' : '' ?>><?= __('yt_freq_12h', 'Cada 12 horas') ?></option>
+          <option value="24" <?= $interval_hours === 24 ? 'selected' : '' ?>><?= __('yt_freq_24h', 'Una vez al día') ?></option>
         </select>
       </div>
     </div>
 
     <div style="margin-top:24px; display:flex; gap:12px; align-items:center">
-      <button class="btn btn-primary" type="submit">Guardar Configuración</button>
-      <a class="btn" href="<?= admin_url('plugins') ?>">Volver a Plugins</a>
+      <button class="btn btn-primary" type="submit"><?= __('btn_save_settings', 'Guardar Configuración') ?></button>
+      <a class="btn" href="<?= admin_url('plugins') ?>"><?= __('btn_back_plugins', 'Volver a Plugins') ?></a>
     </div>
   </form>
 
   <!-- Panel de Sincronización Manual Inmediata -->
   <div style="margin-top:30px; padding-top:24px; border-top:1px solid var(--border)">
-    <h3 style="margin:0 0 10px 0; font-size:1.05rem">Sincronización Manual Inmediata</h3>
+    <h3 style="margin:0 0 10px 0; font-size:1.05rem"><?= __('yt_manual_sync_title', 'Sincronización Manual Inmediata') ?></h3>
     <p class="help" style="margin:0 0 14px 0">
-      Fuerza una actualización ahora mismo para consultar YouTube y vincular los nuevos episodios emitidos.
+      <?= __('yt_manual_sync_help', 'Fuerza una actualización ahora mismo para consultar YouTube y vincular los nuevos episodios emitidos.') ?>
     </p>
 
     <form method="POST" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
       <?= kp_csrf_field() ?>
       <input type="hidden" name="action_type" value="sync_now">
       <select class="input" name="sync_podcast_id" style="max-width:280px">
-        <option value="0">Todos los podcasts configurados</option>
+        <option value="0"><?= __('yt_all_podcasts_option', 'Todos los podcasts configurados') ?></option>
         <?php foreach ($podcasts as $pod): ?>
           <?php if (!empty($playlists[(string)$pod['id']])): ?>
             <option value="<?= (int)$pod['id'] ?>"><?= e($pod['title']) ?></option>
@@ -244,7 +250,7 @@ $last_sync = (int)kp_setting('youtube_stats_last_sync', '0');
         <?php endforeach; ?>
       </select>
       <button class="btn" type="submit" style="background:#ef4444; color:#fff; border-color:#dc2626">
-        ▶️ Sincronizar con YouTube Ahora
+        ▶️ <?= __('yt_btn_sync_now', 'Sincronizar con YouTube Ahora') ?>
       </button>
     </form>
   </div>
@@ -252,16 +258,16 @@ $last_sync = (int)kp_setting('youtube_stats_last_sync', '0');
   <!-- Detalles de la última sincronización en vivo -->
   <?php if (!empty($sync_results['details'])): ?>
     <div style="margin-top:24px">
-      <h4 style="margin:0 0 12px 0; font-size:0.95rem">Detalle de episodios procesados:</h4>
+      <h4 style="margin:0 0 12px 0; font-size:0.95rem"><?= __('yt_processed_details_title', 'Detalle de episodios procesados:') ?></h4>
       <div style="overflow-x:auto; border:1px solid var(--border); border-radius:8px">
         <table style="width:100%; border-collapse:collapse; font-size:12.5px; text-align:left">
           <thead>
             <tr style="background:var(--surface2, rgba(255,255,255,0.03)); border-bottom:1px solid var(--border)">
-              <th style="padding:8px 12px">Vídeo en YouTube</th>
-              <th style="padding:8px 12px">Episodio KutPod</th>
-              <th style="padding:8px 12px; text-align:right">Vistas</th>
-              <th style="padding:8px 12px; text-align:right">Likes</th>
-              <th style="padding:8px 12px; text-align:center">Estado</th>
+              <th style="padding:8px 12px"><?= __('yt_th_video', 'Vídeo en YouTube') ?></th>
+              <th style="padding:8px 12px"><?= __('yt_th_episode', 'Episodio KutPod') ?></th>
+              <th style="padding:8px 12px; text-align:right"><?= __('yt_th_views', 'Vistas') ?></th>
+              <th style="padding:8px 12px; text-align:right"><?= __('yt_th_likes', 'Likes') ?></th>
+              <th style="padding:8px 12px; text-align:center"><?= __('yt_th_status', 'Estado') ?></th>
             </tr>
           </thead>
           <tbody>
@@ -273,7 +279,7 @@ $last_sync = (int)kp_setting('youtube_stats_last_sync', '0');
                   </a>
                 </td>
                 <td style="padding:8px 12px; color:var(--text-2)">
-                  <?= $det['episode_name'] ? '🎙️ ' . e($det['episode_name']) : '<em>No emparejado</em>' ?>
+                  <?= $det['episode_name'] ? '🎙️ ' . e($det['episode_name']) : '<em>' . __('yt_not_matched', 'No emparejado') . '</em>' ?>
                 </td>
                 <td style="padding:8px 12px; text-align:right; font-weight:700; color:#ef4444">
                   <?= number_format($det['views']) ?>
@@ -284,11 +290,11 @@ $last_sync = (int)kp_setting('youtube_stats_last_sync', '0');
                 <td style="padding:8px 12px; text-align:center">
                   <?php if ($det['matched']): ?>
                     <span style="display:inline-block; padding:2px 8px; border-radius:99px; background:rgba(16,185,129,0.15); color:#10b981; font-weight:600; font-size:11px">
-                      Vinculado
+                      <?= __('yt_status_matched', 'Vinculado') ?>
                     </span>
                   <?php else: ?>
                     <span style="display:inline-block; padding:2px 8px; border-radius:99px; background:rgba(239,68,68,0.15); color:#ef4444; font-weight:600; font-size:11px">
-                      Sin vincular
+                      <?= __('yt_status_unmatched', 'Sin vincular') ?>
                     </span>
                   <?php endif; ?>
                 </td>

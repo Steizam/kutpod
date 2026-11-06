@@ -37,24 +37,24 @@ try {
   <?= stat_card(__('upd_installed_version', 'Versión instalada'), 'v' . KUTPOD_VERSION, 'layers', ['sub' => __('upd_current_compilation', 'Compilación actual')]) ?>
   <?= stat_card(__('upd_channel', 'Canal'), $hasToken ? __('upd_channel_github', 'GitHub Directo') : __('upd_channel_cloud', 'KutStudio Cloud'), 'shield',
        $hasToken
-         ? ['sub' => 'Token de desarrollo activo', 'foot' => '<div style="margin-top:8px"><a href="/admin/preferences#update-token" style="color:var(--accent);font-size:12px">' . __('nav_preferences') . ' →</a></div>']
-         : ['sub' => 'Actualización transparente', 'foot' => '<div style="margin-top:8px;font-size:11px;color:var(--text-3)">Automático</div>']) ?>
+         ? ['sub' => __('upd_sub_token_active', 'Token de desarrollo activo'), 'foot' => '<div style="margin-top:8px"><a href="/admin/preferences#update-token" style="color:var(--accent);font-size:12px">' . __('nav_preferences') . ' →</a></div>']
+         : ['sub' => __('upd_sub_transparent', 'Actualización transparente'), 'foot' => '<div style="margin-top:8px;font-size:11px;color:var(--text-3)">' . __('upd_foot_auto', 'Automático') . '</div>']) ?>
   <?= stat_card(__('upd_rollback', 'Rollback'), $hasRollback ? 'v' . $rollbackVersion : __('upd_not_available', 'No disponible'), 'refreshCw',
-       ['sub' => $hasRollback ? 'Versión anterior guardada' : 'Se crea antes de cada update']) ?>
-  <?= stat_card(__('upd_total_applied', 'Actualizaciones'), (string)count($history), 'check', ['sub' => 'aplicadas en total']) ?>
+       ['sub' => $hasRollback ? __('upd_sub_saved_prev', 'Versión anterior guardada') : __('upd_sub_created_before', 'Se crea antes de cada update')]) ?>
+  <?= stat_card(__('upd_total_applied', 'Actualizaciones'), (string)count($history), 'check', ['sub' => __('upd_applied_total', 'aplicadas en total')]) ?>
 </div>
 
 <!-- Buscar actualización -->
 <div class="card card-lg" style="padding:28px;margin-top:24px" id="update-card">
   <div class="card-head" style="margin-bottom:20px">
     <div>
-      <div class="card-title"><?= __('upd_check_btn', 'Buscar actualización') ?></div>
+      <div class="card-title"><?= __('upd_check_title', 'Buscar actualización') ?></div>
       <div style="font-size:12.5px;color:var(--text-3);margin-top:4px">
-        Consulta el repositorio oficial para verificar si hay una nueva versión disponible.
+        <?= __('upd_check_desc', 'Consulta el repositorio oficial para verificar si hay una nueva versión disponible.') ?>
       </div>
     </div>
     <button class="btn btn-primary" id="btn-check" type="button" onclick="kpUpdateCheck()">
-      <?= icon('search',13) ?> <?= __('upd_check_btn', 'Buscar actualizaciones') ?>
+      <?= icon('search',13) ?> <span id="btn-check-text"><?= __('upd_check_btn', 'Buscar actualizaciones') ?></span>
     </button>
   </div>
 
@@ -70,16 +70,16 @@ try {
           <div style="font-size:12.5px;color:var(--text-3);margin-top:4px" id="update-date-label"></div>
         </div>
         <div class="row" style="gap:8px;flex-wrap:wrap">
-          <a id="update-gh-link" href="#" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:12px"><?= icon('arrowUp',13) ?> Ver en GitHub</a>
+          <a id="update-gh-link" href="#" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:12px"><?= icon('arrowUp',13) ?> <?= __('upd_view_gh', 'Ver en GitHub') ?></a>
           <button class="btn btn-primary" id="btn-apply" onclick="kpUpdateApply()">
-            <?= icon('download',13) ?> Actualizar ahora
+            <?= icon('download',13) ?> <?= __('upd_update_now', 'Actualizar ahora') ?>
           </button>
         </div>
       </div>
 
       <!-- Changelog -->
       <div id="update-changelog" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
-        <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-3);margin-bottom:8px">Notas de la versión</div>
+        <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-3);margin-bottom:8px"><?= __('upd_release_notes', 'Notas de la versión') ?></div>
         <div id="update-changelog-body" style="font-size:13.5px;line-height:1.7;color:var(--text-2);white-space:pre-wrap"></div>
       </div>
     </div>
@@ -240,6 +240,48 @@ try {
 <script>
 let _updateData = null;
 
+const UPD_I18N = {
+  searching: <?= json_encode(__('upd_btn_searching', 'Buscando...')) ?>,
+  checkBtn: <?= json_encode(__('upd_check_btn', 'Buscar actualizaciones')) ?>,
+  queryingGh: <?= json_encode(__('upd_querying_gh', 'Consultando GitHub...')) ?>,
+  updateNow: <?= json_encode(__('upd_update_now', 'Actualizar ahora')) ?>,
+  upToDate: <?= json_encode(__('upd_up_to_date', '✅ KutPod está actualizado — v')) ?>,
+  connError: <?= json_encode(__('upd_conn_error', '❌ Error de conexión: ')) ?>,
+  publishedOn: <?= json_encode(__('upd_published_on', 'Publicado el ')) ?>,
+  noReleaseNotes: <?= json_encode(__('upd_no_release_notes', 'Sin notas de la versión.')) ?>,
+  confirmApply: <?= json_encode(__('upd_confirm_apply', "¿Actualizar KutPod de v{from} a v{to}?\n\nSe creará un backup automáticamente antes de aplicar los cambios.")) ?>,
+  step1Label: <?= json_encode(__('upd_step1_label', 'Paso 1/2: Descargando actualización...')) ?>,
+  step1Sub: <?= json_encode(__('upd_step1_sub', 'Obteniendo v{version} desde GitHub')) ?>,
+  step2Label: <?= json_encode(__('upd_step2_label', 'Paso 2/2: Creando respaldo y aplicando...')) ?>,
+  step2Sub: <?= json_encode(__('upd_step2_sub', 'Respaldando y copiando ficheros nuevos')) ?>,
+  serverErrorPrefix: <?= json_encode(__('upd_server_err_prefix', 'El servidor devolvió un error (HTTP ')) ?>,
+  completedTitle: <?= json_encode(__('upd_completed_title', 'Actualización completada')) ?>,
+  completedBody: <?= json_encode(__('upd_completed_body', 'KutPod actualizado de <strong>v{from}</strong> a <strong>v{to}</strong>. {files} ficheros actualizados.')) ?>,
+  reloadPage: <?= json_encode(__('upd_reload_page', 'Recargar página')) ?>,
+  rollbackSelectAlert: <?= json_encode(__('upd_rb_select_alert', 'Por favor, selecciona una copia de seguridad para restaurar.')) ?>,
+  rollbackSelectedVersion: <?= json_encode(__('upd_rb_selected_version', 'la versión seleccionada')) ?>,
+  rollbackConfirm: <?= json_encode(__('upd_rb_confirm', "¿Revertir KutPod a {version}?\n\nSe restaurarán todos los ficheros del código. Tus datos (podcasts, episodios, estadísticas) no se verán afectados.")) ?>,
+  restoring: <?= json_encode(__('upd_rb_restoring', 'Restaurando...')) ?>,
+  rollbackSuccess: <?= json_encode(__('upd_rb_success', '✅ Rollback completado. Restaurada versión <strong>v{version}</strong>.')) ?>,
+  cleanPromptBoth: <?= json_encode(__('upd_clean_prompt_both', '¿Deseas eliminar las actualizaciones descargadas (.zip) Y también todas las copias de seguridad de versiones anteriores?')) ?>,
+  cleanPromptDlOnly: <?= json_encode(__('upd_clean_prompt_dl_only', '¿Deseas eliminar los paquetes de actualizaciones descargados (.zip) y archivos temporales?')) ?>,
+  cleaning: <?= json_encode(__('upd_cleaning', 'Borrando...')) ?>,
+  deletingFiles: <?= json_encode(__('upd_deleting_files', 'Eliminando archivos...')) ?>,
+  cleanCompleted: <?= json_encode(__('upd_clean_completed', 'Limpieza completada: {count} archivo(s) eliminados ({freed} liberados).')) ?>,
+  btnClean: <?= json_encode(__('upd_storage_btn_clean', 'Borrar actualizaciones descargadas')) ?>,
+  manualSelectZip: <?= json_encode(__('upd_manual_select_zip', 'Por favor selecciona un archivo .zip.')) ?>,
+  manualMustBeZip: <?= json_encode(__('upd_manual_must_be_zip', 'El archivo seleccionado debe ser un .zip.')) ?>,
+  manualConfirm: <?= json_encode(__('upd_manual_confirm', "¿Deseas aplicar la actualización manual desde \"{name}\"?\n\nSe creará un respaldo de seguridad previo de forma automática.")) ?>,
+  manualInstallingBtn: <?= json_encode(__('upd_manual_installing_btn', 'Instalando actualización...')) ?>,
+  manualUploading: <?= json_encode(__('upd_manual_uploading', 'Subiendo e instalando paquete...')) ?>,
+  manualUnpacking: <?= json_encode(__('upd_manual_unpacking', 'Desempaquetando archivos, respaldando versión actual y sobrescribiendo core...')) ?>,
+  manualSuccessTitle: <?= json_encode(__('upd_manual_success_title', '🎉 ¡KutPod actualizado con éxito!')) ?>,
+  manualSuccessBody: <?= json_encode(__('upd_manual_success_body', 'Actualizado de v{from} a <strong>v{to}</strong> ({files} ficheros copiados).')) ?>,
+  manualErrUpdate: <?= json_encode(__('upd_manual_err_update', '❌ Error al actualizar:')) ?>,
+  manualUploadBtn: <?= json_encode(__('upd_manual_upload_btn', 'Subir e instalar actualización')) ?>,
+  dateLocale: <?= json_encode(kp_detect_lang() === 'en' ? 'en-US' : 'es-ES') ?>
+};
+
 function kpUpdateCheck() {
   const btn = document.getElementById('btn-check');
   const status = document.getElementById('update-status');
@@ -249,15 +291,15 @@ function kpUpdateCheck() {
   const applyBtn = document.getElementById('btn-apply');
 
   btn.disabled = true;
-  btn.innerHTML = '<?= icon('search',13) ?> Buscando...';
+  btn.innerHTML = '<?= icon('search',13) ?> ' + UPD_I18N.searching;
   status.style.display = 'block';
-  status.innerHTML = '<div style="padding:14px;color:var(--text-3);font-size:13.5px">Consultando GitHub...</div>';
+  status.innerHTML = '<div style="padding:14px;color:var(--text-3);font-size:13.5px">' + UPD_I18N.queryingGh + '</div>';
   available.style.display = 'none';
   if (progress) progress.style.display = 'none';
   if (result) result.style.display = 'none';
   if (applyBtn) {
     applyBtn.disabled = false;
-    applyBtn.innerHTML = '<?= icon('download',13) ?> Actualizar ahora';
+    applyBtn.innerHTML = '<?= icon('download',13) ?> ' + UPD_I18N.updateNow;
   }
 
   fetch('/api/update?action=check')
@@ -268,7 +310,7 @@ function kpUpdateCheck() {
         return;
       }
       if (data.up_to_date) {
-        status.innerHTML = '<div style="padding:14px;color:#10b981;font-size:13.5px">✅ KutPod está actualizado — v' + data.version + '</div>';
+        status.innerHTML = '<div style="padding:14px;color:#10b981;font-size:13.5px">' + UPD_I18N.upToDate + data.version + '</div>';
         return;
       }
       if (data.available) {
@@ -277,28 +319,31 @@ function kpUpdateCheck() {
         available.style.display = 'block';
         if (applyBtn) {
           applyBtn.disabled = false;
-          applyBtn.innerHTML = '<?= icon('download',13) ?> Actualizar ahora';
+          applyBtn.innerHTML = '<?= icon('download',13) ?> ' + UPD_I18N.updateNow;
         }
         document.getElementById('update-version-label').textContent = data.name || ('v' + data.new_version);
         document.getElementById('update-date-label').textContent = data.published_at
-          ? 'Publicado el ' + new Date(data.published_at).toLocaleDateString('es', {year:'numeric', month:'long', day:'numeric'})
+          ? UPD_I18N.publishedOn + new Date(data.published_at).toLocaleDateString(UPD_I18N.dateLocale, {year:'numeric', month:'long', day:'numeric'})
           : '';
-        document.getElementById('update-changelog-body').textContent = data.changelog || 'Sin notas de la versión.';
+        document.getElementById('update-changelog-body').textContent = data.changelog || UPD_I18N.noReleaseNotes;
         document.getElementById('update-gh-link').href = data.html_url || '#';
       }
     })
     .catch(e => {
-      status.innerHTML = '<div style="padding:14px;color:#ef4444;font-size:13.5px">❌ Error de conexión: ' + e.message + '</div>';
+      status.innerHTML = '<div style="padding:14px;color:#ef4444;font-size:13.5px">' + UPD_I18N.connError + e.message + '</div>';
     })
     .finally(() => {
       btn.disabled = false;
-      btn.innerHTML = '<?= icon('search',13) ?> Buscar actualizaciones';
+      btn.innerHTML = '<?= icon('search',13) ?> ' + UPD_I18N.checkBtn;
     });
 }
 
 function kpUpdateApply() {
   if (!_updateData) return;
-  if (!confirm('¿Actualizar KutPod de v' + _updateData.current_version + ' a v' + _updateData.new_version + '?\n\nSe creará un backup automáticamente antes de aplicar los cambios.')) return;
+  const confirmMsg = UPD_I18N.confirmApply
+    .replace('{from}', _updateData.current_version)
+    .replace('{to}', _updateData.new_version);
+  if (!confirm(confirmMsg)) return;
 
   const btn = document.getElementById('btn-apply');
   const progress = document.getElementById('update-progress');
@@ -327,8 +372,8 @@ function kpUpdateApply() {
   progress.style.display = 'block';
 
   // Paso 1: Descargar
-  progressLabel.textContent = 'Paso 1/2: Descargando actualización...';
-  progressSub.textContent = 'Obteniendo v' + _updateData.new_version + ' desde GitHub';
+  progressLabel.textContent = UPD_I18N.step1Label;
+  progressSub.textContent = UPD_I18N.step1Sub.replace('{version}', _updateData.new_version);
   progressBar.style.width = '25%';
 
   const dlBody = new URLSearchParams({
@@ -342,15 +387,15 @@ function kpUpdateApply() {
       try {
         return JSON.parse(text);
       } catch(e) {
-        throw new Error('El servidor devolvió un error (HTTP ' + r.status + '):\n' + text.substring(0, 150) + '...');
+        throw new Error(UPD_I18N.serverErrorPrefix + r.status + '):\n' + text.substring(0, 150) + '...');
       }
     })
     .then(dlData => {
       if (dlData.error) return showError(dlData.error);
 
       // Paso 2: Aplicar
-      progressLabel.textContent = 'Paso 2/2: Creando respaldo y aplicando...';
-      progressSub.textContent = 'Respaldando y copiando ficheros nuevos';
+      progressLabel.textContent = UPD_I18N.step2Label;
+      progressSub.textContent = UPD_I18N.step2Sub;
       progressBar.style.width = '65%';
 
       const applyBody = new URLSearchParams({
@@ -365,7 +410,7 @@ function kpUpdateApply() {
           try {
             return JSON.parse(text);
           } catch(e) {
-            throw new Error('El servidor devolvió un error (HTTP ' + r.status + '):\n' + text.substring(0, 150) + '...');
+            throw new Error(UPD_I18N.serverErrorPrefix + r.status + '):\n' + text.substring(0, 150) + '...');
           }
         })
         .then(data => {
@@ -375,13 +420,15 @@ function kpUpdateApply() {
             progress.style.display = 'none';
             result.style.display = 'block';
             resultCard.style.background = '#10b98122';
-            document.getElementById('result-title').textContent = '✅ Actualización completada';
+            document.getElementById('result-title').textContent = '✅ ' + UPD_I18N.completedTitle;
             document.getElementById('result-body').innerHTML =
-              'KutPod actualizado de <strong>v' + data.from + '</strong> a <strong>v' + data.to + '</strong>. ' +
-              data.files_updated + ' ficheros actualizados.<br><br>' +
-              '<a href="/admin/update" class="btn btn-primary" style="margin-top:8px">Recargar página</a>';
+              UPD_I18N.completedBody
+                .replace('{from}', data.from)
+                .replace('{to}', data.to)
+                .replace('{files}', data.files_updated) + '<br><br>' +
+              '<a href="/admin/update" class="btn btn-primary" style="margin-top:8px">' + UPD_I18N.reloadPage + '</a>';
             btn.disabled = false;
-            btn.innerHTML = '<?= icon('download',13) ?> Actualizar ahora';
+            btn.innerHTML = '<?= icon('download',13) ?> ' + UPD_I18N.updateNow;
             _updateData = null;
           }
         });
@@ -393,20 +440,20 @@ function kpUpdateRollback() {
   const select = document.getElementById('rollback-select');
   const backupFile = select ? select.value : '';
   if (!backupFile) {
-    alert('Por favor, selecciona una copia de seguridad para restaurar.');
+    alert(UPD_I18N.rollbackSelectAlert);
     return;
   }
 
   const option = select.options[select.selectedIndex];
-  const versionText = option ? option.text : 'la versión seleccionada';
+  const versionText = option ? option.text : UPD_I18N.rollbackSelectedVersion;
 
-  if (!confirm('¿Revertir KutPod a ' + versionText + '?\n\nSe restaurarán todos los ficheros del código. Tus datos (podcasts, episodios, estadísticas) no se verán afectados.')) return;
+  if (!confirm(UPD_I18N.rollbackConfirm.replace('{version}', versionText))) return;
 
   const btn = document.getElementById('btn-rollback');
   const status = document.getElementById('rollback-status');
   btn.disabled = true;
   status.style.display = 'block';
-  status.innerHTML = '<div style="padding:14px;color:var(--text-3);font-size:13.5px"><?= icon('refreshCw',13) ?> Restaurando...</div>';
+  status.innerHTML = '<div style="padding:14px;color:var(--text-3);font-size:13.5px"><?= icon('refreshCw',13) ?> ' + UPD_I18N.restoring + '</div>';
 
   fetch('/api/update', {
     method: 'POST',
@@ -420,7 +467,9 @@ function kpUpdateRollback() {
         return;
       }
       if (data.success) {
-        status.innerHTML = '<div style="padding:14px;background:#10b98122;border-radius:8px;font-size:13.5px">✅ Rollback completado. Restaurada versión <strong>v' + data.restored_version + '</strong>.<br><br><a href="/admin/update" class="btn btn-primary" style="margin-top:8px">Recargar página</a></div>';
+        status.innerHTML = '<div style="padding:14px;background:#10b98122;border-radius:8px;font-size:13.5px">' +
+          UPD_I18N.rollbackSuccess.replace('{version}', data.restored_version) +
+          '<br><br><a href="/admin/update" class="btn btn-primary" style="margin-top:8px">' + UPD_I18N.reloadPage + '</a></div>';
       }
     })
     .catch(e => {
@@ -440,8 +489,8 @@ function humanBytesJs(bytes) {
 function kpCleanDownloads() {
   const includeRollbacks = document.getElementById('clean-include-rollbacks')?.checked || false;
   const promptMsg = includeRollbacks
-    ? '¿Deseas eliminar las actualizaciones descargadas (.zip) Y también todas las copias de seguridad de versiones anteriores?'
-    : '¿Deseas eliminar los paquetes de actualizaciones descargados (.zip) y archivos temporales?';
+    ? UPD_I18N.cleanPromptBoth
+    : UPD_I18N.cleanPromptDlOnly;
 
   if (!confirm(promptMsg)) return;
 
@@ -449,11 +498,11 @@ function kpCleanDownloads() {
   const status = document.getElementById('clean-status');
   if (btn) {
     btn.disabled = true;
-    btn.innerHTML = '<?= icon('refreshCw',13) ?> Borrando...';
+    btn.innerHTML = '<?= icon('refreshCw',13) ?> ' + UPD_I18N.cleaning;
   }
   if (status) {
     status.style.display = 'block';
-    status.innerHTML = '<div style="padding:10px;color:var(--text-3);font-size:13px">Eliminando archivos...</div>';
+    status.innerHTML = '<div style="padding:10px;color:var(--text-3);font-size:13px">' + UPD_I18N.deletingFiles + '</div>';
   }
 
   const body = new URLSearchParams({
@@ -469,7 +518,7 @@ function kpCleanDownloads() {
         else alert('Error: ' + data.error);
         return;
       }
-      const msg = 'Limpieza completada: ' + data.deleted_count + ' archivo(s) eliminados (' + data.freed_human + ' liberados).';
+      const msg = UPD_I18N.cleanCompleted.replace('{count}', data.deleted_count).replace('{freed}', data.freed_human);
       if (status) {
         status.innerHTML = '<div style="padding:10px;color:#10b981;font-size:13px;background:#10b98115;border-radius:8px">✅ ' + msg + '</div>';
       } else {
@@ -497,7 +546,7 @@ function kpCleanDownloads() {
     .finally(() => {
       if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '<?= icon('trash',13) ?> Borrar actualizaciones descargadas';
+        btn.innerHTML = '<?= icon('trash',13) ?> ' + UPD_I18N.btnClean;
       }
     });
 }
@@ -509,26 +558,26 @@ function kpManualUpdateUpload(e) {
   const status = document.getElementById('manual-upload-status');
 
   if (!fileInput.files || !fileInput.files[0]) {
-    alert('Por favor selecciona un archivo .zip.');
+    alert(UPD_I18N.manualSelectZip);
     return;
   }
 
   const file = fileInput.files[0];
   if (!file.name.toLowerCase().endsWith('.zip')) {
-    alert('El archivo seleccionado debe ser un .zip.');
+    alert(UPD_I18N.manualMustBeZip);
     return;
   }
 
-  if (!confirm('¿Deseas aplicar la actualización manual desde "' + file.name + '"?\n\nSe creará un respaldo de seguridad previo de forma automática.')) {
+  if (!confirm(UPD_I18N.manualConfirm.replace('{name}', file.name))) {
     return;
   }
 
   btn.disabled = true;
-  btn.innerHTML = '<?= icon('upload',13) ?> Instalando actualización...';
+  btn.innerHTML = '<?= icon('upload',13) ?> ' + UPD_I18N.manualInstallingBtn;
   status.style.display = 'block';
   status.innerHTML = '<div style="background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:16px;color:var(--text-2);font-size:13.5px">'
-    + '<div style="font-weight:600;margin-bottom:4px">Subiendo e instalando paquete...</div>'
-    + '<div style="font-size:12px;color:var(--text-3)">Desempaquetando archivos, respaldando versión actual y sobrescribiendo core...</div>'
+    + '<div style="font-weight:600;margin-bottom:4px">' + UPD_I18N.manualUploading + '</div>'
+    + '<div style="font-size:12px;color:var(--text-3)">' + UPD_I18N.manualUnpacking + '</div>'
     + '</div>';
 
   const formData = new FormData();
@@ -544,34 +593,39 @@ function kpManualUpdateUpload(e) {
     try {
       return JSON.parse(text);
     } catch(err) {
-      throw new Error('Respuesta inválida del servidor (HTTP ' + r.status + '): ' + text.substring(0, 150));
+      throw new Error(UPD_I18N.serverErrorPrefix + r.status + '): ' + text.substring(0, 150));
     }
   })
   .then(data => {
     if (data.error) {
       status.innerHTML = '<div style="background:#ef444418;border:1px solid #ef444455;border-radius:10px;padding:16px;color:#ef4444;font-size:13.5px">'
-        + '<strong>❌ Error al actualizar:</strong><div style="margin-top:6px;font-size:13px">' + data.error + '</div>'
+        + '<strong>' + UPD_I18N.manualErrUpdate + '</strong><div style="margin-top:6px;font-size:13px">' + data.error + '</div>'
         + '</div>';
       btn.disabled = false;
-      btn.innerHTML = '<?= icon('upload',13) ?> Subir e instalar actualización';
+      btn.innerHTML = '<?= icon('upload',13) ?> ' + UPD_I18N.manualUploadBtn;
       return;
     }
 
     status.innerHTML = '<div style="background:#10b98118;border:1px solid #10b98155;border-radius:10px;padding:20px;color:#10b981;font-size:14px">'
-      + '<div style="font-size:16px;font-weight:700">🎉 ¡KutPod actualizado con éxito!</div>'
-      + '<div style="margin-top:6px;font-size:13px;color:var(--text-2)">Actualizado de v' + data.from + ' a <strong>v' + data.to + '</strong> (' + data.files_updated + ' ficheros copiados).</div>'
-      + '<div style="margin-top:14px"><button class="btn btn-primary" onclick="window.location.reload()">' + '<?= icon('refreshCw',13) ?> Recargar página' + '</button></div>'
+      + '<div style="font-size:16px;font-weight:700">' + UPD_I18N.manualSuccessTitle + '</div>'
+      + '<div style="margin-top:6px;font-size:13px;color:var(--text-2)">' +
+        UPD_I18N.manualSuccessBody
+          .replace('{from}', data.from)
+          .replace('{to}', data.to)
+          .replace('{files}', data.files_updated) +
+        '</div>'
+      + '<div style="margin-top:14px"><button class="btn btn-primary" onclick="window.location.reload()">' + '<?= icon('refreshCw',13) ?> ' + UPD_I18N.reloadPage + '</button></div>'
       + '</div>';
     fileInput.value = '';
     btn.disabled = false;
-    btn.innerHTML = '<?= icon('upload',13) ?> Subir e instalar actualización';
+    btn.innerHTML = '<?= icon('upload',13) ?> ' + UPD_I18N.manualUploadBtn;
   })
   .catch(err => {
     status.innerHTML = '<div style="background:#ef444418;border:1px solid #ef444455;border-radius:10px;padding:16px;color:#ef4444;font-size:13.5px">'
-      + '<strong>❌ Error de conexión:</strong><div style="margin-top:6px;font-size:13px">' + err.message + '</div>'
+      + '<strong>' + UPD_I18N.connError + '</strong><div style="margin-top:6px;font-size:13px">' + err.message + '</div>'
       + '</div>';
     btn.disabled = false;
-    btn.innerHTML = '<?= icon('upload',13) ?> Subir e instalar actualización';
+    btn.innerHTML = '<?= icon('upload',13) ?> ' + UPD_I18N.manualUploadBtn;
   });
 }
 </script>
