@@ -480,6 +480,332 @@ function kp_alert(string $kind, string $title, string $body = '', string $link =
   } catch (Throwable $e) {}
 }
 
+/**
+ * Traduce el título de una alerta al idioma activo.
+ */
+function kp_alert_translate_title(?string $title): string {
+  if ($title === null || $title === '') return '';
+  $lang = kp_detect_lang();
+  if ($lang === 'es') {
+    $enToEs = [
+      'Downloads processed' => 'Descargas procesadas',
+      'Update applied' => 'Actualización aplicada',
+      'Rollback completed' => 'Rollback completado',
+      'Cleanup executed' => 'Limpieza ejecutada',
+      'Episode published' => 'Episodio publicado',
+      'Episode deleted' => 'Episodio eliminado',
+      'Anti-bot rules synchronized' => 'Reglas anti-bot sincronizadas',
+      'Import completed' => 'Importación completada',
+      'Import failed' => 'Importación fallida',
+      'Login' => 'Inicio de sesión',
+      'Login (2FA)' => 'Inicio de sesión (2FA)',
+      'Logout' => 'Cierre de sesión',
+      'Failed login' => 'Login fallido',
+      'Blocked due to excessive attempts' => 'Bloqueo por intentos excesivos',
+      '2FA Enabled' => '2FA Activado',
+      '2FA Disabled' => '2FA Desactivado',
+      'Password reset' => 'Contraseña restablecida',
+      'Password recovery' => 'Recuperación de contraseña',
+      'Backup codes generated' => 'Códigos de respaldo generados',
+      'Backup code used' => 'Código de respaldo utilizado',
+      'API login failed' => 'Login API fallido',
+      'API login successful' => 'Login API exitoso',
+      'Invalid API token' => 'Token API inválido',
+      'Profile updated' => 'Perfil actualizado',
+      'New follower' => 'Nuevo seguidor',
+      'New Like' => 'Nuevo Me gusta',
+      'New Boost' => 'Nuevo Retoot',
+      'New Comment' => 'Nuevo Comentario',
+      'Episode re-sent to Fediverse' => 'Episodio re-enviado al Fediverso',
+      'Episode published to Fediverse' => 'Episodio publicado en Fediverso',
+      'Published to Flarum' => 'Publicado en Flarum',
+      'YouTube views synchronized' => 'Vistas de YouTube sincronizadas',
+      'New Premium Subscription' => 'Nueva Suscripción Premium',
+      'Subscription Cancelled' => 'Suscripción Cancelada',
+    ];
+    return $enToEs[$title] ?? $title;
+  }
+
+  // Idioma 'en'
+  $esToEn = [
+    'Descargas procesadas' => 'Downloads processed',
+    'Actualización aplicada' => 'Update applied',
+    'Rollback completado' => 'Rollback completed',
+    'Limpieza ejecutada' => 'Cleanup executed',
+    'Episodio publicado' => 'Episode published',
+    'Episodio eliminado' => 'Episode deleted',
+    'Reglas anti-bot sincronizadas' => 'Anti-bot rules synchronized',
+    'Importación completada' => 'Import completed',
+    'Importación fallida' => 'Import failed',
+    'Inicio de sesión' => 'Login',
+    'Inicio de sesión (2FA)' => 'Login (2FA)',
+    'Cierre de sesión' => 'Logout',
+    'Login fallido' => 'Failed login',
+    'Bloqueo por intentos excesivos' => 'Blocked due to excessive attempts',
+    '2FA Activado' => '2FA Enabled',
+    '2FA Desactivado' => '2FA Disabled',
+    'Contraseña restablecida' => 'Password reset',
+    'Recuperación de contraseña' => 'Password recovery',
+    'Códigos de respaldo generados' => 'Backup codes generated',
+    'Código de respaldo utilizado' => 'Backup code used',
+    'Login API fallido' => 'API login failed',
+    'Login API exitoso' => 'API login successful',
+    'Token API inválido' => 'Invalid API token',
+    'Error de conexión SMTP' => 'SMTP connection error',
+    'Error de envío (SMTP)' => 'Email sending error (SMTP)',
+    'Perfil actualizado' => 'Profile updated',
+    'Nuevo seguidor' => 'New follower',
+    'Nuevo Me gusta' => 'New Like',
+    'Nuevo Retoot' => 'New Boost',
+    'Nuevo Comentario' => 'New Comment',
+    'Episodio re-enviado al Fediverso' => 'Episode re-sent to Fediverse',
+    'Episodio publicado en Fediverso' => 'Episode published to Fediverse',
+    'Error al federar episodio (no crítico)' => 'Error federating episode (non-critical)',
+    'Publicado en Flarum' => 'Published to Flarum',
+    'Error al publicar en Flarum (Plugin)' => 'Error publishing to Flarum (Plugin)',
+    'Vistas de YouTube sincronizadas' => 'YouTube views synchronized',
+    'Nueva Suscripción Premium' => 'New Premium Subscription',
+    'Nueva Suscripción Premium (PayPal)' => 'New Premium Subscription (PayPal)',
+    'Suscripción Cancelada (Stripe)' => 'Subscription Cancelled (Stripe)',
+    'Suscripción Cancelada (PayPal)' => 'Subscription Cancelled (PayPal)',
+    'Suscripción Pausada (Stripe)' => 'Subscription Paused (Stripe)',
+    'Suscripción Suspendida (PayPal)' => 'Subscription Suspended (PayPal)',
+    'Suscripción Reactivada (Stripe)' => 'Subscription Reactivated (Stripe)',
+    'Suscripción Reactivada (PayPal)' => 'Subscription Reactivated (PayPal)',
+    'Fallo de Pago (Stripe)' => 'Payment Failed (Stripe)',
+    'Fallo de Pago (PayPal)' => 'Payment Failed (PayPal)',
+    'Token Premium Suspendido' => 'Premium Token Suspended',
+    'Error de Stripe Checkout' => 'Stripe Checkout Error',
+    'Error en gancho de publicación (no crítico)' => 'Publishing hook error (non-critical)',
+    'Episodio actualizado (API)' => 'Episode updated (API)',
+    'Episodio publicado (API)' => 'Episode published (API)',
+    'Episodio borrador (API)' => 'Episode draft (API)',
+  ];
+
+  if (isset($esToEn[$title])) {
+    return $esToEn[$title];
+  }
+
+  // Patrones dinámicos
+  if (preg_match('/^(.+?\s+)?([\d,\.]+)\s+descargas alcanzadas$/u', $title, $m)) {
+    return trim($m[1] ?? '') . ' ' . $m[2] . ' downloads reached';
+  }
+  if (preg_match('/^(.+?\s+)?([\d,\.]+)\s+vistas alcanzadas en YouTube$/u', $title, $m)) {
+    return trim($m[1] ?? '') . ' ' . $m[2] . ' views reached on YouTube';
+  }
+  if (preg_match('/^Nuevo\s+(.+)$/u', $title, $m)) {
+    $act = match (trim($m[1])) {
+      'Like', 'Me gusta' => 'Like',
+      'Retoot' => 'Boost',
+      'Comentario' => 'Comment',
+      default => $m[1]
+    };
+    return 'New ' . $act;
+  }
+
+  return $title;
+}
+
+/**
+ * Traduce el cuerpo de una alerta al idioma activo.
+ */
+function kp_alert_translate_body(?string $body): string {
+  if ($body === null || $body === '') return '';
+  $lang = kp_detect_lang();
+  if ($lang === 'es') {
+    return $body;
+  }
+
+  // 1. Descargas de OP3
+  if (preg_match('/^(\d+)\s+nuevas?\s+descargas?\s+registradas?\s+\((\d+)\s+duplicados\s+filtrados\)(?:\.\s*Detalles:\s*(.*))?$/us', $body, $m)) {
+    $count = (int)$m[1];
+    $dups = (int)$m[2];
+    $details = $m[3] ?? '';
+    $downloadWord = $count === 1 ? 'new download' : 'new downloads';
+    $res = "{$count} {$downloadWord} recorded ({$dups} duplicates filtered).";
+    if ($details !== '') {
+      $details = preg_replace('/(\d+)\s+de\s+\'/u', '$1 for \'', $details);
+      $details = preg_replace('/\'\s+en\s+\'/u', '\' in \'', $details);
+      $details = preg_replace('/y\s+(\d+)\s+m[aá]s/u', 'and $1 more', $details);
+      $res .= ' Details: ' . rtrim($details, '.') . '.';
+    }
+    return $res;
+  }
+
+  // 2. Actualización / Rollback del sistema
+  if (preg_match('/^KutPod actualizado de v([^\s]+) a v([^\s]+)$/u', rtrim($body, '.'), $m)) {
+    return "KutPod updated from v{$m[1]} to v{$m[2]}.";
+  }
+  if (preg_match('/^KutPod revertido a v([^\s]+)$/u', rtrim($body, '.'), $m)) {
+    return "KutPod rolled back to v{$m[1]}.";
+  }
+  if (str_starts_with($body, 'El garbage collector de base de datos se ejecutó correctamente')) {
+    return 'Database garbage collector executed successfully. Old alerts, completed AP deliveries (>30d), outbox (>90d), old OP3 hits (>90d), expired sessions were purged and VACUUM was executed.';
+  }
+
+  // 3. Hitos de descargas y YouTube
+  if (preg_match('/^El episodio \'(.+?)\' superó las ([\d,\.]+) descargas únicas verificadas por OP3\.?$/u', $body, $m)) {
+    return "Episode '{$m[1]}' exceeded {$m[2]} verified unique downloads via OP3.";
+  }
+  if (preg_match('/^El episodio "(.+?)" ha superado las ([\d,\.]+) vistas en YouTube \(([\d,\.]+) vistas actuales\)\.?$/u', $body, $m)) {
+    return "Episode \"{$m[1]}\" exceeded {$m[2]} views on YouTube ({$m[3]} current views).";
+  }
+  if (preg_match('/^Se actualizaron las estadísticas de YouTube para \'(.+?)\': (.*?) en (\d+) episodios emparejados\.?$/u', $body, $m)) {
+    $viewsMsg = $m[2];
+    $viewsMsg = preg_replace('/^\+(\d+)\s+nuevas vistas\s+\((\d+)\s+totales\)$/u', '+$1 new views ($2 total)', $viewsMsg);
+    $viewsMsg = preg_replace('/^(\d+)\s+vistas totales$/u', '$1 total views', $viewsMsg);
+    return "YouTube stats updated for '{$m[1]}': {$viewsMsg} across {$m[3]} matched episodes.";
+  }
+
+  // 4. Episodios y publicaciones
+  if (preg_match('/^El episodio \'(.+?)\' se ha publicado en la red\.?$/u', $body, $m)) {
+    return "Episode '{$m[1]}' has been published to the network.";
+  }
+  if (preg_match('/^El episodio \'(.+?)\' fue eliminado de (.+?)\.?$/u', $body, $m)) {
+    return "Episode '{$m[1]}' was deleted from {$m[2]}.";
+  }
+  if (preg_match('/^\'(.+?)\' fue actualizado en (.+?) vía Kut Editor\.?$/u', $body, $m)) {
+    return "'{$m[1]}' was updated in {$m[2]} via Kut Editor.";
+  }
+  if (preg_match('/^\'(.+?)\' se ha publicado en (.+?) vía Kut Editor\.?$/u', $body, $m)) {
+    return "'{$m[1]}' was published in {$m[2]} via Kut Editor.";
+  }
+  if (preg_match('/^\'(.+?)\' se ha guardado como borrador en (.+?) vía Kut Editor\.?$/u', $body, $m)) {
+    return "'{$m[1]}' was saved as draft in {$m[2]} via Kut Editor.";
+  }
+  if (preg_match('/^\'(.+?)\' se ha (.+?) en (.+?) vía Kut Editor\.?$/u', $body, $m)) {
+    $action = $m[2] === 'borrador' ? 'saved as draft' : ($m[2] === 'publicado' ? 'published' : $m[2]);
+    return "'{$m[1]}' was {$action} in {$m[3]} via Kut Editor.";
+  }
+
+  // 5. Fediverso
+  if (preg_match('/^El perfil del podcast en el Fediverso se ha encolado para actualización\.?$/u', $body)) {
+    return 'The podcast profile in the Fediverse has been queued for update.';
+  }
+  if (preg_match('/^@(.+?) ha comenzado a seguir a tu podcast \'(.+?)\'\.?$/u', $body, $m)) {
+    return "@{$m[1]} started following your podcast '{$m[2]}'.";
+  }
+  if (preg_match('/^@(.+?) ha comentado en tu podcast\.?$/u', $body, $m)) {
+    return "@{$m[1]} commented on your podcast.";
+  }
+  if (preg_match('/^El episodio \'(.+?)\' se ha vuelto a encolar para entrega\.?$/u', $body, $m)) {
+    return "Episode '{$m[1]}' has been re-queued for delivery.";
+  }
+  if (preg_match('/^El episodio \'(.+?)\' se ha encolado para entrega\.?$/u', $body, $m)) {
+    return "Episode '{$m[1]}' has been queued for delivery.";
+  }
+  if (preg_match('/^A @(.+?) le gusta tu episodio \'(.+?)\'\.?$/u', $body, $m)) {
+    return "@{$m[1]} liked your episode '{$m[2]}'.";
+  }
+  if (preg_match('/^@(.+?) compartió tu episodio \'(.+?)\'\.?$/u', $body, $m)) {
+    return "@{$m[1]} boosted your episode '{$m[2]}'.";
+  }
+  if (preg_match('/^@(.+?) ha interactuado con \'(.+?)\'\.?$/u', $body, $m)) {
+    return "@{$m[1]} interacted with '{$m[2]}'.";
+  }
+
+  // 6. Seguridad y autenticación
+  if (preg_match('/^(.+?) accedió tras validar 2FA desde (.+?)\.?$/u', $body, $m)) {
+    return "{$m[1]} logged in after 2FA validation from {$m[2]}.";
+  }
+  if (preg_match('/^(.+?) accedió al panel desde (.+?)\.?$/u', $body, $m)) {
+    return "{$m[1]} accessed the dashboard from {$m[2]}.";
+  }
+  if (preg_match('/^(.+?) cerró sesión\.?$/u', $body, $m)) {
+    return "{$m[1]} logged out.";
+  }
+  if (preg_match('/^Intento de acceso con email \'(.+?)\' desde (.+?)\.?$/u', $body, $m)) {
+    return "Access attempt with email '{$m[1]}' from {$m[2]}.";
+  }
+  if (preg_match('/^IP (.+?) bloqueada tras demasiados intentos de acceso fallidos\.?$/u', $body, $m)) {
+    return "IP {$m[1]} blocked after too many failed access attempts.";
+  }
+  if (preg_match('/^Se activó la autenticación en dos pasos para (.+?)\.?$/u', $body, $m)) {
+    return "Two-factor authentication was enabled for {$m[1]}.";
+  }
+  if (preg_match('/^Se desactivó la autenticación en dos pasos para (.+?)\.?$/u', $body, $m)) {
+    return "Two-factor authentication was disabled for {$m[1]}.";
+  }
+  if (preg_match('/^Se generaron nuevos códigos para (.+?)\.?$/u', $body, $m)) {
+    return "New backup codes were generated for {$m[1]}.";
+  }
+  if (preg_match('/^El usuario (.+?) ha utilizado un código de respaldo para acceder\.?$/u', $body, $m)) {
+    return "User {$m[1]} used a backup code to log in.";
+  }
+  if (preg_match('/^El usuario (.+?) ha restablecido su contraseña\.?$/u', $body, $m)) {
+    return "User {$m[1]} has reset their password.";
+  }
+  if (preg_match('/^Se ha enviado un enlace de recuperación al usuario (.+?)\.?$/u', $body, $m)) {
+    return "A recovery link has been sent to user {$m[1]}.";
+  }
+  if (preg_match('/^Intento de acceso vía API con usuario \'(.+?)\' desde (.+?)\.?$/u', $body, $m)) {
+    return "API access attempt with user '{$m[1]}' from {$m[2]}.";
+  }
+  if (preg_match('/^(.+?) se conectó vía API \((.+?)\) desde (.+?)\.?$/u', $body, $m)) {
+    return "{$m[1]} connected via API ({$m[2]}) from {$m[3]}.";
+  }
+  if (preg_match('/^Se intentó acceder a la API con un token inválido o expirado desde (.+?)\.?$/u', $body, $m)) {
+    return "Attempted to access the API with an invalid or expired token from {$m[1]}.";
+  }
+  if (preg_match('/^No se pudo conectar a (.+?)\.?$/u', $body, $m)) {
+    return "Could not connect to {$m[1]}.";
+  }
+  if (preg_match('/^Fallo enviando correo a (.+?)\.?$/u', $body, $m)) {
+    return "Failed sending email to {$m[1]}.";
+  }
+
+  // 7. Importación y reglas OP3
+  if (preg_match('/^Se sincronizaron (\d+) reglas de detección de bots desde OP3\.?$/u', $body, $m)) {
+    return "Synchronized {$m[1]} bot detection rules from OP3.";
+  }
+  if (preg_match('/^Se importaron (\d+) episodios(?: \((\d+) fallidos\))?(?: en \'(.+?)\')?\.?$/u', $body, $m)) {
+    $res = "Imported {$m[1]} episodes";
+    if (!empty($m[2])) $res .= " ({$m[2]} failed)";
+    if (!empty($m[3])) $res .= " into '{$m[3]}'";
+    return $res . '.';
+  }
+  if (preg_match('/^El job #(\d+) falló:\s*(.*)$/u', $body, $m)) {
+    return "Job #{$m[1]} failed: {$m[2]}";
+  }
+
+  // 8. Plugins
+  if (preg_match('/^Se creó la discusión \'(.+?)\' en el foro\.?$/u', $body, $m)) {
+    return "Discussion '{$m[1]}' was created in the forum.";
+  }
+  if (preg_match('/^No se encontró el tag \'(.+?)\' en Flarum\. Verifica que exista en tu foro\.?$/u', $body, $m)) {
+    return "Tag '{$m[1]}' not found in Flarum. Please verify it exists in your forum.";
+  }
+  if (preg_match('/^El usuario (.+?) se ha suscrito mediante (.+?)\.?$/u', $body, $m)) {
+    return "User {$m[1]} subscribed via {$m[2]}.";
+  }
+  if (preg_match('/^La suscripción de (.+?) ha sido cancelada en (.+?)\.?$/u', $body, $m)) {
+    return "The subscription of {$m[1]} was cancelled in {$m[2]}.";
+  }
+  if (preg_match('/^La suscripción de (.+?) ha sido pausada en (.+?)\.?$/u', $body, $m)) {
+    return "The subscription of {$m[1]} was paused in {$m[2]}.";
+  }
+  if (preg_match('/^La suscripción de (.+?) ha sido suspendida en (.+?)\.?$/u', $body, $m)) {
+    return "The subscription of {$m[1]} was suspended in {$m[2]}.";
+  }
+  if (preg_match('/^La suscripción de (.+?) ha sido reactivada en (.+?)\.?$/u', $body, $m)) {
+    return "The subscription of {$m[1]} was reactivated in {$m[2]}.";
+  }
+  if (preg_match('/^El cobro de la suscripción de (.+?) ha fallado en (.+?)\. Acceso suspendido temporalmente\.?$/u', $body, $m)) {
+    return "Subscription payment for {$m[1]} failed in {$m[2]}. Access temporarily suspended.";
+  }
+  if (preg_match('/^El cobro de PayPal para (.+?) ha sido denegado\. Acceso suspendido temporalmente\.?$/u', $body, $m)) {
+    return "PayPal payment for {$m[1]} was declined. Access temporarily suspended.";
+  }
+  if (preg_match('/^El token de (.+?) fue suspendido automáticamente al registrar accesos desde (\d+) direcciones IP distintas en 24h\.?$/u', $body, $m)) {
+    return "Token for {$m[1]} was automatically suspended after detecting accesses from {$m[2]} different IP addresses in 24h.";
+  }
+  if (preg_match('/^Error al crear sesión de checkout:\s*(.*)$/u', $body, $m)) {
+    return "Error creating checkout session: {$m[1]}";
+  }
+
+  return $body;
+}
+
 /** Convierte texto plano/Markdown ligero a HTML para las notas públicas. */
 function kp_md_to_html(string $md): string {
   if (!$md) return '';

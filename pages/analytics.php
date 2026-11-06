@@ -229,33 +229,32 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
 ?>
 <div class="page-head">
   <div>
-    <h1 class="page-title">Estadísticas</h1>
+    <h1 class="page-title"><?= __('nav_analytics', 'Estadísticas') ?></h1>
     <p class="page-sub">
-      Métricas servidas por OP3 nativo · auditables · sin tracking de usuario
-      <?php if ($last_sync): ?> · sincronizado <?= e(kp_relative_time($last_sync['updated_at'] ?? $last_sync['v'] ?? 0)) ?><?php endif; ?>
+      <?= __('analytics_subtitle', 'Métricas servidas por OP3 nativo · auditables · sin tracking de usuario') ?>
+      <?php if ($last_sync): ?> · <?= __('analytics_synced', 'sincronizado') ?> <?= e(kp_relative_time($last_sync['updated_at'] ?? $last_sync['v'] ?? 0)) ?><?php endif; ?>
     </p>
   </div>
   <div class="row">
     <div class="seg">
-      <?= rng_btn('7d','7 días', $range, $active_tab) ?>
-      <?= rng_btn('30d','30 días', $range, $active_tab) ?>
-      <?= rng_btn('mtd','Este mes', $range, $active_tab) ?>
-      <?= rng_btn('all','Histórico', $range, $active_tab) ?>
+      <?= rng_btn('7d', __('analytics_range_7d', '7 días'), $range, $active_tab) ?>
+      <?= rng_btn('30d', __('analytics_range_30d', '30 días'), $range, $active_tab) ?>
+      <?= rng_btn('mtd', __('analytics_range_mtd', 'Este mes'), $range, $active_tab) ?>
+      <?= rng_btn('all', __('analytics_range_all', 'Histórico'), $range, $active_tab) ?>
     </div>
-    <a class="btn" href="/api/v1/stats/export.csv?range=<?= e($range) ?>"><?= icon('download',13) ?> Exportar CSV</a>
+    <a class="btn" href="/api/v1/stats/export.csv?range=<?= e($range) ?>"><?= icon('download',13) ?> <?= __('analytics_export_csv', 'Exportar CSV') ?></a>
   </div>
 </div>
 
 <?php if (!$has_op3 || $tot === 0): ?>
   <div class="card card-lg" style="text-align:center;padding:64px 24px">
     <div style="opacity:.4;margin-bottom:12px"><?= icon('chart',48) ?></div>
-    <h3 style="margin:0 0 8px">Sin datos todavía</h3>
+    <h3 style="margin:0 0 8px"><?= __('analytics_no_data_title', 'Sin datos todavía') ?></h3>
     <p class="muted" style="margin:0;max-width:520px;margin-inline:auto">
-      OP3 acumula descargas en cuanto las URLs de tus feeds pasen por <code>/r/&lt;show&gt;/&lt;ep&gt;</code>.
-      Las estadísticas aparecerán aquí en cuanto el worker procese los primeros logs.
+      <?= __('analytics_no_data_desc', 'OP3 acumula descargas en cuanto las URLs de tus feeds pasen por :code. Las estadísticas aparecerán aquí en cuanto el worker procese los primeros logs.', ['code' => '<code>/r/<show>/<ep></code>']) ?>
     </p>
     <div class="row" style="justify-content:center;gap:8px;margin-top:18px">
-      <a class="btn" href="/admin/preferences#op3"><?= icon('settings',13) ?> Configurar OP3</a>
+      <a class="btn" href="/admin/preferences#op3"><?= icon('settings',13) ?> <?= __('analytics_configure_op3', 'Configurar OP3') ?></a>
       <code style="background:var(--surface-2);padding:6px 10px;border-radius:6px;font-size:12px">php cli/op3-worker.php</code>
     </div>
   </div>
@@ -263,10 +262,10 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
 
   <!-- Tarjetas de resumen global -->
   <div class="stat-grid <?= kp_plugin_is_active('youtube_stats') ? 'stat-grid-5' : '' ?>">
-    <?= stat_card('Descargas totales', number_format($tot), 'download') ?>
-    <?= stat_card('Descargas · '.e($range), number_format($tot_period), 'chart') ?>
-    <?= stat_card('Oyentes únicos', number_format($unique_listeners), 'users', ['sub'=>'identificados por OP3']) ?>
-    <?= stat_card('Podcasts activos', (string)count($podcasts), 'mic') ?>
+    <?= stat_card(__('analytics_total_downloads', 'Descargas totales'), number_format($tot), 'download') ?>
+    <?= stat_card(__('analytics_downloads_period', 'Descargas · :range', ['range' => $range]), number_format($tot_period), 'chart') ?>
+    <?= stat_card(__('analytics_unique_listeners', 'Oyentes únicos'), number_format($unique_listeners), 'users', ['sub'=>__('analytics_identified_op3', 'identificados por OP3')]) ?>
+    <?= stat_card(__('analytics_active_podcasts', 'Podcasts activos'), (string)count($podcasts), 'mic') ?>
     <?php kp_do_action('analytics_stat_grid'); ?>
   </div>
 
@@ -274,29 +273,29 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
   <div class="stats-tabs-nav" role="tablist">
     <button type="button" class="stats-tab-btn <?= $active_tab === 'downloads' ? 'active' : '' ?>" data-tab="downloads" role="tab" aria-selected="<?= $active_tab === 'downloads' ? 'true' : 'false' ?>">
       <?= icon('chart', 16) ?>
-      <span>Descargas</span>
+      <span><?= __('analytics_tab_downloads', 'Descargas') ?></span>
     </button>
     <button type="button" class="stats-tab-btn <?= $active_tab === 'location' ? 'active' : '' ?>" data-tab="location" role="tab" aria-selected="<?= $active_tab === 'location' ? 'true' : 'false' ?>">
       <?= icon('globe', 16) ?>
-      <span>Localización</span>
+      <span><?= __('analytics_tab_location', 'Localización') ?></span>
       <?php if (!empty($countries_agg)): ?>
-        <span class="tab-badge" title="<?= count($countries_agg) ?> países con descargas registradas"><?= count($countries_agg) ?></span>
+        <span class="tab-badge" title="<?= __('analytics_countries_with_dl', ':count países con descargas registradas', ['count' => count($countries_agg)]) ?>"><?= count($countries_agg) ?></span>
       <?php endif; ?>
     </button>
     <button type="button" class="stats-tab-btn <?= $active_tab === 'tech' ? 'active' : '' ?>" data-tab="tech" role="tab" aria-selected="<?= $active_tab === 'tech' ? 'true' : 'false' ?>">
       <?= icon('layers', 16) ?>
-      <span>Tecnología</span>
+      <span><?= __('analytics_tab_tech', 'Tecnología') ?></span>
     </button>
     <?php if (kp_plugin_is_active('youtube_stats')): ?>
       <button type="button" class="stats-tab-btn <?= $active_tab === 'youtube' ? 'active' : '' ?>" data-tab="youtube" role="tab" aria-selected="<?= $active_tab === 'youtube' ? 'true' : 'false' ?>">
         <span style="color:#ef4444;display:inline-flex;align-items:center"><?= icon('play', 16) ?></span>
-        <span>YouTube</span>
+        <span><?= __('analytics_tab_youtube', 'YouTube') ?></span>
         <?php
           try {
             $ytCountRow = kp_one("SELECT COUNT(*) as c FROM youtube_episode_stats");
             $ytCount = (int)($ytCountRow['c'] ?? 0);
             if ($ytCount > 0): ?>
-              <span class="tab-badge" style="background:rgba(239,68,68,0.15);color:#ef4444" title="<?= $ytCount ?> episodios vinculados con YouTube"><?= $ytCount ?></span>
+              <span class="tab-badge" style="background:rgba(239,68,68,0.15);color:#ef4444" title="<?= __('analytics_yt_linked_eps', ':count episodios vinculados con YouTube', ['count' => $ytCount]) ?>"><?= $ytCount ?></span>
             <?php endif;
           } catch (Throwable $e) {}
         ?>
@@ -320,13 +319,13 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
       <div class="card card-lg span-8" style="padding:28px">
         <div class="card-head" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
           <div>
-            <div class="card-title"><?= $has_yt_series ? 'Descargas y Vistas por día' : 'Descargas por día' ?></div>
-            <div class="page-sub" style="margin-top:4px;font-size:12.5px">Agregado entre todos los podcasts · últimos <?= count($series) ?> días (pasa el cursor para ver el total)</div>
+            <div class="card-title"><?= $has_yt_series ? __('analytics_chart_daily_downloads_yt', 'Descargas y Vistas por día') : __('analytics_chart_daily_downloads', 'Descargas por día') ?></div>
+            <div class="page-sub" style="margin-top:4px;font-size:12.5px"><?= __('analytics_chart_sub', 'Agregado entre todos los podcasts · últimos :count días (pasa el cursor para ver el total)', ['count' => count($series)]) ?></div>
           </div>
           <?php if ($has_yt_series): ?>
             <div class="row" style="gap:14px;font-size:12px">
-              <div class="row" style="gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:var(--accent)"></span>Descargas OP3</div>
-              <div class="row" style="gap:6px;font-weight:600;color:#ef4444"><span style="width:10px;height:10px;border-radius:3px;background:#ef4444"></span>▶️ YouTube</div>
+              <div class="row" style="gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:var(--accent)"></span><?= __('analytics_legend_op3', 'Descargas OP3') ?></div>
+              <div class="row" style="gap:6px;font-weight:600;color:#ef4444"><span style="width:10px;height:10px;border-radius:3px;background:#ef4444"></span><?= __('analytics_legend_yt', '▶️ YouTube') ?></div>
             </div>
           <?php endif; ?>
         </div>
@@ -337,20 +336,20 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
             $yt_h = $chart_max > 0 ? ($yt_v / $chart_max) * 100 : 0;
 
             if ($has_yt_series) {
-              $tip = e($d) . ': ' . number_format($v) . ' descargas';
+              $tip = e($d) . ': ' . number_format($v) . ' ' . __('analytics_tip_downloads', 'descargas');
               if ($yt_v > 0) {
-                $tip .= ' · ' . number_format($yt_v) . ' vistas YouTube';
+                $tip .= ' · ' . number_format($yt_v) . ' ' . __('analytics_tip_yt_views', 'vistas YouTube');
               }
             } else {
               $pct_peak = $max_dl > 0 ? round(($v / $max_dl) * 100) : 0;
-              $tip = e($d) . ': ' . number_format($v) . ' descargas (' . $pct_peak . '% del día pico)';
+              $tip = e($d) . ': ' . number_format($v) . ' ' . __('analytics_tip_downloads', 'descargas') . ' (' . $pct_peak . '% ' . __('analytics_tip_pct_peak', 'del día pico') . ')';
             }
           ?>
             <div class="chart-day-bar-wrap <?= $has_yt_series ? 'has-yt' : '' ?>" data-tooltip="<?= $tip ?>" data-label="<?= e($d) ?>" data-count="<?= number_format($v) ?>">
               <?php if ($has_yt_series): ?>
                 <div style="display:flex;align-items:flex-end;gap:2px;width:100%;height:100%">
-                  <div class="chart-day-bar" style="height:<?= max(2, $h) ?>%;flex:1;background:var(--accent)" title="Descargas: <?= number_format($v) ?>"></div>
-                  <div class="chart-day-bar" style="height:<?= max($yt_v > 0 ? 2 : 0, $yt_h) ?>%;flex:1;background:#ef4444" title="YouTube: <?= number_format($yt_v) ?>"></div>
+                  <div class="chart-day-bar" style="height:<?= max(2, $h) ?>%;flex:1;background:var(--accent)" title="<?= e(__('analytics_legend_op3', 'Descargas OP3')) ?>: <?= number_format($v) ?>"></div>
+                  <div class="chart-day-bar" style="height:<?= max($yt_v > 0 ? 2 : 0, $yt_h) ?>%;flex:1;background:#ef4444" title="<?= e(__('analytics_legend_yt', 'YouTube')) ?>: <?= number_format($yt_v) ?>"></div>
                 </div>
               <?php else: ?>
                 <div class="chart-day-bar" style="height:<?= max(2, $h) ?>%"></div>
@@ -379,8 +378,8 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
       ?>
       <div class="card card-lg span-4 kp-paginated-card" style="padding:24px" data-page-size="5">
         <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
-          <span>Por podcast</span>
-          <span style="font-size:11px;color:var(--text-3);font-weight:400">Top 5 más activos</span>
+          <span><?= __('analytics_by_podcast', 'Por podcast') ?></span>
+          <span style="font-size:11px;color:var(--text-3);font-weight:400"><?= __('analytics_top5_active', 'Top 5 más activos') ?></span>
         </div>
         <div class="kp-paginated-items col" style="gap:12px;margin-top:14px">
           <?php foreach ($podcasts_sorted as $ps):
@@ -396,14 +395,14 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
       <div class="card card-lg span-6" style="padding:24px">
         <div class="card-title" style="display:flex;align-items:center;gap:8px">
           <span style="color:var(--accent);display:inline-flex"><?= icon('star', 16) ?></span>
-          Top 5 Episodios
+          <?= __('analytics_top5_episodes', 'Top 5 Episodios') ?>
         </div>
-        <div class="help" style="margin-top:6px;margin-bottom:14px">Los 5 episodios más descargados de todos los podcasts</div>
+        <div class="help" style="margin-top:6px;margin-bottom:14px"><?= __('analytics_top5_episodes_sub', 'Los 5 episodios más descargados de todos los podcasts') ?></div>
         <?php
           $top5 = kp_op3_top_episodes(5);
           if (empty($top5)):
         ?>
-          <div class="muted" style="padding:24px 0;text-align:center">Sin datos de descargas acumuladas todavía</div>
+          <div class="muted" style="padding:24px 0;text-align:center"><?= __('analytics_no_accumulated_data', 'Sin datos de descargas acumuladas todavía') ?></div>
         <?php else: ?>
           <div class="col" style="gap:12px">
             <?php foreach ($top5 as $idx => $ep):
@@ -429,7 +428,7 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
                 </div>
                 <div class="tabular" style="text-align:right">
                   <div style="font-size:13.5px;font-weight:600"><?= fmt_num((int)$ep['downloads']) ?></div>
-                  <div style="font-size:10.5px;color:var(--text-3);margin-top:1px">descargas</div>
+                  <div style="font-size:10.5px;color:var(--text-3);margin-top:1px"><?= __('analytics_downloads_label', 'descargas') ?></div>
                 </div>
               </div>
             <?php endforeach; ?>
@@ -441,9 +440,9 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
       <div class="card card-lg span-6 kp-paginated-card" style="padding:24px" data-page-size="5">
         <div class="card-title" style="display:flex;align-items:center;gap:8px">
           <span style="color:var(--accent);display:inline-flex"><?= icon('award', 16) ?></span>
-          Líder de cada podcast
+          <?= __('analytics_leader_podcast', 'Líder de cada podcast') ?>
         </div>
-        <div class="help" style="margin-top:6px;margin-bottom:14px">El episodio más descargado de cada show activo (ordenados por descargas)</div>
+        <div class="help" style="margin-top:6px;margin-bottom:14px"><?= __('analytics_leader_podcast_sub', 'El episodio más descargado de cada show activo (ordenados por descargas)') ?></div>
         <?php
           $leaders = [];
           foreach ($podcasts as $p) {
@@ -507,10 +506,10 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
       <div class="world-map-head">
         <div>
           <div class="card-title" style="display:flex;align-items:center;gap:8px">
-            <?= icon('globe', 18) ?> Distribución geográfica de descargas
+            <?= icon('globe', 18) ?> <?= __('analytics_geo_distribution', 'Distribución geográfica de descargas') ?>
           </div>
           <div class="page-sub" style="margin-top:4px;font-size:12.5px">
-            Pasa el cursor sobre un país para ver descargas y porcentaje. Los países con más descargas se muestran en un tono más oscuro.
+            <?= __('analytics_geo_distribution_sub', 'Pasa el cursor sobre un país para ver descargas y porcentaje. Los países con más descargas se muestran en un tono más oscuro.') ?>
           </div>
         </div>
         <div class="row" style="gap:8px">
@@ -520,7 +519,7 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
               $top_cc_cnt = $countries_agg[$top_cc] ?? 0;
             ?>
             <div style="font-size:12px;color:var(--text-2);background:var(--surface-2);border:1px solid var(--border);padding:6px 12px;border-radius:20px;display:inline-flex;align-items:center;gap:6px">
-              <span><?= kp_country_flag($top_cc) ?> Mayor audiencia: <strong><?= e(kp_country_name($top_cc)) ?></strong> (<?= number_format($top_cc_cnt) ?>)</span>
+              <span><?= kp_country_flag($top_cc) ?> <?= __('analytics_highest_audience', 'Mayor audiencia: :name (:count)', ['name' => kp_country_name($top_cc), 'count' => number_format($top_cc_cnt)]) ?></span>
             </div>
           <?php endif; ?>
         </div>
@@ -531,15 +530,15 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
           <div class="world-map-legend">
             <span class="legend-label">0</span>
             <div class="legend-gradient-bar" title="Escala de color: tonos más oscuros representan mayor volumen de descargas"></div>
-            <span class="legend-label" style="font-weight:600">Más descargas (tono más oscuro)</span>
+            <span class="legend-label" style="font-weight:600"><?= __('analytics_more_downloads_legend', 'Más descargas (tono más oscuro)') ?></span>
             <?php if (!empty($countries_agg)): ?>
-              <span class="legend-count-pill"><?= count($countries_agg) ?> países activos</span>
+              <span class="legend-count-pill"><?= __('analytics_active_countries_count', ':count países activos', ['count' => count($countries_agg)]) ?></span>
             <?php endif; ?>
           </div>
           <div class="world-map-actions">
-            <button type="button" class="map-ctrl-btn" id="map-zoom-in" title="Acercar mapa">+</button>
-            <button type="button" class="map-ctrl-btn" id="map-zoom-out" title="Alejar mapa">−</button>
-            <button type="button" class="map-ctrl-btn" id="map-zoom-reset" title="Restablecer posición y zoom">↺</button>
+            <button type="button" class="map-ctrl-btn" id="map-zoom-in" title="<?= __('analytics_zoom_in', 'Acercar mapa') ?>">+</button>
+            <button type="button" class="map-ctrl-btn" id="map-zoom-out" title="<?= __('analytics_zoom_out', 'Alejar mapa') ?>">−</button>
+            <button type="button" class="map-ctrl-btn" id="map-zoom-reset" title="<?= __('analytics_zoom_reset', 'Restablecer posición y zoom') ?>">↺</button>
           </div>
         </div>
         <div class="world-map-stage" id="world-map-stage">
@@ -560,10 +559,10 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
       <div class="stats-col">
         <!-- Países -->
         <div class="card card-lg kp-paginated-card" style="padding:24px" data-page-size="5">
-          <div class="card-title">Países</div>
-          <div class="help" style="margin-top:6px;margin-bottom:14px">Detección por cascada CF-IPCountry → GeoLite2 → ASN</div>
+          <div class="card-title"><?= __('analytics_countries', 'Países') ?></div>
+          <div class="help" style="margin-top:6px;margin-bottom:14px"><?= __('analytics_countries_help', 'Detección por cascada CF-IPCountry → GeoLite2 → ASN') ?></div>
           <?php if (!$countries_agg): ?>
-            <div class="muted" style="padding:24px 0;text-align:center">Sin datos de geolocalización todavía</div>
+            <div class="muted" style="padding:24px 0;text-align:center"><?= __('analytics_no_geo_data', 'Sin datos de geolocalización todavía') ?></div>
           <?php else: ?>
             <div class="kp-paginated-items col" style="gap:10px">
               <?php foreach ($countries_agg as $cc => $v):
@@ -577,10 +576,10 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
 
         <!-- Regiones LatAm -->
         <div class="card card-lg kp-paginated-card" style="padding:24px" data-page-size="5">
-          <div class="card-title">Top Latinoamérica</div>
-          <div class="help" style="margin-top:6px;margin-bottom:14px">Regiones con mayor interacción en Sudamérica y Centroamérica</div>
+          <div class="card-title"><?= __('analytics_top_latam', 'Top Latinoamérica') ?></div>
+          <div class="help" style="margin-top:6px;margin-bottom:14px"><?= __('analytics_top_latam_help', 'Regiones con mayor interacción en Sudamérica y Centroamérica') ?></div>
           <?php if (!$latam_agg): ?>
-            <div class="muted" style="padding:24px 0;text-align:center">Sin datos de Latinoamérica</div>
+            <div class="muted" style="padding:24px 0;text-align:center"><?= __('analytics_no_latam_data', 'Sin datos de Latinoamérica') ?></div>
           <?php else: ?>
             <div class="kp-paginated-items col" style="gap:10px">
               <?php foreach ($latam_agg as $r => $v):
@@ -592,10 +591,10 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
 
         <!-- Regiones Asia -->
         <div class="card card-lg kp-paginated-card" style="padding:24px" data-page-size="5">
-          <div class="card-title">Top Asia</div>
-          <div class="help" style="margin-top:6px;margin-bottom:14px">Regiones con mayor interacción en Asia</div>
+          <div class="card-title"><?= __('analytics_top_asia', 'Top Asia') ?></div>
+          <div class="help" style="margin-top:6px;margin-bottom:14px"><?= __('analytics_top_asia_help', 'Regiones con mayor interacción en Asia') ?></div>
           <?php if (!$as_agg): ?>
-            <div class="muted" style="padding:24px 0;text-align:center">Sin datos de Asia</div>
+            <div class="muted" style="padding:24px 0;text-align:center"><?= __('analytics_no_asia_data', 'Sin datos de Asia') ?></div>
           <?php else: ?>
             <div class="kp-paginated-items col" style="gap:10px">
               <?php foreach ($as_agg as $r => $v):
@@ -610,10 +609,10 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
       <div class="stats-col">
         <!-- Metros U.S. -->
         <div class="card card-lg kp-paginated-card" style="padding:24px" data-page-size="5">
-          <div class="card-title">Top U.S. Metros</div>
-          <div class="help" style="margin-top:6px;margin-bottom:14px">Mercados metropolitanos DMA (Nielsen)</div>
+          <div class="card-title"><?= __('analytics_top_us_metros', 'Top U.S. Metros') ?></div>
+          <div class="help" style="margin-top:6px;margin-bottom:14px"><?= __('analytics_top_us_metros_help', 'Mercados metropolitanos DMA (Nielsen)') ?></div>
           <?php if (!$metros_agg): ?>
-            <div class="muted" style="padding:24px 0;text-align:center">Sin datos de metros en EE.UU.</div>
+            <div class="muted" style="padding:24px 0;text-align:center"><?= __('analytics_no_us_metros_data', 'Sin datos de metros en EE.UU.') ?></div>
           <?php else: ?>
             <div class="kp-paginated-items col" style="gap:10px">
               <?php foreach ($metros_agg as $m => $v):
@@ -626,10 +625,10 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
 
         <!-- Regiones Europa -->
         <div class="card card-lg kp-paginated-card" style="padding:24px" data-page-size="5">
-          <div class="card-title">Top Europa</div>
-          <div class="help" style="margin-top:6px;margin-bottom:14px">Regiones con mayor interacción en Europa</div>
+          <div class="card-title"><?= __('analytics_top_europe', 'Top Europa') ?></div>
+          <div class="help" style="margin-top:6px;margin-bottom:14px"><?= __('analytics_top_europe_help', 'Regiones con mayor interacción en Europa') ?></div>
           <?php if (!$eu_agg): ?>
-            <div class="muted" style="padding:24px 0;text-align:center">Sin datos de Europa</div>
+            <div class="muted" style="padding:24px 0;text-align:center"><?= __('analytics_no_europe_data', 'Sin datos de Europa') ?></div>
           <?php else: ?>
             <div class="kp-paginated-items col" style="gap:10px">
               <?php foreach ($eu_agg as $r => $v):
@@ -648,10 +647,10 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
       <!-- Columna 1: Apps Podcasting 2.0 -->
       <div class="stats-col">
         <div class="card card-lg kp-paginated-card" style="padding:24px" data-page-size="5">
-          <div class="card-title">Apps · Podcasting 2.0</div>
-          <div class="help" style="margin-top:6px;margin-bottom:14px">Detectadas por <code>?aid=</code> en User-Agent vía Podcast Index</div>
+          <div class="card-title"><?= __('analytics_apps_p20', 'Apps · Podcasting 2.0') ?></div>
+          <div class="help" style="margin-top:6px;margin-bottom:14px"><?= __('analytics_apps_p20_help', 'Detectadas por <code>?aid=</code> en User-Agent vía Podcast Index') ?></div>
           <?php if (!$apps_agg): ?>
-            <div class="muted" style="padding:24px 0;text-align:center">Sin apps PC 2.0 detectadas todavía</div>
+            <div class="muted" style="padding:24px 0;text-align:center"><?= __('analytics_no_apps_p20_data', 'Sin apps PC 2.0 detectadas todavía') ?></div>
           <?php else: ?>
             <div class="kp-paginated-items col" style="gap:10px">
               <?php foreach ($apps_agg as $name => $v):
@@ -666,10 +665,10 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
       <div class="stats-col">
         <!-- Navegadores -->
         <div class="card card-lg kp-paginated-card" style="padding:24px" data-page-size="5">
-          <div class="card-title">Top Navegadores</div>
-          <div class="help" style="margin-top:6px;margin-bottom:14px">Agentes y clientes web de reproducción</div>
+          <div class="card-title"><?= __('analytics_top_browsers', 'Top Navegadores') ?></div>
+          <div class="help" style="margin-top:6px;margin-bottom:14px"><?= __('analytics_top_browsers_help', 'Agentes y clientes web de reproducción') ?></div>
           <?php if (!$browsers_agg): ?>
-            <div class="muted" style="padding:24px 0;text-align:center">Sin datos de navegadores</div>
+            <div class="muted" style="padding:24px 0;text-align:center"><?= __('analytics_no_browsers_data', 'Sin datos de navegadores') ?></div>
           <?php else: ?>
             <div class="kp-paginated-items col" style="gap:10px">
               <?php foreach ($browsers_agg as $b => $v):
@@ -681,10 +680,10 @@ function rng_btn($k, $l, $cur, $tab = 'downloads', $page = 'analytics') {
 
         <!-- Dispositivos -->
         <div class="card card-lg kp-paginated-card" style="padding:24px" data-page-size="5">
-          <div class="card-title">Top Dispositivos</div>
-          <div class="help" style="margin-top:6px;margin-bottom:14px">Modelos y categorías de hardware</div>
+          <div class="card-title"><?= __('analytics_top_devices', 'Top Dispositivos') ?></div>
+          <div class="help" style="margin-top:6px;margin-bottom:14px"><?= __('analytics_top_devices_help', 'Modelos y categorías de hardware') ?></div>
           <?php if (!$devices_agg): ?>
-            <div class="muted" style="padding:24px 0;text-align:center">Sin datos de dispositivos</div>
+            <div class="muted" style="padding:24px 0;text-align:center"><?= __('analytics_no_devices_data', 'Sin datos de dispositivos') ?></div>
           <?php else: ?>
             <div class="kp-paginated-items col" style="gap:10px">
               <?php foreach ($devices_agg as $d => $v):

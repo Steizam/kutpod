@@ -63,20 +63,14 @@ $categories = [
 function kp_alert_category(array $a): string {
   $k = $a['kind'] ?? '';
   if ($k === 'milestones' || $k === 'hitos') return 'milestones';
+  $title = mb_strtolower($a['title'] ?? '');
+  $isMilestone = str_contains($title, 'alcanzadas') || str_contains($title, 'descargas alcanzadas') || str_contains($title, 'hito') || str_contains($title, 'meta') || str_contains($title, 'reached') || str_contains($title, 'goal') || str_contains($title, 'milestone');
   if ($k === 'downloads' || $k === 'youtube') {
-    $title = mb_strtolower($a['title'] ?? '');
-    if (str_contains($title, 'alcanzadas') || str_contains($title, 'descargas alcanzadas') || str_contains($title, 'hito') || str_contains($title, 'meta')) {
-      return 'milestones';
-    }
-    return 'downloads';
+    return $isMilestone ? 'milestones' : 'downloads';
   }
   if ($k === 'fediverse') return 'fediverse';
   if ($k === 'op3') {
-    $title = mb_strtolower($a['title'] ?? '');
-    if (str_contains($title, 'alcanzadas') || str_contains($title, 'descargas alcanzadas') || str_contains($title, 'hito') || str_contains($title, 'meta')) {
-      return 'milestones';
-    }
-    return 'downloads';
+    return $isMilestone ? 'milestones' : 'downloads';
   }
   return 'system';
 }
@@ -99,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if ($action === 'mark_all_read') {
     try {
       kp_q("UPDATE alerts SET read_at = datetime('now') WHERE read_at IS NULL");
-      setcookie('kp_flash', 'Todas las alertas han sido marcadas como leídas.', time() + 30, '/');
+      setcookie('kp_flash', __('alerts_flash_all_marked', 'Todas las alertas han sido marcadas como leídas.'), time() + 30, '/');
     } catch (Throwable $e) {}
     header('Location: /admin/alerts?tab=' . urlencode($post_tab));
     exit;
@@ -109,9 +103,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if ($action === 'mark_tab_read') {
     try {
       if ($post_tab === 'downloads') {
-        kp_q("UPDATE alerts SET read_at = datetime('now') WHERE read_at IS NULL AND (kind IN ('downloads', 'youtube') OR (kind = 'op3' AND title NOT LIKE '%alcanzadas%' AND title NOT LIKE '%meta%' AND title NOT LIKE '%hito%'))");
+        kp_q("UPDATE alerts SET read_at = datetime('now') WHERE read_at IS NULL AND (kind IN ('downloads', 'youtube') OR (kind = 'op3' AND title NOT LIKE '%alcanzadas%' AND title NOT LIKE '%reached%' AND title NOT LIKE '%meta%' AND title NOT LIKE '%goal%' AND title NOT LIKE '%hito%' AND title NOT LIKE '%milestone%'))");
       } elseif ($post_tab === 'milestones') {
-        kp_q("UPDATE alerts SET read_at = datetime('now') WHERE read_at IS NULL AND (kind IN ('milestones', 'hitos') OR ((kind = 'op3' OR kind = 'youtube') AND (title LIKE '%alcanzadas%' OR title LIKE '%meta%' OR title LIKE '%hito%')))");
+        kp_q("UPDATE alerts SET read_at = datetime('now') WHERE read_at IS NULL AND (kind IN ('milestones', 'hitos') OR ((kind = 'op3' OR kind = 'youtube') AND (title LIKE '%alcanzadas%' OR title LIKE '%reached%' OR title LIKE '%meta%' OR title LIKE '%goal%' OR title LIKE '%hito%' OR title LIKE '%milestone%')))");
       } elseif ($post_tab === 'fediverse') {
         kp_q("UPDATE alerts SET read_at = datetime('now') WHERE read_at IS NULL AND kind = 'fediverse'");
       } elseif ($post_tab === 'system') {
@@ -119,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       } else {
         kp_q("UPDATE alerts SET read_at = datetime('now') WHERE read_at IS NULL");
       }
-      setcookie('kp_flash', 'Alertas de ' . e($categories[$post_tab]['label']) . ' marcadas como leídas.', time() + 30, '/');
+      setcookie('kp_flash', __('alerts_flash_tab_marked', 'Alertas de :tab marcadas como leídas.', ['tab' => $categories[$post_tab]['label']]), time() + 30, '/');
     } catch (Throwable $e) {}
     header('Location: /admin/alerts?tab=' . urlencode($post_tab));
     exit;
@@ -164,8 +158,8 @@ try {
   $raw_stats = kp_q("
     SELECT 
       CASE 
-        WHEN kind IN ('milestones', 'hitos') OR ((kind = 'op3' OR kind = 'youtube') AND (title LIKE '%alcanzadas%' OR title LIKE '%meta%' OR title LIKE '%hito%')) THEN 'milestones'
-        WHEN kind IN ('downloads', 'youtube') OR (kind = 'op3' AND title NOT LIKE '%alcanzadas%') THEN 'downloads'
+        WHEN kind IN ('milestones', 'hitos') OR ((kind = 'op3' OR kind = 'youtube') AND (title LIKE '%alcanzadas%' OR title LIKE '%reached%' OR title LIKE '%meta%' OR title LIKE '%goal%' OR title LIKE '%hito%' OR title LIKE '%milestone%')) THEN 'milestones'
+        WHEN kind IN ('downloads', 'youtube') OR (kind = 'op3' AND title NOT LIKE '%alcanzadas%' AND title NOT LIKE '%reached%' AND title NOT LIKE '%meta%' AND title NOT LIKE '%goal%' AND title NOT LIKE '%hito%' AND title NOT LIKE '%milestone%') THEN 'downloads'
         WHEN kind = 'fediverse' THEN 'fediverse'
         ELSE 'system'
       END as cat,
@@ -198,9 +192,9 @@ $offset = ($page - 1) * $perPage;
 $alerts = [];
 try {
   if ($active_tab === 'downloads') {
-    $whereClause = "(kind IN ('downloads', 'youtube') OR (kind = 'op3' AND title NOT LIKE '%alcanzadas%' AND title NOT LIKE '%meta%' AND title NOT LIKE '%hito%'))";
+    $whereClause = "(kind IN ('downloads', 'youtube') OR (kind = 'op3' AND title NOT LIKE '%alcanzadas%' AND title NOT LIKE '%reached%' AND title NOT LIKE '%meta%' AND title NOT LIKE '%goal%' AND title NOT LIKE '%hito%' AND title NOT LIKE '%milestone%'))";
   } elseif ($active_tab === 'milestones') {
-    $whereClause = "(kind IN ('milestones', 'hitos') OR ((kind = 'op3' OR kind = 'youtube') AND (title LIKE '%alcanzadas%' OR title LIKE '%meta%' OR title LIKE '%hito%')))";
+    $whereClause = "(kind IN ('milestones', 'hitos') OR ((kind = 'op3' OR kind = 'youtube') AND (title LIKE '%alcanzadas%' OR title LIKE '%reached%' OR title LIKE '%meta%' OR title LIKE '%goal%' OR title LIKE '%hito%' OR title LIKE '%milestone%')))";
   } elseif ($active_tab === 'fediverse') {
     $whereClause = "kind = 'fediverse'";
   } elseif ($active_tab === 'system') {
@@ -704,19 +698,19 @@ $total_unread_all = $stats['all']['unread'] ?? 0;
               </span>
 
               <?php if ($is_unread): ?>
-                <span class="alert-badge-unread-dot" title="No leída"></span>
+                <span class="alert-badge-unread-dot" title="<?= __('alerts_badge_unread', 'No leída') ?>"></span>
               <?php endif; ?>
 
               <?php if (!empty($a['action_type'])):
                 $at = $a['action_type'];
                 $atLabel = match($at) {
-                  'Follow'   => __('alert_act_follower', '👤 Seguidor'),
-                  'Like'     => __('alert_act_like', '💖 Me gusta'),
-                  'Announce' => __('alert_act_announce', '🔁 Retoot'),
-                  'Reply'    => __('alert_act_reply', '💬 Comentario'),
-                  'YouTube'  => __('alert_act_youtube', '▶️ YouTube'),
-                  'Hito'     => __('alert_act_milestone', '🏆 Hito'),
-                  default    => '⚡ ' . $at,
+                  'Follow', 'Seguidor' => __('alert_act_follower', '👤 Seguidor'),
+                  'Like', 'Me gusta'   => __('alert_act_like', '💖 Me gusta'),
+                  'Announce', 'Retoot' => __('alert_act_announce', '🔁 Retoot'),
+                  'Reply', 'Comentario'=> __('alert_act_reply', '💬 Comentario'),
+                  'YouTube'            => __('alert_act_youtube', '▶️ YouTube'),
+                  'Hito', 'Milestone'  => __('alert_act_milestone', '🏆 Hito'),
+                  default              => '⚡ ' . $at,
                 };
               ?>
                 <span style="font-size:11.5px;color:<?= $at === 'YouTube' ? '#ef4444' : ($at === 'Hito' ? '#f59e0b' : 'var(--text-3)') ?>;font-weight:600"><?= e($atLabel) ?></span>
@@ -729,14 +723,14 @@ $total_unread_all = $stats['all']['unread'] ?? 0;
 
             <!-- Título -->
             <div class="alert-card-title">
-              <?= e($a['title']) ?>
+              <?= e(kp_alert_translate_title($a['title'])) ?>
             </div>
 
             <!-- Actor name (si es del fediverso o usuario) -->
             <?php if (!empty($a['actor_name'])): ?>
               <div style="font-size:13px;font-weight:500;margin-bottom:4px">
                 <?php if (!empty($a['actor_url'])): ?>
-                  <a href="<?= e($a['actor_url']) ?>" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" title="Ver perfil en el Fediverso">
+                  <a href="<?= e($a['actor_url']) ?>" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" title="<?= __('alerts_fediverse_profile', 'Ver perfil en el Fediverso') ?>">
                     <?= e($a['actor_name']) ?>
                   </a>
                   <span class="muted" style="font-size:11.5px;opacity:0.75">&lt;<?= e($a['actor_url']) ?>&gt;</span>
@@ -749,7 +743,7 @@ $total_unread_all = $stats['all']['unread'] ?? 0;
             <!-- Cuerpo del mensaje -->
             <?php if (!empty($a['body'])): ?>
               <div class="alert-card-body">
-                <?= e($a['body']) ?>
+                <?= e(kp_alert_translate_body($a['body'])) ?>
               </div>
             <?php endif; ?>
 
@@ -832,19 +826,19 @@ $total_unread_all = $stats['all']['unread'] ?? 0;
       <div class="row" style="justify-content:space-between;margin-top:24px;padding-top:16px;border-top:1px solid var(--border);align-items:center">
         <div>
           <?php if ($page > 1): ?>
-            <a href="?tab=<?= urlencode($active_tab) ?>&p=<?= $page - 1 ?>" class="btn" style="font-size:13px">« Anterior</a>
+            <a href="?tab=<?= urlencode($active_tab) ?>&p=<?= $page - 1 ?>" class="btn" style="font-size:13px"><?= __('alerts_page_prev', '« Anterior') ?></a>
           <?php else: ?>
-            <button class="btn" disabled style="opacity:0.5;cursor:not-allowed;font-size:13px">« Anterior</button>
+            <button class="btn" disabled style="opacity:0.5;cursor:not-allowed;font-size:13px"><?= __('alerts_page_prev', '« Anterior') ?></button>
           <?php endif; ?>
         </div>
         <div class="muted tabular" style="font-size:13px">
-          Página <?= $page ?> de <?= $totalPages ?> (Total: <?= $totalInTab ?>)
+          <?= __('alerts_page_info', 'Página :page de :totalPages (Total: :total)', ['page' => $page, 'totalPages' => $totalPages, 'total' => $totalInTab]) ?>
         </div>
         <div>
           <?php if ($page < $totalPages): ?>
-            <a href="?tab=<?= urlencode($active_tab) ?>&p=<?= $page + 1 ?>" class="btn" style="font-size:13px">Siguiente »</a>
+            <a href="?tab=<?= urlencode($active_tab) ?>&p=<?= $page + 1 ?>" class="btn" style="font-size:13px"><?= __('alerts_page_next', 'Siguiente »') ?></a>
           <?php else: ?>
-            <button class="btn" disabled style="opacity:0.5;cursor:not-allowed;font-size:13px">Siguiente »</button>
+            <button class="btn" disabled style="opacity:0.5;cursor:not-allowed;font-size:13px"><?= __('alerts_page_next', 'Siguiente »') ?></button>
           <?php endif; ?>
         </div>
       </div>
