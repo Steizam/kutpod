@@ -103,12 +103,12 @@ $totalResults = count($podcasts) + count($episodes);
 ?>
 <div class="page-head">
   <div>
-    <h1 class="page-title">Resultados de búsqueda</h1>
+    <h1 class="page-title"><?= __('search_results_title', 'Resultados de búsqueda') ?></h1>
     <p class="page-sub">
       <?php if ($q === ''): ?>
-        Escribe un término en la barra superior.
+        <?= __('search_prompt_type', 'Escribe un término en la barra superior.') ?>
       <?php else: ?>
-        Mostrando <?= $totalResults ?> resultado<?= $totalResults === 1 ? '' : 's' ?> para "<?= e($q) ?>"
+        <?= __raw('search_showing_results', 'Mostrando :count resultado(s) para ":query"', ['count' => $totalResults, 'query' => e($q)]) ?>
       <?php endif; ?>
     </p>
   </div>
@@ -117,21 +117,21 @@ $totalResults = count($podcasts) + count($episodes);
 <?php if ($q === ''): ?>
   <div class="card" style="padding:60px 40px;text-align:center;margin-top:var(--gap)">
     <div style="color:var(--text-3);margin-bottom:12px"><?= icon('search',32) ?></div>
-    <div style="font-size:16px;font-weight:500">¿Qué deseas buscar?</div>
-    <div class="page-sub" style="margin-top:6px">Ingresa el título, descripción o nombre de un podcast o episodio en el buscador.</div>
+    <div style="font-size:16px;font-weight:500"><?= __('search_what_to_search', '¿Qué deseas buscar?') ?></div>
+    <div class="page-sub" style="margin-top:6px"><?= __('search_empty_hint', 'Ingresa el título, descripción o nombre de un podcast o episodio en el buscador.') ?></div>
   </div>
 <?php else: ?>
   <?php if ($totalResults === 0): ?>
     <div class="card" style="padding:60px 40px;text-align:center;margin-top:var(--gap)">
       <div style="color:var(--text-3);margin-bottom:12px"><?= icon('search',32) ?></div>
-      <div style="font-size:16px;font-weight:500">No hay coincidencias</div>
-      <div class="page-sub" style="margin-top:6px">No se encontraron podcasts ni episodios para "<?= e($q) ?>".</div>
+      <div style="font-size:16px;font-weight:500"><?= __('search_no_matches', 'No hay coincidencias') ?></div>
+      <div class="page-sub" style="margin-top:6px"><?= __raw('search_no_matches_desc', 'No se encontraron podcasts ni episodios para ":query".', ['query' => e($q)]) ?></div>
     </div>
   <?php else: ?>
     
     <?php if (!empty($podcasts)): ?>
       <div class="card" style="margin-top:var(--gap)">
-        <div class="card-head"><div class="card-title">Podcasts encontrados (<?= count($podcasts) ?>)</div></div>
+        <div class="card-head"><div class="card-title"><?= __raw('search_podcasts_found', 'Podcasts encontrados (:count)', ['count' => count($podcasts)]) ?></div></div>
         <div class="list">
           <?php foreach ($podcasts as $p): ?>
             <a class="row" style="padding:14px 16px;border-top:1px solid var(--border);text-decoration:none;color:var(--text);align-items:center;gap:14px" href="/admin/podcast?id=<?= e($p['id']) ?>">
@@ -142,14 +142,14 @@ $totalResults = count($podcasts) + count($episodes);
               <?php endif; ?>
               <div style="flex:1;min-width:0">
                 <div style="font-size:14.5px;font-weight:600"><?= e($p['title']) ?></div>
-                <div style="font-size:12px;color:var(--text-3);margin-top:2px"><?= e($p['author'] ?: 'Sin autor') ?> · <?= (int)($p['episodes'] ?? 0) ?> episodios</div>
+                <div style="font-size:12px;color:var(--text-3);margin-top:2px"><?= e($p['author'] ?: __('no_author', 'Sin autor')) ?> · <?= __raw('pod_episodes_count', ':count episodios', ['count' => (int)($p['episodes'] ?? 0)]) ?></div>
                 <?php if (!empty($p['description'])): ?>
                   <div style="font-size:12.5px;color:var(--text-2);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4">
                     <?= e(strip_tags($p['description'])) ?>
                   </div>
                 <?php endif; ?>
               </div>
-              <span class="btn" style="padding:5px 12px;font-size:12px;color:var(--accent);border-color:var(--accent);flex-shrink:0">Administrar →</span>
+              <span class="btn" style="padding:5px 12px;font-size:12px;color:var(--accent);border-color:var(--accent);flex-shrink:0"><?= __('manage_arrow', 'Administrar →') ?></span>
             </a>
           <?php endforeach; ?>
         </div>
@@ -158,7 +158,7 @@ $totalResults = count($podcasts) + count($episodes);
 
     <?php if (!empty($episodes)): ?>
       <div class="card" style="margin-top:var(--gap)">
-        <div class="card-head"><div class="card-title">Episodios encontrados (<?= count($episodes) ?>)</div></div>
+        <div class="card-head"><div class="card-title"><?= __raw('search_episodes_found', 'Episodios encontrados (:count)', ['count' => count($episodes)]) ?></div></div>
         <div class="list">
           <div style="overflow-x:auto;">
             <div style="min-width: 700px;">

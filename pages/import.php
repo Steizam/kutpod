@@ -7,60 +7,60 @@ $targets = kp_q("SELECT id, title FROM podcasts ORDER BY title");
 ?>
 <div class="page-head">
   <div>
-    <h1 class="page-title">Importar RSS</h1>
-    <p class="page-sub">Streaming · idempotente · resumible. Probado con feeds de 1000+ episodios.</p>
+    <h1 class="page-title"><?= __('imp_title', 'Importar RSS') ?></h1>
+    <p class="page-sub"><?= __('imp_sub', 'Streaming · idempotente · resumible. Probado con feeds de 1000+ episodios.') ?></p>
   </div>
 </div>
 
 <div class="grid-12" style="gap:24px">
   <div class="card card-lg span-8">
-    <div class="card-title" style="margin-bottom:14px">Origen del feed</div>
-    <div class="field"><label class="label">URL del feed RSS</label>
+    <div class="card-title" style="margin-bottom:14px"><?= __('imp_feed_source', 'Origen del feed') ?></div>
+    <div class="field"><label class="label"><?= __('imp_feed_url', 'URL del feed RSS') ?></label>
       <input class="input" id="imp_url" type="url" placeholder="https://anchor.fm/s/.../podcast/rss" style="font-family:ui-monospace,monospace">
     </div>
-    <div class="field" style="margin-top:14px"><label class="label">Destino</label>
+    <div class="field" style="margin-top:14px"><label class="label"><?= __('imp_destination', 'Destino') ?></label>
       <select class="select" id="imp_target">
-        <option value="">— Crear un podcast nuevo —</option>
+        <option value=""><?= __('imp_create_new_podcast', '— Crear un podcast nuevo —') ?></option>
         <?php foreach ($targets as $t): ?>
-          <option value="<?= (int)$t['id'] ?>">Mergear en: <?= e($t['title']) ?></option>
+          <option value="<?= (int)$t['id'] ?>"><?= __raw('imp_merge_into', 'Mergear en: :title', ['title' => $t['title']]) ?></option>
         <?php endforeach; ?>
       </select>
     </div>
     <div class="col" style="gap:8px;margin-top:18px">
-      <label class="toggle-row"><span><strong>Preservar GUIDs originales</strong></span><label class="toggle"><input type="checkbox" data-opt="preserve_guid" checked><span class="toggle-track"></span></label></label>
-      <label class="toggle-row"><span><strong>Preservar fechas de publicación</strong></span><label class="toggle"><input type="checkbox" data-opt="preserve_dates" checked><span class="toggle-track"></span></label></label>
-      <label class="toggle-row"><span><strong>Descargar archivos de audio a tu servidor</strong></span><label class="toggle"><input type="checkbox" data-opt="download_audio" checked><span class="toggle-track"></span></label></label>
-      <label class="toggle-row"><span><strong>Descargar portadas</strong></span><label class="toggle"><input type="checkbox" data-opt="download_images" checked><span class="toggle-track"></span></label></label>
-      <label class="toggle-row"><span><strong>Importar namespaces Podcasting 2.0</strong></span><label class="toggle"><input type="checkbox" data-opt="podcast_2_0" checked><span class="toggle-track"></span></label></label>
-      <label class="toggle-row"><span><strong>Continuar si un episodio falla</strong><br><span class="help">Recomendado para feeds grandes</span></span><label class="toggle"><input type="checkbox" data-opt="resume_on_fail" checked><span class="toggle-track"></span></label></label>
-      <label class="toggle-row"><span><strong>Crear respaldo automático antes de importar</strong></span><label class="toggle"><input type="checkbox" data-opt="auto_backup" checked><span class="toggle-track"></span></label></label>
+      <label class="toggle-row"><span><strong><?= __('imp_opt_preserve_guids', 'Preservar GUIDs originales') ?></strong></span><label class="toggle"><input type="checkbox" data-opt="preserve_guid" checked><span class="toggle-track"></span></label></label>
+      <label class="toggle-row"><span><strong><?= __('imp_opt_preserve_dates', 'Preservar fechas de publicación') ?></strong></span><label class="toggle"><input type="checkbox" data-opt="preserve_dates" checked><span class="toggle-track"></span></label></label>
+      <label class="toggle-row"><span><strong><?= __('imp_opt_download_audio', 'Descargar archivos de audio a tu servidor') ?></strong></span><label class="toggle"><input type="checkbox" data-opt="download_audio" checked><span class="toggle-track"></span></label></label>
+      <label class="toggle-row"><span><strong><?= __('imp_opt_download_covers', 'Descargar portadas') ?></strong></span><label class="toggle"><input type="checkbox" data-opt="download_images" checked><span class="toggle-track"></span></label></label>
+      <label class="toggle-row"><span><strong><?= __('imp_opt_podcast_2_0', 'Importar namespaces Podcasting 2.0') ?></strong></span><label class="toggle"><input type="checkbox" data-opt="podcast_2_0" checked><span class="toggle-track"></span></label></label>
+      <label class="toggle-row"><span><strong><?= __('imp_opt_resume_on_fail', 'Continuar si un episodio falla') ?></strong><br><span class="help"><?= __('imp_opt_resume_help', 'Recomendado para feeds grandes') ?></span></span><label class="toggle"><input type="checkbox" data-opt="resume_on_fail" checked><span class="toggle-track"></span></label></label>
+      <label class="toggle-row"><span><strong><?= __('imp_opt_auto_backup', 'Crear respaldo automático antes de importar') ?></strong></span><label class="toggle"><input type="checkbox" data-opt="auto_backup" checked><span class="toggle-track"></span></label></label>
     </div>
     <div class="row" style="gap:10px;margin-top:18px">
-      <button class="btn" type="button" onclick="KP_IMP.analyze()"><?= icon('search',13) ?> Analizar feed</button>
-      <button class="btn btn-primary" type="button" onclick="KP_IMP.start()"><?= icon('download',13) ?> Iniciar importación</button>
+      <button class="btn" type="button" onclick="KP_IMP.analyze()"><?= icon('search',13) ?> <?= __('imp_btn_analyze', 'Analizar feed') ?></button>
+      <button class="btn btn-primary" type="button" onclick="KP_IMP.start()"><?= icon('download',13) ?> <?= __('imp_btn_start', 'Iniciar importación') ?></button>
     </div>
   </div>
 
   <div class="card card-lg span-4">
-    <div class="card-title" style="margin-bottom:14px">Vista previa</div>
-    <div id="imp_preview" class="help" style="min-height:200px">Analiza un feed para ver título, episodios y namespaces detectados.</div>
+    <div class="card-title" style="margin-bottom:14px"><?= __('imp_preview_title', 'Vista previa') ?></div>
+    <div id="imp_preview" class="help" style="min-height:200px"><?= __('imp_preview_empty', 'Analiza un feed para ver título, episodios y namespaces detectados.') ?></div>
   </div>
 
   <div class="card card-lg span-12" id="imp_progress" hidden>
-    <div class="card-head"><div class="card-title">Progreso</div>
+    <div class="card-head"><div class="card-title"><?= __('imp_progress_title', 'Progreso') ?></div>
       <div class="row" style="gap:8px">
-        <button class="btn btn-sm" type="button" onclick="KP_IMP.pause()">Pausar</button>
-        <button class="btn btn-sm" type="button" onclick="KP_IMP.resume()">Reanudar</button>
-        <button class="btn btn-sm" type="button" onclick="KP_IMP.cancel()">Cancelar</button>
+        <button class="btn btn-sm" type="button" onclick="KP_IMP.pause()"><?= __('imp_btn_pause', 'Pausar') ?></button>
+        <button class="btn btn-sm" type="button" onclick="KP_IMP.resume()"><?= __('imp_btn_resume', 'Reanudar') ?></button>
+        <button class="btn btn-sm" type="button" onclick="KP_IMP.cancel()"><?= __('cancel', 'Cancelar') ?></button>
       </div>
     </div>
     <div class="progress-bar" style="margin-top:14px"><div class="progress-fill" id="imp_fill"></div></div>
     <div class="row tabular" style="gap:24px;margin-top:10px;font-size:13px;color:var(--text-2)">
-      <span><strong id="imp_done">0</strong> / <span id="imp_total">0</span> episodios</span>
+      <span><strong id="imp_done">0</strong> / <span id="imp_total">0</span> <?= __('nav_episodes', 'episodios') ?></span>
       <span><strong id="imp_rate">0</strong> ep/s</span>
-      <span><strong id="imp_mb">0</strong> MB descargados</span>
+      <span><strong id="imp_mb">0</strong> <?= __('imp_mb_downloaded', 'MB descargados') ?></span>
       <span>ETA: <strong id="imp_eta">—</strong></span>
-      <span>Errores: <strong id="imp_failed">0</strong></span>
+      <span><?= __('imp_errors_count', 'Errores:') ?> <strong id="imp_failed">0</strong></span>
     </div>
     <div class="terminal" id="imp_log" style="margin-top:14px;max-height:280px;overflow:auto;font-family:ui-monospace,monospace;font-size:12px;background:var(--surface-2);padding:14px;border-radius:8px"></div>
   </div>

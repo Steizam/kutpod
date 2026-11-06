@@ -204,8 +204,8 @@ if ($action === 'settings' && $pluginId !== '') {
 
 <div class="page-head">
   <div>
-    <h1 class="page-title">Manejador de Plugins</h1>
-    <p class="page-sub">Activa integraciones o extiende la funcionalidad de tu instancia</p>
+    <h1 class="page-title"><?= __('plug_title', 'Manejador de Plugins') ?></h1>
+    <p class="page-sub"><?= __('plug_sub', 'Activa integraciones o extiende la funcionalidad de tu instancia') ?></p>
   </div>
 </div>
 
@@ -214,15 +214,15 @@ if ($action === 'settings' && $pluginId !== '') {
   <!-- Formulario de Instalación -->
   <div class="span-4 col" style="gap:24px">
     <div class="card">
-      <div class="card-title" style="margin-bottom:12px">Subir nuevo Plugin</div>
+      <div class="card-title" style="margin-bottom:12px"><?= __('plug_install_new', 'Subir nuevo Plugin') ?></div>
       <p style="font-size:12.5px;color:var(--text-3);line-height:1.5;margin-bottom:16px">
-        Puedes subir un plugin empaquetado en formato <strong>.zip</strong>. Debe contener el archivo <code>plugin.json</code> en la raíz.
+        <?= __('plug_install_desc', 'Puedes subir un plugin empaquetado en formato <strong>.zip</strong>. Debe contener el archivo <code>plugin.json</code> en la raíz.') ?>
       </p>
       
       <?php if (!is_writable($pluginsDir)): ?>
         <div style="background:var(--red-soft); border: 1px solid var(--red-10); color:var(--red); padding:12px; border-radius:8px; font-size:12px; line-height:1.5; margin-bottom:16px">
-          <strong>Directorio sin permisos de escritura:</strong><br>
-          Para instalar manualmente, usa SSH en la raíz del servidor y asigna permisos:
+          <strong><?= __('plug_dir_not_writable', 'Directorio sin permisos de escritura:') ?></strong><br>
+          <?= __('plug_dir_perm_hint', 'Para instalar manualmente, usa SSH en la raíz del servidor y asigna permisos:') ?>
           <code style="display:block; margin-top:6px; background:rgba(0,0,0,0.15); padding:6px; border-radius:4px; font-family:monospace; user-select:all">chmod -R 775 storage/plugins</code>
         </div>
       <?php endif; ?>
@@ -231,11 +231,11 @@ if ($action === 'settings' && $pluginId !== '') {
         <?= kp_csrf_field() ?>
         <input type="hidden" name="action" value="upload">
         <div class="field">
-          <label class="label">Selecciona el ZIP del plugin</label>
+          <label class="label"><?= __('plug_select_zip', 'Selecciona el ZIP del plugin') ?></label>
           <input class="input" type="file" name="zip" accept=".zip" required style="padding:6px">
         </div>
         <button class="btn btn-primary" type="submit" style="margin-top:16px; width:100%; justify-content:center" <?= !is_writable($pluginsDir) ? 'disabled' : '' ?>>
-          <?= icon('upload', 14) ?> Instalar Plugin
+          <?= icon('upload', 14) ?> <?= __('plug_install_btn', 'Instalar Plugin') ?>
         </button>
       </form>
     </div>
@@ -244,12 +244,12 @@ if ($action === 'settings' && $pluginId !== '') {
   <!-- Listado de Plugins -->
   <div class="span-8 col">
     <div class="card">
-      <div class="card-title" style="margin-bottom:18px">Plugins Disponibles</div>
+      <div class="card-title" style="margin-bottom:18px"><?= __('plug_available_title', 'Plugins Disponibles') ?></div>
       
       <?php if (empty($available_plugins)): ?>
         <div style="text-align:center; padding:48px 0; color:var(--text-3)">
           <?= icon('layers', 32) ?>
-          <p style="margin-top:12px; font-size:14px">No hay plugins instalados.</p>
+          <p style="margin-top:12px; font-size:14px"><?= __('plug_no_plugins', 'No hay plugins instalados.') ?></p>
         </div>
       <?php else: ?>
         <div class="col" style="gap:16px">
@@ -264,15 +264,15 @@ if ($action === 'settings' && $pluginId !== '') {
                 <div style="display:flex; align-items:center; gap:8px">
                   <h3 style="margin:0; font-size:15px; font-weight:600"><?= e($plugin['name']) ?></h3>
                   <span class="tag <?= $is_active ? 'published' : 'draft' ?>" style="font-size:10.5px">
-                    <?= $is_active ? 'Activo' : 'Inactivo' ?>
+                    <?= $is_active ? __('plug_active', 'Activo') : __('plug_inactive', 'Inactivo') ?>
                   </span>
                 </div>
                 <p style="margin:6px 0; font-size:13px; color:var(--text-2); line-height:1.4">
-                  <?= e($plugin['description'] ?? 'Sin descripción.') ?>
+                  <?= e($plugin['description'] ?? __('plug_no_desc', 'Sin descripción.')) ?>
                 </p>
                 <div style="display:flex; gap:12px; font-size:11.5px; color:var(--text-3)">
-                  <span>Versión: <strong><?= e($plugin['version'] ?? '1.0') ?></strong></span>
-                  <span>Autor: <strong><?= e($plugin['author'] ?? 'Desconocido') ?></strong></span>
+                  <span><?= __('plug_version', 'Versión:') ?> <strong><?= e($plugin['version'] ?? '1.0') ?></strong></span>
+                  <span><?= __('plug_author', 'Autor:') ?> <strong><?= e($plugin['author'] ?? __('plug_unknown_author', 'Desconocido')) ?></strong></span>
                 </div>
               </div>
               
@@ -283,19 +283,19 @@ if ($action === 'settings' && $pluginId !== '') {
                   <?php if ($is_active): ?>
                     <input type="hidden" name="action" value="deactivate">
                     <button class="btn btn-ghost" type="submit" style="color:var(--text-3); width:100%; justify-content:center; padding:6px 12px; font-size:12px">
-                      Desactivar
+                      <?= __('plug_disable', 'Desactivar') ?>
                     </button>
                   <?php else: ?>
                     <input type="hidden" name="action" value="activate">
                     <button class="btn" type="submit" style="color:var(--accent); border-color:var(--accent); width:100%; justify-content:center; padding:6px 12px; font-size:12px">
-                      Activar
+                      <?= __('plug_enable', 'Activar') ?>
                     </button>
                   <?php endif; ?>
                 </form>
                 
                 <?php if ($is_active && $plugin['has_options']): ?>
                   <a class="btn btn-primary" href="<?= admin_url('plugins?action=settings&plugin=' . urlencode($id)) ?>" style="padding:6px 12px; font-size:12px; text-align:center; display:block">
-                    <?= icon('settings', 12) ?> Configurar
+                    <?= icon('settings', 12) ?> <?= __('plug_settings', 'Configurar') ?>
                   </a>
                 <?php endif; ?>
               </div>

@@ -9,53 +9,53 @@ require_once __DIR__ . '/../includes/db.php';
 $categories = [
   'all' => [
     'key'         => 'all',
-    'label'       => 'Todas',
-    'singular'    => 'Todas las alertas',
+    'label'       => __('alerts_tab_all', 'Todas'),
+    'singular'    => __('alerts_all_title', 'Todas las alertas'),
     'icon'        => 'bell',
     'color'       => 'var(--accent)',
-    'desc'        => 'Vista panorámica de todas las notificaciones del sistema',
-    'empty_title' => 'Sin alertas en el sistema',
-    'empty_desc'  => 'No hay notificaciones registradas por el momento.',
+    'desc'        => __('alerts_all_desc', 'Vista panorámica de todas las notificaciones del sistema'),
+    'empty_title' => __('alerts_all_empty_title', 'Sin alertas en el sistema'),
+    'empty_desc'  => __('alerts_all_empty_desc', 'No hay notificaciones registradas por el momento.'),
   ],
   'downloads' => [
     'key'         => 'downloads',
-    'label'       => 'Descargas',
-    'singular'    => 'Descargas',
+    'label'       => __('alerts_tab_downloads', 'Descargas'),
+    'singular'    => __('alerts_tab_downloads', 'Descargas'),
     'icon'        => 'download',
     'color'       => '#0284c7',
-    'desc'        => 'Sincronización de reglas y registros diarios de descargas auditadas',
-    'empty_title' => 'Sin alertas de descargas',
-    'empty_desc'  => 'Aquí aparecerán los informes de descargas auditadas por OP3.',
+    'desc'        => __('alerts_downloads_desc', 'Sincronización de reglas y registros diarios de descargas auditadas'),
+    'empty_title' => __('alerts_downloads_empty_title', 'Sin alertas de descargas'),
+    'empty_desc'  => __('alerts_downloads_empty_desc', 'Aquí aparecerán los informes de descargas auditadas por OP3.'),
   ],
   'milestones' => [
     'key'         => 'milestones',
-    'label'       => 'Hitos',
-    'singular'    => 'Hitos',
+    'label'       => __('alerts_tab_milestones', 'Hitos'),
+    'singular'    => __('alerts_milestones_title', 'Hitos & Metas'),
     'icon'        => 'award',
     'color'       => '#f59e0b',
-    'desc'        => 'Metas de audiencia superadas y récords de descargas alcanzadas',
-    'empty_title' => 'Sin hitos alcanzados aún',
-    'empty_desc'  => 'Cuando tus episodios alcancen metas de 100, 500, 1.000 o más descargas, aparecerán aquí para celebrar el logro.',
+    'desc'        => __('alerts_milestones_desc', 'Metas de audiencia superadas y récords de descargas alcanzadas'),
+    'empty_title' => __('alerts_milestones_empty_title', 'Sin hitos alcanzados aún'),
+    'empty_desc'  => __('alerts_milestones_empty_desc', 'Cuando tus episodios alcancen metas de 100, 500, 1.000 o más descargas, aparecerán aquí para celebrar el logro.'),
   ],
   'fediverse' => [
     'key'         => 'fediverse',
-    'label'       => 'Fediverso',
-    'singular'    => 'Fediverso',
+    'label'       => __('nav_fediverse', 'Fediverso'),
+    'singular'    => __('nav_fediverse', 'Fediverso'),
     'icon'        => 'globe',
     'color'       => '#6366f1',
-    'desc'        => 'Nuevos seguidores, interacciones, me gusta y publicaciones en ActivityPub',
-    'empty_title' => 'Sin actividad del Fediverso',
-    'empty_desc'  => 'Aquí aparecerán los nuevos seguidores, comentarios, me gusta y avisos de federación.',
+    'desc'        => __('alerts_fediverse_desc', 'Nuevos seguidores, interacciones, me gusta y publicaciones en ActivityPub'),
+    'empty_title' => __('alerts_fediverse_empty_title', 'Sin actividad del Fediverso'),
+    'empty_desc'  => __('alerts_fediverse_empty_desc', 'Aquí aparecerán los nuevos seguidores, comentarios, me gusta y avisos de federación.'),
   ],
   'system' => [
     'key'         => 'system',
-    'label'       => 'Sistema',
-    'singular'    => 'Sistema',
+    'label'       => __('alerts_tab_system', 'Sistema'),
+    'singular'    => __('alerts_tab_system', 'Sistema'),
     'icon'        => 'settings',
     'color'       => '#10b981',
-    'desc'        => 'Avisos de seguridad, 2FA, importaciones RSS, plugins y mantenimiento',
-    'empty_title' => 'Sin avisos del sistema',
-    'empty_desc'  => 'La plataforma y los servicios funcionan con normalidad sin avisos pendientes.',
+    'desc'        => __('alerts_system_desc', 'Avisos de seguridad, 2FA, importaciones RSS, plugins y mantenimiento'),
+    'empty_title' => __('alerts_system_empty_title', 'Sin avisos del sistema'),
+    'empty_desc'  => __('alerts_system_empty_desc', 'La plataforma y los servicios funcionan con normalidad sin avisos pendientes.'),
   ],
 ];
 
@@ -507,9 +507,9 @@ $total_unread_all = $stats['all']['unread'] ?? 0;
 
 <div class="page-head">
   <div>
-    <h1 class="page-title">Alertas</h1>
+    <h1 class="page-title"><?= __('nav_alerts') ?></h1>
     <p class="page-sub">
-      <?= $total_unread_all ? "<strong>$total_unread_all</strong> sin leer · " : '' ?>Centro de notificaciones de descargas, hitos, federación y sistema
+      <?= $total_unread_all ? "<strong>$total_unread_all</strong> " . __('alerts_unread') . " · " : '' ?><?= __('alerts_subtitle') ?>
     </p>
   </div>
   <div class="row" style="gap:8px">
@@ -519,7 +519,7 @@ $total_unread_all = $stats['all']['unread'] ?? 0;
         <input type="hidden" name="_action" value="mark_all_read"/>
         <input type="hidden" name="tab" value="<?= e($active_tab) ?>"/>
         <button class="btn btn-primary" type="submit" style="display:inline-flex;align-items:center;gap:6px">
-          <?= icon('check', 13) ?> Marcar todas leídas (<?= $total_unread_all ?>)
+          <?= icon('check', 13) ?> <?= __('alerts_mark_all_read', ['count' => $total_unread_all]) ?>
         </button>
       </form>
     <?php endif; ?>
@@ -531,16 +531,16 @@ $total_unread_all = $stats['all']['unread'] ?? 0;
   <!-- 1. Descargas -->
   <a href="?tab=downloads" class="alert-kpi-card <?= $active_tab === 'downloads' ? 'is-active' : '' ?>" style="--card-accent:#0284c7;--card-accent-soft:rgba(2,132,199,0.12)">
     <div class="alert-kpi-head">
-      <span class="alert-kpi-label">Descargas</span>
+      <span class="alert-kpi-label"><?= __('alerts_tab_downloads') ?></span>
       <span class="alert-kpi-icon"><?= icon('download', 16) ?></span>
     </div>
     <div class="alert-kpi-num tabular"><?= number_format($stats['downloads']['total']) ?></div>
     <div class="alert-kpi-footer">
-      <span>Registros OP3</span>
+      <span><?= __('alerts_op3_records') ?></span>
       <?php if ($stats['downloads']['unread'] > 0): ?>
-        <span class="alert-unread-badge"><span class="alert-badge-unread-dot"></span> <?= $stats['downloads']['unread'] ?> sin leer</span>
+        <span class="alert-unread-badge"><span class="alert-badge-unread-dot"></span> <?= $stats['downloads']['unread'] ?> <?= __('alerts_unread') ?></span>
       <?php else: ?>
-        <span class="alert-clean-badge"><?= icon('check', 11) ?> Al día</span>
+        <span class="alert-clean-badge"><?= icon('check', 11) ?> <?= __('alerts_all_caught_up') ?></span>
       <?php endif; ?>
     </div>
   </a>
@@ -548,16 +548,16 @@ $total_unread_all = $stats['all']['unread'] ?? 0;
   <!-- 2. Hitos -->
   <a href="?tab=milestones" class="alert-kpi-card <?= $active_tab === 'milestones' ? 'is-active' : '' ?>" style="--card-accent:#f59e0b;--card-accent-soft:rgba(245,158,11,0.12)">
     <div class="alert-kpi-head">
-      <span class="alert-kpi-label">Hitos &amp; Metas</span>
+      <span class="alert-kpi-label"><?= __('alerts_milestones_title') ?></span>
       <span class="alert-kpi-icon"><?= icon('award', 16) ?></span>
     </div>
     <div class="alert-kpi-num tabular"><?= number_format($stats['milestones']['total']) ?></div>
     <div class="alert-kpi-footer">
-      <span>Récords de audiencia</span>
+      <span><?= __('alerts_audience_records') ?></span>
       <?php if ($stats['milestones']['unread'] > 0): ?>
-        <span class="alert-unread-badge"><span class="alert-badge-unread-dot"></span> <?= $stats['milestones']['unread'] ?> sin leer</span>
+        <span class="alert-unread-badge"><span class="alert-badge-unread-dot"></span> <?= $stats['milestones']['unread'] ?> <?= __('alerts_unread') ?></span>
       <?php else: ?>
-        <span class="alert-clean-badge"><?= icon('check', 11) ?> Al día</span>
+        <span class="alert-clean-badge"><?= icon('check', 11) ?> <?= __('alerts_all_caught_up') ?></span>
       <?php endif; ?>
     </div>
   </a>
@@ -565,16 +565,16 @@ $total_unread_all = $stats['all']['unread'] ?? 0;
   <!-- 3. Fediverso -->
   <a href="?tab=fediverse" class="alert-kpi-card <?= $active_tab === 'fediverse' ? 'is-active' : '' ?>" style="--card-accent:#6366f1;--card-accent-soft:rgba(99,102,241,0.12)">
     <div class="alert-kpi-head">
-      <span class="alert-kpi-label">El Fediverso</span>
+      <span class="alert-kpi-label"><?= __('nav_fediverse') ?></span>
       <span class="alert-kpi-icon"><?= icon('globe', 16) ?></span>
     </div>
     <div class="alert-kpi-num tabular"><?= number_format($stats['fediverse']['total']) ?></div>
     <div class="alert-kpi-footer">
-      <span>Actividad ActivityPub</span>
+      <span><?= __('alerts_activitypub_activity') ?></span>
       <?php if ($stats['fediverse']['unread'] > 0): ?>
-        <span class="alert-unread-badge"><span class="alert-badge-unread-dot"></span> <?= $stats['fediverse']['unread'] ?> sin leer</span>
+        <span class="alert-unread-badge"><span class="alert-badge-unread-dot"></span> <?= $stats['fediverse']['unread'] ?> <?= __('alerts_unread') ?></span>
       <?php else: ?>
-        <span class="alert-clean-badge"><?= icon('check', 11) ?> Al día</span>
+        <span class="alert-clean-badge"><?= icon('check', 11) ?> <?= __('alerts_all_caught_up') ?></span>
       <?php endif; ?>
     </div>
   </a>
@@ -582,16 +582,16 @@ $total_unread_all = $stats['all']['unread'] ?? 0;
   <!-- 4. Sistema -->
   <a href="?tab=system" class="alert-kpi-card <?= $active_tab === 'system' ? 'is-active' : '' ?>" style="--card-accent:#10b981;--card-accent-soft:rgba(16,185,129,0.12)">
     <div class="alert-kpi-head">
-      <span class="alert-kpi-label">El Sistema</span>
+      <span class="alert-kpi-label"><?= __('alerts_tab_system') ?></span>
       <span class="alert-kpi-icon"><?= icon('settings', 16) ?></span>
     </div>
     <div class="alert-kpi-num tabular"><?= number_format($stats['system']['total']) ?></div>
     <div class="alert-kpi-footer">
-      <span>Avisos de plataforma</span>
+      <span><?= __('alerts_platform_notices') ?></span>
       <?php if ($stats['system']['unread'] > 0): ?>
-        <span class="alert-unread-badge"><span class="alert-badge-unread-dot"></span> <?= $stats['system']['unread'] ?> sin leer</span>
+        <span class="alert-unread-badge"><span class="alert-badge-unread-dot"></span> <?= $stats['system']['unread'] ?> <?= __('alerts_unread') ?></span>
       <?php else: ?>
-        <span class="alert-clean-badge"><?= icon('check', 11) ?> Al día</span>
+        <span class="alert-clean-badge"><?= icon('check', 11) ?> <?= __('alerts_all_caught_up') ?></span>
       <?php endif; ?>
     </div>
   </a>
@@ -607,7 +607,7 @@ $total_unread_all = $stats['all']['unread'] ?? 0;
     <a href="?tab=<?= urlencode($ckey) ?>" class="alerts-tab-link <?= $is_active ? 'active' : '' ?>" role="tab" aria-selected="<?= $is_active ? 'true' : 'false' ?>">
       <?= icon($cdata['icon'], 16) ?>
       <span><?= e($cdata['label']) ?></span>
-      <span class="tab-counter <?= $c_unread > 0 ? 'has-unread' : '' ?>" title="<?= $c_unread ? "$c_unread sin leer de $c_total" : "$c_total en total" ?>">
+      <span class="tab-counter <?= $c_unread > 0 ? 'has-unread' : '' ?>" title="<?= $c_unread ? "$c_unread " . __('alerts_unread') . " / $c_total" : "$c_total" ?>">
         <?= $c_total ?><?= $c_unread ? " ($c_unread)" : '' ?>
       </span>
     </a>
@@ -622,16 +622,16 @@ $total_unread_all = $stats['all']['unread'] ?? 0;
         <h2 style="margin:0;font-size:18px"><?= e($categories[$active_tab]['singular']) ?></h2>
         <?php if ($unread_in_active_tab > 0): ?>
           <span class="alert-unread-badge" style="font-size:11.5px">
-            <span class="alert-badge-unread-dot"></span> <?= $unread_in_active_tab ?> sin leer
+            <span class="alert-badge-unread-dot"></span> <?= $unread_in_active_tab ?> <?= __('alerts_unread') ?>
           </span>
         <?php else: ?>
           <span class="alert-clean-badge" style="font-size:11.5px">
-            <?= icon('check', 12) ?> Al día
+            <?= icon('check', 12) ?> <?= __('alerts_all_caught_up') ?>
           </span>
         <?php endif; ?>
       </div>
       <p class="muted" style="margin:4px 0 0;font-size:13px">
-        <?= e($categories[$active_tab]['desc']) ?> · Mostrando <?= count($alerts) ?> de <?= $totalInTab ?>
+        <?= e($categories[$active_tab]['desc']) ?> · <?= __('alerts_showing_of', ['count' => count($alerts), 'total' => $totalInTab]) ?>
       </p>
     </div>
 
@@ -643,7 +643,7 @@ $total_unread_all = $stats['all']['unread'] ?? 0;
           <input type="hidden" name="_action" value="mark_tab_read"/>
           <input type="hidden" name="tab" value="<?= e($active_tab) ?>"/>
           <button class="btn" type="submit" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px">
-            <?= icon('check', 13) ?> Marcar <?= $active_tab === 'all' ? 'todas' : 'esta pestaña' ?> como leída (<?= $unread_in_active_tab ?>)
+            <?= icon('check', 13) ?> <?= __('alerts_mark_tab_read', ['tab' => $active_tab === 'all' ? __('alerts_all_plural') : __('alerts_this_tab'), 'count' => $unread_in_active_tab]) ?>
           </button>
         </form>
       <?php endif; ?>
@@ -710,12 +710,12 @@ $total_unread_all = $stats['all']['unread'] ?? 0;
               <?php if (!empty($a['action_type'])):
                 $at = $a['action_type'];
                 $atLabel = match($at) {
-                  'Follow'   => '👤 Seguidor',
-                  'Like'     => '💖 Me gusta',
-                  'Announce' => '🔁 Retoot',
-                  'Reply'    => '💬 Comentario',
-                  'YouTube'  => '▶️ YouTube',
-                  'Hito'     => '🏆 Hito',
+                  'Follow'   => __('alert_act_follower', '👤 Seguidor'),
+                  'Like'     => __('alert_act_like', '💖 Me gusta'),
+                  'Announce' => __('alert_act_announce', '🔁 Retoot'),
+                  'Reply'    => __('alert_act_reply', '💬 Comentario'),
+                  'YouTube'  => __('alert_act_youtube', '▶️ YouTube'),
+                  'Hito'     => __('alert_act_milestone', '🏆 Hito'),
                   default    => '⚡ ' . $at,
                 };
               ?>
@@ -765,27 +765,27 @@ $total_unread_all = $stats['all']['unread'] ?? 0;
                     $lnk = "/@" . $m[1];
                   }
 
-                  $linkLabel = 'Ver detalle →';
+                  $linkLabel = __('alerts_view_detail', 'Ver detalle →');
                   $actionType = $a['action_type'] ?? '';
 
                   if (str_contains($lnk, 'new-episode') || str_contains($lnk, '/notes/')) {
-                    $linkLabel = 'Ver episodio →';
+                    $linkLabel = __('alerts_view_episode', 'Ver episodio →');
                   } elseif (str_contains($lnk, 'tab=analytics') || str_contains($lnk, '/admin/analytics')) {
-                    $linkLabel = 'Ver estadísticas →';
+                    $linkLabel = __('alerts_view_stats', 'Ver estadísticas →');
                   } elseif (str_contains($lnk, '/admin/podcast/')) {
-                    $linkLabel = 'Ver podcast →';
+                    $linkLabel = __('alerts_view_podcast', 'Ver podcast →');
                   } elseif (str_contains($lnk, '/admin/import')) {
-                    $linkLabel = 'Ver importación →';
+                    $linkLabel = __('alerts_view_import', 'Ver importación →');
                   } elseif (str_contains($lnk, 'flarum') || str_contains($lnk, '/d/')) {
-                    $linkLabel = 'Ver en foro →';
+                    $linkLabel = __('alerts_view_forum', 'Ver en foro →');
                   } elseif ($actionType === 'Like' || $actionType === 'Announce') {
-                    $linkLabel = 'Ver publicación →';
+                    $linkLabel = __('alerts_view_post', 'Ver publicación →');
                   } elseif ($actionType === 'Reply') {
-                    $linkLabel = 'Ver comentario →';
+                    $linkLabel = __('alerts_view_comment', 'Ver comentario →');
                   } elseif ($actionType === 'Follow' || (!empty($a['actor_url']) && $lnk === $a['actor_url'])) {
-                    $linkLabel = 'Ver perfil →';
+                    $linkLabel = __('alerts_view_profile', 'Ver perfil →');
                   } elseif (str_starts_with(strtolower($lnk), 'http')) {
-                    $linkLabel = 'Ver enlace →';
+                    $linkLabel = __('alerts_view_link', 'Ver enlace →');
                   }
 
                   $is_external = str_starts_with(strtolower($lnk), 'http');
@@ -805,18 +805,18 @@ $total_unread_all = $stats['all']['unread'] ?? 0;
                     <input type="hidden" name="_action" value="mark_one_read"/>
                     <input type="hidden" name="tab" value="<?= e($active_tab) ?>"/>
                     <input type="hidden" name="alert_id" value="<?= (int)$a['id'] ?>"/>
-                    <button type="submit" class="alert-action-btn check" title="Marcar como leída">
-                      <?= icon('check', 12) ?> <span>Marcar leída</span>
+                    <button type="submit" class="alert-action-btn check" title="<?= __('alerts_mark_read') ?>">
+                      <?= icon('check', 12) ?> <span><?= __('alerts_mark_read') ?></span>
                     </button>
                   </form>
                 <?php endif; ?>
 
-                <form method="POST" style="margin:0;padding:0" onsubmit="return confirm('¿Eliminar esta alerta?')">
+                <form method="POST" style="margin:0;padding:0" onsubmit="return confirm('<?= __('alerts_confirm_delete') ?>')">
                   <?= kp_csrf_field() ?>
                   <input type="hidden" name="_action" value="delete_alert"/>
                   <input type="hidden" name="tab" value="<?= e($active_tab) ?>"/>
                   <input type="hidden" name="alert_id" value="<?= (int)$a['id'] ?>"/>
-                  <button type="submit" class="alert-action-btn delete" title="Eliminar alerta">
+                  <button type="submit" class="alert-action-btn delete" title="<?= __('alerts_delete_title') ?>">
                     <?= icon('trash', 12) ?>
                   </button>
                 </form>

@@ -218,14 +218,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $sections = [
-  's1-1' => 'Identidad',
-  's1-2' => 'Clasificación',
-  's1-3' => 'Autor & Licencia',
-  's1-9' => 'Equipo',
+  's1-1' => __('pod_tab_identity', 'Identidad'),
+  's1-2' => __('pod_tab_classification', 'Clasificación'),
+  's1-3' => __('pod_tab_author_license', 'Autor & Licencia'),
+  's1-9' => __('pod_tab_team', 'Equipo'),
   // 's1-5' => 'Premium', // TODO: backend logic needed
-  's1-6' => 'Estadísticas · OP3',
-  's1-7' => 'Ubicación',
-  's1-8' => 'Avanzados',
+  's1-6' => __('pod_tab_op3', 'Estadísticas · OP3'),
+  's1-7' => __('pod_tab_location', 'Ubicación'),
+  's1-8' => __('pod_tab_advanced', 'Avanzados'),
 ];
 $sections = kp_apply_filters('podcast_form_sections', $sections);
 ?>
@@ -233,8 +233,8 @@ $sections = kp_apply_filters('podcast_form_sections', $sections);
   <?= kp_csrf_field() ?>
   <div class="page-head">
     <div>
-      <h1 class="page-title"><?= $mode === 'create' ? 'Nuevo podcast' : 'Editar podcast' ?></h1>
-      <p class="page-sub"><?= $mode === 'create' ? 'Configura tu nuevo show en 8 secciones.' : 'Edita la configuración del podcast.' ?></p>
+      <h1 class="page-title"><?= $mode === 'create' ? __('pod_new_show', 'Nuevo podcast') : __('pod_edit_show', 'Editar podcast') ?></h1>
+      <p class="page-sub"><?= $mode === 'create' ? __('pod_new_sub', 'Configura tu nuevo show en 8 secciones.') : __('pod_edit_sub', 'Edita la configuración del podcast.') ?></p>
     </div>
   </div>
 
@@ -531,14 +531,14 @@ $sections = kp_apply_filters('podcast_form_sections', $sections);
       <?php endforeach; ?>
       
       <div style="margin-top:32px;display:flex;flex-direction:column;gap:10px">
-        <button class="btn btn-primary" type="submit" name="status" value="published" style="width:100%;justify-content:center;padding:10px"><?= icon('check',13) ?> Guardar</button>
-        <button class="btn" type="submit" name="status" value="draft" formnovalidate style="width:100%;justify-content:center"><?= icon('file',13) ?> Guardar borrador</button>
+        <button class="btn btn-primary" type="submit" name="status" value="published" style="width:100%;justify-content:center;padding:10px"><?= icon('check',13) ?> <?= __('save', 'Guardar') ?></button>
+        <button class="btn" type="submit" name="status" value="draft" formnovalidate style="width:100%;justify-content:center"><?= icon('file',13) ?> <?= __('ep_draft_btn', 'Guardar borrador') ?></button>
         <?php if ($mode === 'edit' && $p): ?>
-          <a class="btn" href="/@<?= e($p['slug'] ?? $p['id']) ?>" target="_blank" rel="noopener" style="width:100%;justify-content:center"><?= icon('externalLink',13) ?> Ir al Podcast</a>
+          <a class="btn" href="/@<?= e($p['slug'] ?? $p['id']) ?>" target="_blank" rel="noopener" style="width:100%;justify-content:center"><?= icon('externalLink',13) ?> <?= __('pod_go_to_podcast', 'Ir al Podcast') ?></a>
         <?php endif; ?>
-        <a class="btn" href="/admin/podcasts" style="width:100%;justify-content:center">Cancelar</a>
+        <a class="btn" href="/admin/podcasts" style="width:100%;justify-content:center"><?= __('cancel', 'Cancelar') ?></a>
         <?php if ($mode === 'edit'): ?>
-          <button class="btn btn-danger" style="color:var(--red,#ef4444);border:1px solid var(--red,#ef4444);width:100%;justify-content:center" type="submit" name="action" value="delete" formnovalidate onclick="return confirm('¿Estás seguro de que quieres eliminar este podcast y TODOS sus episodios?')"><?= icon('x',13) ?> Eliminar</button>
+          <button class="btn btn-danger" style="color:var(--red,#ef4444);border:1px solid var(--red,#ef4444);width:100%;justify-content:center" type="submit" name="action" value="delete" formnovalidate onclick="return confirm('<?= e(__('pod_confirm_delete', '¿Estás seguro de que quieres eliminar este podcast y TODOS sus episodios?')) ?>')"><?= icon('x',13) ?> <?= __('delete', 'Eliminar') ?></button>
         <?php endif; ?>
       </div>
     </aside>

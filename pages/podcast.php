@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $eps = kp_episodes_of($p['id'], true, false);
 
 $draftsCount = count(array_filter($eps, fn($e) => ($e['status'] ?? '') === 'draft'));
-$subText = $draftsCount > 0 ? "$draftsCount borrador" . ($draftsCount > 1 ? 'es' : '') . " en cola" : '';
+$subText = $draftsCount > 0 ? __raw('pod_drafts_in_queue', "$draftsCount borrador" . ($draftsCount > 1 ? 'es' : '') . " en cola", ['count' => $draftsCount]) : '';
 
 $seasons = array_unique(array_map(fn($e) => (int)($e['s'] ?? 1), $eps));
 rsort($seasons);
@@ -66,18 +66,18 @@ if ($audioBytes > 0) {
 ?>
 <?php if (isset($_GET['refederated']) && $_GET['refederated'] === '1'): ?>
   <div class="alert success" style="margin-bottom:var(--gap);display:flex;align-items:center;gap:8px;padding:12px;background:#10b98122;color:#10b981;border-radius:8px;border:1px solid #10b98144;font-size:14px">
-    <?= icon('check', 16) ?> El episodio se ha encolado para re-envío al Fediverso.
+    <?= icon('check', 16) ?> <?= __('pod_refederate_success', 'El episodio se ha encolado para re-envío al Fediverso.') ?>
   </div>
 <?php endif; ?>
 <?php if (isset($_GET['defederated']) && $_GET['defederated'] === '1'): ?>
   <div class="alert success" style="margin-bottom:var(--gap);display:flex;align-items:center;gap:8px;padding:12px;background:#10b98122;color:#10b981;border-radius:8px;border:1px solid #10b98144;font-size:14px">
-    <?= icon('check', 16) ?> El post de este episodio en el Fediverso se ha encolado para eliminación.
+    <?= icon('check', 16) ?> <?= __('pod_defederate_success', 'El post de este episodio en el Fediverso se ha encolado para eliminación.') ?>
   </div>
 <?php endif; ?>
 
 <div class="page-head">
   <div class="row" style="gap:16px;align-items:flex-start">
-    <a class="cover-link" href="/@<?= e($p['id']) ?>" target="_blank" title="Ver <?= e($p['title']) ?> en la web">
+    <a class="cover-link" href="/@<?= e($p['id']) ?>" target="_blank" title="<?= e(__raw('pod_view_on_web', 'Ver :title en la web', ['title' => $p['title']])) ?>">
       <?php if ($p['cover']): ?>
         <img class="cover" src="<?= e($p['cover']) ?>" style="width:64px;height:64px;border-radius:14px;object-fit:cover" alt="<?= e($p['title']) ?>">
       <?php else: ?>
@@ -86,47 +86,47 @@ if ($audioBytes > 0) {
     </a>
     <div>
       <h1 class="page-title">
-        <a href="/@<?= e($p['id']) ?>" target="_blank" title="Ver <?= e($p['title']) ?> en la web"><?= e($p['title']) ?></a>
+        <a href="/@<?= e($p['id']) ?>" target="_blank" title="<?= e(__raw('pod_view_on_web', 'Ver :title en la web', ['title' => $p['title']])) ?>"><?= e($p['title']) ?></a>
         <?php if (($p['parental'] ?? 'clean') === 'explicit'): ?>
           <span style="display:inline-block;background:var(--border);color:var(--text-2);border-radius:4px;font-size:12px;padding:2px 6px;margin-left:6px;vertical-align:middle;line-height:1;font-weight:800">E</span>
         <?php endif; ?>
       </h1>
-      <p class="page-sub"><?= (int)$p['episodes'] ?> episodios · <?= fmt_num($p['downloads']) ?> descargas · <?= e($p['cat']) ?></p>
+      <p class="page-sub"><?= __raw('pod_sub_stats', ':episodes episodios · :downloads descargas · :cat', ['episodes' => (int)$p['episodes'], 'downloads' => fmt_num($p['downloads']), 'cat' => $p['cat']]) ?></p>
     </div>
   </div>
   <div class="row">
     <?php if (!empty($p['op3']) && ($op3_url = kp_op3_show_url($p))): ?>
       <a class="btn" href="<?= e($op3_url) ?>" target="_blank"><?= icon('chart',13) ?> OP3</a>
     <?php else: ?>
-      <button class="btn" disabled style="opacity:0.5;cursor:not-allowed" title="OP3 no está activo para este show"><?= icon('chart',13) ?> OP3</button>
+      <button class="btn" disabled style="opacity:0.5;cursor:not-allowed" title="<?= __('pod_op3_disabled_hint', 'OP3 no está activo para este show') ?>"><?= icon('chart',13) ?> OP3</button>
     <?php endif; ?>
-    <a class="btn" href="/@<?= e($p['id']) ?>/feed.xml" target="_blank" download="feed.xml"><?= icon('rss',13) ?> Exportar RSS</a>
+    <a class="btn" href="/@<?= e($p['id']) ?>/feed.xml" target="_blank" download="feed.xml"><?= icon('rss',13) ?> <?= __('pod_export_rss', 'Exportar RSS') ?></a>
     <a class="btn" href="/admin/broadcast?podcast=<?= e($p['id']) ?>"><?= icon('globe',13) ?> Broadcast</a>
-    <a class="btn" href="/admin/edit-podcast?id=<?= e($p['id']) ?>" style="color:var(--accent);border-color:var(--accent)"><?= icon('edit',13) ?> Editar</a>
-    <a class="btn btn-primary" href="/admin/new-episode?podcast=<?= e($p['id']) ?>"><?= icon('plus',13) ?> Nuevo episodio</a>
+    <a class="btn" href="/admin/edit-podcast?id=<?= e($p['id']) ?>" style="color:var(--accent);border-color:var(--accent)"><?= icon('edit',13) ?> <?= __('edit', 'Editar') ?></a>
+    <a class="btn btn-primary" href="/admin/new-episode?podcast=<?= e($p['id']) ?>"><?= icon('plus',13) ?> <?= __('pod_new_episode', 'Nuevo episodio') ?></a>
   </div>
 </div>
 
 <div class="stat-grid">
-  <?= stat_card('Episodios', (string)$p['episodes'], 'headphones', $subText ? ['sub'=>$subText] : []) ?>
-  <?= stat_card('Almacenamiento', $formattedBytes, 'layers', ['sub'=>'solo audios']) ?>
-  <?= stat_card('Descargas · 7d', fmt_num($p['downloads7']), 'download', ['delta'=>['dir'=>$p['growth']>=0?'up':'down','val'=>($p['growth']>=0?'+':'').$p['growth'].'%']]) ?>
-  <?= stat_card('Oyentes únicos', fmt_num($p['unique_listeners'] ?? 0), 'users', ['sub' => 'estimado por OP3']) ?>
+  <?= stat_card(__('pod_stat_episodes', 'Episodios'), (string)$p['episodes'], 'headphones', $subText ? ['sub'=>$subText] : []) ?>
+  <?= stat_card(__('pod_stat_storage', 'Almacenamiento'), $formattedBytes, 'layers', ['sub'=>__('pod_stat_storage_sub', 'solo audios')]) ?>
+  <?= stat_card(__('pod_stat_downloads_7d', 'Descargas · 7d'), fmt_num($p['downloads7']), 'download', ['delta'=>['dir'=>$p['growth']>=0?'up':'down','val'=>($p['growth']>=0?'+':'').$p['growth'].'%']]) ?>
+  <?= stat_card(__('pod_stat_unique_listeners', 'Oyentes únicos'), fmt_num($p['unique_listeners'] ?? 0), 'users', ['sub' => __('pod_stat_listeners_op3_sub', 'estimado por OP3')]) ?>
 </div>
 
 <div class="card" style="margin-top:var(--gap)">
   <div class="card-head">
-    <div class="card-title">Episodios — <?= count($eps) ?></div>
+    <div class="card-title"><?= __raw('pod_episodes_count_header', 'Episodios — :count', ['count' => count($eps)]) ?></div>
     <div class="row" style="gap:12px">
       <?php if (count($seasons) > 1): ?>
       <select class="select" style="font-size:12px;padding:4px 10px;height:auto;min-height:0" onchange="window.location.href='/admin/podcast?id=<?= e($p['id']) ?>'+(this.value?'&s='+this.value:'')">
-        <option value="">Todas las temporadas</option>
+        <option value=""><?= __('pod_all_seasons', 'Todas las temporadas') ?></option>
         <?php foreach ($seasons as $seasonNum): ?>
-          <option value="<?= $seasonNum ?>" <?= $filterSeason === $seasonNum ? 'selected' : '' ?>>Temporada <?= $seasonNum ?></option>
+          <option value="<?= $seasonNum ?>" <?= $filterSeason === $seasonNum ? 'selected' : '' ?>><?= __raw('pod_season_label', 'Temporada :num', ['num' => $seasonNum]) ?></option>
         <?php endforeach; ?>
       </select>
       <?php endif; ?>
-      <a class="btn btn-primary" href="/admin/new-episode?podcast=<?= e($p['id']) ?>"><?= icon('plus',13) ?> Nuevo episodio</a>
+      <a class="btn btn-primary" href="/admin/new-episode?podcast=<?= e($p['id']) ?>"><?= icon('plus',13) ?> <?= __('pod_new_episode', 'Nuevo episodio') ?></a>
     </div>
   </div>
   <div class="list">
@@ -140,7 +140,7 @@ if ($audioBytes > 0) {
     <?php $sParam = $filterSeason ? '&s=' . $filterSeason : ''; ?>
     <div class="row" style="padding:16px;justify-content:center;gap:4px;border-top:1px solid var(--border)">
       <?php if ($pageEp > 1): ?>
-        <a class="btn" style="padding:4px 10px;font-size:12px" href="/admin/podcast?id=<?= e($p['id']) ?><?= $sParam ?>&p=1">Principio</a>
+        <a class="btn" style="padding:4px 10px;font-size:12px" href="/admin/podcast?id=<?= e($p['id']) ?><?= $sParam ?>&p=1"><?= __('pod_pagination_first', 'Principio') ?></a>
       <?php endif; ?>
 
       <?php
@@ -177,7 +177,7 @@ if ($audioBytes > 0) {
       ?>
 
       <?php if ($pageEp < $totalPages): ?>
-        <a class="btn" style="padding:4px 10px;font-size:12px" href="/admin/podcast?id=<?= e($p['id']) ?><?= $sParam ?>&p=<?= $totalPages ?>">Último</a>
+        <a class="btn" style="padding:4px 10px;font-size:12px" href="/admin/podcast?id=<?= e($p['id']) ?><?= $sParam ?>&p=<?= $totalPages ?>"><?= __('pod_pagination_last', 'Último') ?></a>
       <?php endif; ?>
     </div>
     <?php endif; ?>

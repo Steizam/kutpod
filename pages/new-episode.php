@@ -245,11 +245,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $sections = [
-  's2-1' => 'Archivo & metadatos',
-  's2-2' => 'Notas (Markdown)',
-  's2-3' => 'Premium & ubicación',
-  's2-4' => 'Transcripción & capítulos',
-  's2-5' => 'Avanzados',
+  's2-1' => __('ep_audio_meta', 'Archivo & metadatos'),
+  's2-2' => __('ep_notes', 'Notas (Markdown)'),
+  's2-3' => __('ep_premium_loc', 'Premium & ubicación'),
+  's2-4' => __('ep_transcripts_chapters', 'Transcripción & capítulos'),
+  's2-5' => __('ep_advanced', 'Avanzados'),
 ];
 ?>
 <form method="POST" enctype="multipart/form-data" class="form-episode">
@@ -257,8 +257,8 @@ $sections = [
   <input type="hidden" name="client_duration" id="client_duration" value="0">
   <div class="page-head">
     <div>
-      <h1 class="page-title"><?= $ep ? 'Editar episodio' : 'Nuevo episodio' ?></h1>
-      <p class="page-sub">Para <strong><?= e($p['title']) ?></strong> · @<?= e($p['id']) ?>@<?= e(kp_handle_domain()) ?></p>
+      <h1 class="page-title"><?= $ep ? __('ep_edit_episode', 'Editar episodio') : __('ep_new_episode', 'Nuevo episodio') ?></h1>
+      <p class="page-sub"><?= __('ep_for_prefix', 'Para') ?> <strong><?= e($p['title']) ?></strong> · @<?= e($p['id']) ?>@<?= e(kp_handle_domain()) ?></p>
     </div>
   </div>
 
@@ -497,15 +497,15 @@ $sections = [
       <?php endforeach; ?>
       
       <div style="margin-top:32px;display:flex;flex-direction:column;gap:10px">
-        <button class="btn btn-primary" type="submit" name="status" value="published" style="width:100%;justify-content:center;padding:10px"><?= icon('upload',13) ?> <?= ($ep && ($ep['status'] ?? '') === 'published') ? 'Guardar Cambios' : 'Publicar' ?></button>
-        <button class="btn" type="submit" name="status" value="scheduled" style="width:100%;justify-content:center"><?= icon('check',13) ?> Programar</button>
-        <button class="btn" type="submit" name="status" value="draft" style="width:100%;justify-content:center"><?= icon('file',13) ?> <?= ($ep['status'] ?? '') === 'published' ? 'Despublicar (A borrador)' : 'Guardar Borrador' ?></button>
+        <button class="btn btn-primary" type="submit" name="status" value="published" style="width:100%;justify-content:center;padding:10px"><?= icon('upload',13) ?> <?= ($ep && ($ep['status'] ?? '') === 'published') ? __('save_changes', 'Guardar Cambios') : __('ep_publish_btn', 'Publicar') ?></button>
+        <button class="btn" type="submit" name="status" value="scheduled" style="width:100%;justify-content:center"><?= icon('check',13) ?> <?= __('ep_schedule_btn', 'Programar') ?></button>
+        <button class="btn" type="submit" name="status" value="draft" style="width:100%;justify-content:center"><?= icon('file',13) ?> <?= ($ep['status'] ?? '') === 'published' ? __('ep_unpublish_btn', 'Despublicar (A borrador)') : __('ep_draft_btn', 'Guardar Borrador') ?></button>
         <?php if ($ep && ($ep['status'] ?? '') === 'published'): ?>
-          <a class="btn" href="/@<?= e($p['slug'] ?? $p['id']) ?>/<?= e($ep['slug'] ?? $ep['id']) ?>" target="_blank" rel="noopener" style="width:100%;justify-content:center"><?= icon('externalLink',13) ?> Ir al Episodio</a>
+          <a class="btn" href="/@<?= e($p['slug'] ?? $p['id']) ?>/<?= e($ep['slug'] ?? $ep['id']) ?>" target="_blank" rel="noopener" style="width:100%;justify-content:center"><?= icon('externalLink',13) ?> <?= __('ep_go_to_episode', 'Ir al Episodio') ?></a>
         <?php endif; ?>
-        <a class="btn" href="/admin/podcast?id=<?= e($p['id']) ?>" style="width:100%;justify-content:center">Cancelar</a>
+        <a class="btn" href="/admin/podcast?id=<?= e($p['id']) ?>" style="width:100%;justify-content:center"><?= __('cancel', 'Cancelar') ?></a>
         <?php if ($ep): ?>
-          <button class="btn btn-danger" style="color:var(--red,#ef4444);border:1px solid var(--red,#ef4444);width:100%;justify-content:center" type="submit" name="action" value="delete" onclick="return confirm('¿Estás seguro de que quieres eliminar este episodio permanentemente?')"><?= icon('x',13) ?> Eliminar</button>
+          <button class="btn btn-danger" style="color:var(--red,#ef4444);border:1px solid var(--red,#ef4444);width:100%;justify-content:center" type="submit" name="action" value="delete" onclick="return confirm('<?= e(__('ep_confirm_delete', '¿Estás seguro de que quieres eliminar este episodio permanentemente?')) ?>')"><?= icon('x',13) ?> <?= __('delete', 'Eliminar') ?></button>
         <?php endif; ?>
       </div>
     </aside>

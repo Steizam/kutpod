@@ -27,34 +27,34 @@ try {
 ?>
 <div class="page-head">
   <div>
-    <h1 class="page-title">Actualizaciones</h1>
-    <p class="page-sub">Mantén KutPod al día · actualización con un click · rollback instantáneo</p>
+    <h1 class="page-title"><?= __('upd_title', 'Actualizaciones') ?></h1>
+    <p class="page-sub"><?= __('upd_sub', 'Mantén KutPod al día · actualización con un click · rollback instantáneo') ?></p>
   </div>
 </div>
 
 <!-- Estado actual -->
 <div class="stat-grid">
-  <?= stat_card('Versión instalada', 'v' . KUTPOD_VERSION, 'layers', ['sub' => 'Compilación actual']) ?>
-  <?= stat_card('Canal', $hasToken ? 'GitHub Directo' : 'KutStudio Cloud', 'shield',
+  <?= stat_card(__('upd_installed_version', 'Versión instalada'), 'v' . KUTPOD_VERSION, 'layers', ['sub' => __('upd_current_compilation', 'Compilación actual')]) ?>
+  <?= stat_card(__('upd_channel', 'Canal'), $hasToken ? __('upd_channel_github', 'GitHub Directo') : __('upd_channel_cloud', 'KutStudio Cloud'), 'shield',
        $hasToken
-         ? ['sub' => 'Token de desarrollo activo', 'foot' => '<div style="margin-top:8px"><a href="/admin/preferences#update-token" style="color:var(--accent);font-size:12px">Preferencias →</a></div>']
+         ? ['sub' => 'Token de desarrollo activo', 'foot' => '<div style="margin-top:8px"><a href="/admin/preferences#update-token" style="color:var(--accent);font-size:12px">' . __('nav_preferences') . ' →</a></div>']
          : ['sub' => 'Actualización transparente', 'foot' => '<div style="margin-top:8px;font-size:11px;color:var(--text-3)">Automático</div>']) ?>
-  <?= stat_card('Rollback', $hasRollback ? 'v' . $rollbackVersion : 'No disponible', 'refreshCw',
+  <?= stat_card(__('upd_rollback', 'Rollback'), $hasRollback ? 'v' . $rollbackVersion : __('upd_not_available', 'No disponible'), 'refreshCw',
        ['sub' => $hasRollback ? 'Versión anterior guardada' : 'Se crea antes de cada update']) ?>
-  <?= stat_card('Actualizaciones', (string)count($history), 'check', ['sub' => 'aplicadas en total']) ?>
+  <?= stat_card(__('upd_total_applied', 'Actualizaciones'), (string)count($history), 'check', ['sub' => 'aplicadas en total']) ?>
 </div>
 
 <!-- Buscar actualización -->
 <div class="card card-lg" style="padding:28px;margin-top:24px" id="update-card">
   <div class="card-head" style="margin-bottom:20px">
     <div>
-      <div class="card-title">Buscar actualización</div>
+      <div class="card-title"><?= __('upd_check_btn', 'Buscar actualización') ?></div>
       <div style="font-size:12.5px;color:var(--text-3);margin-top:4px">
         Consulta el repositorio oficial para verificar si hay una nueva versión disponible.
       </div>
     </div>
     <button class="btn btn-primary" id="btn-check" type="button" onclick="kpUpdateCheck()">
-      <?= icon('search',13) ?> Buscar actualizaciones
+      <?= icon('search',13) ?> <?= __('upd_check_btn', 'Buscar actualizaciones') ?>
     </button>
   </div>
 
@@ -88,7 +88,7 @@ try {
   <!-- Barra de progreso -->
   <div id="update-progress" style="display:none;margin-top:16px">
     <div style="background:var(--surface-2);border-radius:12px;padding:20px">
-      <div style="font-size:14px;font-weight:500;margin-bottom:12px" id="progress-label">Preparando...</div>
+      <div style="font-size:14px;font-weight:500;margin-bottom:12px" id="progress-label"><?= __('upd_preparing', 'Preparando...') ?></div>
       <div style="background:var(--border);border-radius:6px;height:8px;overflow:hidden">
         <div id="progress-bar" style="background:var(--accent);height:100%;border-radius:6px;width:0%;transition:width 0.6s ease"></div>
       </div>
@@ -109,9 +109,9 @@ try {
 <div class="card card-lg" style="padding:28px;margin-top:24px" id="manual-upload-card">
   <div class="card-head" style="margin-bottom:18px">
     <div>
-      <div class="card-title"><?= icon('upload',16) ?> Subir paquete de actualización (.zip)</div>
+      <div class="card-title"><?= icon('upload',16) ?> <?= __('upd_manual_upload_pkg', 'Subir paquete de actualización (.zip)') ?></div>
       <div style="font-size:12.5px;color:var(--text-3);margin-top:4px">
-        Si tu servidor no puede conectar a GitHub o prefieres actualizar manualmente, sube el archivo <code>.zip</code> descargado directamente desde los <a href="https://github.com/ernestoacostame/kutpod/releases" target="_blank" rel="noopener" style="color:var(--accent)">Releases de GitHub</a>.
+        <?= __('upd_manual_upload_pkg_desc', 'Si tu servidor no puede conectar a GitHub o prefieres actualizar manualmente, sube el archivo <code>.zip</code> descargado directamente desde los <a href="https://github.com/ernestoacostame/kutpod/releases" target="_blank" rel="noopener" style="color:var(--accent)">Releases de GitHub</a>.') ?>
       </div>
     </div>
   </div>
@@ -120,11 +120,11 @@ try {
     <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
       <input type="file" id="manual-zip-input" accept=".zip,application/zip" class="input" style="flex:1;min-width:240px;padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px" required>
       <button class="btn btn-primary" id="btn-manual-upload" type="submit">
-        <?= icon('upload',13) ?> Subir e instalar actualización
+        <?= icon('upload',13) ?> <?= __('upd_manual_upload_btn', 'Subir e instalar actualización') ?>
       </button>
     </div>
     <div style="font-size:11.5px;color:var(--text-3);margin-top:8px">
-      ℹ Se creará una copia de seguridad automática antes de aplicar los ficheros del archivo ZIP.
+      <?= __('upd_manual_backup_notice', 'ℹ Se creará una copia de seguridad automática antes de aplicar los ficheros del archivo ZIP.') ?>
     </div>
   </form>
 
@@ -136,12 +136,12 @@ try {
 <div class="card card-lg" style="padding:28px;margin-top:24px">
   <div class="card-head" style="align-items:flex-start;flex-wrap:wrap;gap:16px">
     <div style="flex:1;min-width:250px">
-      <div class="card-title"><?= icon('refreshCw',16) ?> Revertir actualización</div>
+      <div class="card-title"><?= icon('refreshCw',16) ?> <?= __('upd_rollback_title', 'Revertir actualización') ?></div>
       <div style="font-size:12.5px;color:var(--text-3);margin-top:4px">
-        Restaura una versión previamente guardada de KutPod. Los datos (episodios, podcasts, estadísticas) no se verán afectados.
+        <?= __('upd_rollback_desc', 'Restaura una versión previamente guardada de KutPod. Los datos (episodios, podcasts, estadísticas) no se verán afectados.') ?>
       </div>
       <div style="margin-top:14px">
-        <label class="label" style="display:block;margin-bottom:6px">Seleccionar copia de seguridad:</label>
+        <label class="label" style="display:block;margin-bottom:6px"><?= __('upd_rollback_select_label', 'Seleccionar copia de seguridad:') ?></label>
         <select class="select" id="rollback-select" style="max-width:100%;width:320px">
           <?php foreach ($rollbacks as $rb): 
             $isSelected = ($hasRollback && $rb['path'] === $rollbackPath) ? 'selected' : '';
@@ -154,7 +154,7 @@ try {
       </div>
     </div>
     <button class="btn" id="btn-rollback" onclick="kpUpdateRollback()" style="color:#f59e0b;border-color:#f59e0b44;margin-top:24px">
-      <?= icon('refreshCw',13) ?> Revertir a la versión seleccionada
+      <?= icon('refreshCw',13) ?> <?= __('upd_rollback_btn', 'Revertir a la versión seleccionada') ?>
     </button>
   </div>
   <div id="rollback-status" style="display:none;margin-top:14px"></div>
@@ -165,34 +165,34 @@ try {
 <div class="card card-lg" style="padding:24px;margin-top:24px" id="card-clean-updates">
   <div class="card-head" style="align-items:flex-start;flex-wrap:wrap;gap:16px">
     <div style="flex:1;min-width:260px">
-      <div class="card-title"><?= icon('trash', 16) ?> Paquetes de actualización descargados</div>
+      <div class="card-title"><?= icon('trash', 16) ?> <?= __('upd_storage_title', 'Paquetes de actualización descargados') ?></div>
       <div style="font-size:12.5px;color:var(--text-3);margin-top:4px">
-        Libera espacio en disco eliminando los paquetes de actualización descargados (.zip) y carpetas temporales.
+        <?= __('upd_storage_desc', 'Libera espacio en disco eliminando los paquetes de actualización descargados (.zip) y carpetas temporales.') ?>
       </div>
       <div style="margin-top:12px;display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--text-2)">
         <div>
-          <span style="color:var(--text-3)">Paquetes descargados:</span>
+          <span style="color:var(--text-3)"><?= __('upd_storage_downloaded', 'Paquetes descargados:') ?></span>
           <strong id="storage-dl-text"><?= $storageInfo['downloaded_count'] ?> (<?= human_bytes($storageInfo['downloaded_bytes']) ?>)</strong>
         </div>
         <div>
-          <span style="color:var(--text-3)">Copias de rollback:</span>
+          <span style="color:var(--text-3)"><?= __('upd_storage_rollbacks', 'Copias de rollback:') ?></span>
           <strong id="storage-rb-text"><?= $storageInfo['rollbacks_count'] ?> (<?= human_bytes($storageInfo['rollbacks_bytes']) ?>)</strong>
         </div>
         <div>
-          <span style="color:var(--text-3)">Espacio total ocupado:</span>
+          <span style="color:var(--text-3)"><?= __('upd_storage_total', 'Espacio total ocupado:') ?></span>
           <strong id="storage-total-text"><?= human_bytes($storageInfo['total_bytes']) ?></strong>
         </div>
       </div>
       <div style="margin-top:12px">
         <label style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text-2);cursor:pointer">
           <input type="checkbox" id="clean-include-rollbacks" style="cursor:pointer">
-          Incluir también las copias de seguridad de versiones anteriores (rollback)
+          <?= __('upd_storage_include_rollbacks', 'Incluir también las copias de seguridad de versiones anteriores (rollback)') ?>
         </label>
       </div>
     </div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px">
       <button class="btn" id="btn-clean-downloads" type="button" onclick="kpCleanDownloads()" style="color:#ef4444;border-color:#ef444455;display:inline-flex;align-items:center;gap:6px">
-        <?= icon('trash',13) ?> Borrar actualizaciones descargadas
+        <?= icon('trash',13) ?> <?= __('upd_storage_btn_clean', 'Borrar actualizaciones descargadas') ?>
       </button>
     </div>
   </div>
@@ -202,23 +202,23 @@ try {
 <!-- Historial -->
 <div class="card card-lg" style="padding:0;margin-top:24px">
   <div class="card-head" style="padding:20px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
-    <div class="card-title">Historial de actualizaciones</div>
+    <div class="card-title"><?= __('upd_history_title', 'Historial de actualizaciones') ?></div>
     <button class="btn btn-ghost" type="button" onclick="kpCleanDownloads()" style="font-size:12px;color:var(--text-2);padding:6px 12px;display:inline-flex;align-items:center;gap:6px">
-      <?= icon('trash', 12) ?> Borrar actualizaciones descargadas
+      <?= icon('trash', 12) ?> <?= __('upd_storage_btn_clean', 'Borrar actualizaciones descargadas') ?>
     </button>
   </div>
   <?php if (!$history): ?>
     <div style="padding:48px;text-align:center;color:var(--text-3)">
-      Sin actualizaciones registradas todavía.
+      <?= __('upd_history_empty', 'Sin actualizaciones registradas todavía.') ?>
     </div>
   <?php else: ?>
     <div class="list">
       <div style="display:grid;grid-template-columns:1fr 1fr 130px 130px;gap:14px;padding:10px 24px;font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;border-bottom:1px solid var(--border)">
-        <div>De → A</div><div>Estado</div><div>Fecha</div><div>Backup</div>
+        <div><?= __('upd_history_th_from_to', 'De → A') ?></div><div><?= __('upd_history_th_status', 'Estado') ?></div><div><?= __('upd_history_th_date', 'Fecha') ?></div><div><?= __('upd_history_th_backup', 'Backup') ?></div>
       </div>
       <?php foreach ($history as $h):
         $statusColor = $h['status'] === 'applied' ? '#10b981' : '#f59e0b';
-        $statusLabel = $h['status'] === 'applied' ? 'Aplicada' : 'Revertida';
+        $statusLabel = $h['status'] === 'applied' ? __('upd_status_applied', 'Aplicada') : __('upd_status_reverted', 'Revertida');
       ?>
         <div style="display:grid;grid-template-columns:1fr 1fr 130px 130px;gap:14px;padding:14px 24px;align-items:center;border-bottom:1px solid var(--border);font-size:13.5px">
           <div>
@@ -229,7 +229,7 @@ try {
           <div><span class="tag" style="background:<?= $statusColor ?>22;color:<?= $statusColor ?>;font-size:11px"><?= e($statusLabel) ?></span></div>
           <div style="color:var(--text-2);font-size:12.5px"><?= e(kp_relative_time($h['applied_at'])) ?></div>
           <div style="font-size:12px;color:var(--text-3);font-family:ui-monospace,monospace">
-            <?= !empty($h['backup_path']) && file_exists($h['backup_path']) ? '✓ guardado' : '—' ?>
+            <?= !empty($h['backup_path']) && file_exists($h['backup_path']) ? '✓ ' . __('saved', 'guardado') : '—' ?>
           </div>
         </div>
       <?php endforeach; ?>

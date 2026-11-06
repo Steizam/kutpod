@@ -69,7 +69,7 @@ function get_platform_svg($type, $slug) {
         <a class="btn btn-ghost" href="/admin/podcast/<?= e($p['id']) ?>" style="padding:0;width:32px;height:32px;justify-content:center"><?= icon('arrowLeft',16) ?></a>
         <div>
             <h1 class="page-title">Broadcast</h1>
-            <p class="page-sub">Publica <?= e($p['title']) ?> en plataformas y enlaza tus redes sociales.</p>
+            <p class="page-sub"><?= __raw('bc_sub', 'Publica :title en plataformas y enlaza tus redes sociales.', ['title' => $p['title']]) ?></p>
         </div>
     </div>
 </div>
@@ -78,7 +78,7 @@ function get_platform_svg($type, $slug) {
     <?= kp_csrf_field() ?>
     <div class="grid-12" style="gap:24px;margin-top:24px">
         <div class="span-8 col" style="gap:32px">
-            <?php foreach (['podcasting' => 'Directorios de Podcasts', 'social' => 'Redes Sociales', 'funding' => 'Plataformas de Financiamiento'] as $type => $title): ?>
+            <?php foreach (['podcasting' => __('bc_section_podcasting', 'Directorios de Podcasts'), 'social' => __('bc_section_social', 'Redes Sociales'), 'funding' => __('bc_section_funding', 'Plataformas de Financiamiento')] as $type => $title): ?>
             <section id="<?= $type ?>" class="card card-lg" style="padding:0;overflow:hidden">
                 <header class="section-head" style="padding:24px 24px 16px;border-bottom:1px solid var(--border);margin:0">
                     <h2 style="font-size:18px;font-weight:600"><?= $title ?></h2>
@@ -104,14 +104,14 @@ function get_platform_svg($type, $slug) {
                                 <div>
                                     <div style="font-size:15px;font-weight:600"><?= e($plat['label']) ?></div>
                                     <div class="row" style="gap:12px;margin-top:4px;font-size:12px">
-                                        <a href="<?= e($plat['home_url']) ?>" target="_blank" style="color:var(--text-3);text-decoration:none"><?= icon('externalLink',10) ?> Website</a>
+                                        <a href="<?= e($plat['home_url']) ?>" target="_blank" style="color:var(--text-3);text-decoration:none"><?= icon('externalLink',10) ?> <?= __('website', 'Website') ?></a>
                                         <?php if (!empty($plat['submit_url'])): ?>
-                                        <a href="<?= e($plat['submit_url']) ?>" target="_blank" style="color:var(--accent);text-decoration:none"><?= icon('plus',10) ?> Registrarse</a>
+                                        <a href="<?= e($plat['submit_url']) ?>" target="_blank" style="color:var(--accent);text-decoration:none"><?= icon('plus',10) ?> <?= __('register', 'Registrarse') ?></a>
                                         <?php endif; ?>
                                     </div>
                                 </div>
                                 <label class="toggle-row" style="gap:10px">
-                                    <span style="font-size:13px;color:var(--text-2);font-weight:500">Mostrar en web</span>
+                                    <span style="font-size:13px;color:var(--text-2);font-weight:500"><?= __('bc_show_on_web', 'Mostrar en web') ?></span>
                                     <label class="toggle">
                                         <input type="checkbox" name="links[<?= $type ?>][<?= $slug ?>][visible]" <?= $cfg['visible'] ? 'checked' : '' ?>>
                                         <span class="toggle-track"></span>
@@ -120,12 +120,12 @@ function get_platform_svg($type, $slug) {
                             </div>
                             <div class="grid-12" style="gap:16px">
                                 <div class="field span-8">
-                                    <label class="label">URL / Enlace</label>
+                                    <label class="label"><?= __('url_link', 'URL / Enlace') ?></label>
                                     <input class="input" type="url" name="links[<?= $type ?>][<?= $slug ?>][link]" value="<?= e($cfg['link']) ?>" placeholder="<?= e($plat['home_url']) ?>...">
                                 </div>
                                 <div class="field span-4">
-                                    <label class="label">Account ID (Opcional)</label>
-                                    <input class="input" type="text" name="links[<?= $type ?>][<?= $slug ?>][account_id]" value="<?= e($cfg['account_id']) ?>" placeholder="@usuario o ID">
+                                    <label class="label"><?= __('bc_account_id_optional', 'Account ID (Opcional)') ?></label>
+                                    <input class="input" type="text" name="links[<?= $type ?>][<?= $slug ?>][account_id]" value="<?= e($cfg['account_id']) ?>" placeholder="<?= __('bc_account_placeholder', '@usuario o ID') ?>">
                                 </div>
                             </div>
                         </div>
@@ -138,12 +138,12 @@ function get_platform_svg($type, $slug) {
 
         <div class="span-4 col" style="gap:16px;align-items:stretch">
             <aside class="form-toc" style="position:sticky;top:88px">
-                <a href="#podcasting" class="form-toc-item active">Podcasting</a>
-                <a href="#social" class="form-toc-item">Redes Sociales</a>
-                <a href="#funding" class="form-toc-item">Financiamiento</a>
+                <a href="#podcasting" class="form-toc-item active"><?= __('bc_nav_podcasting', 'Podcasting') ?></a>
+                <a href="#social" class="form-toc-item"><?= __('bc_nav_social', 'Redes Sociales') ?></a>
+                <a href="#funding" class="form-toc-item"><?= __('bc_nav_funding', 'Financiamiento') ?></a>
             </aside>
             <div class="col" style="gap:8px;position:sticky;top:220px">
-                <button type="submit" form="broadcast-form" class="btn btn-primary" style="width:100%;justify-content:center"><?= icon('check',13) ?> Guardar</button>
+                <button type="submit" form="broadcast-form" class="btn btn-primary" style="width:100%;justify-content:center"><?= icon('check',13) ?> <?= __('save', 'Guardar') ?></button>
             </div>
         </div>
     </div>

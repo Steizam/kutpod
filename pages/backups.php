@@ -152,87 +152,87 @@ if (!function_exists('human_bytes')) {
 ?>
 <div class="page-head">
   <div>
-    <h1 class="page-title">Respaldos</h1>
-    <p class="page-sub">Snapshots completos por podcast · audio + feed + portadas + metadatos</p>
+    <h1 class="page-title"><?= __('bk_title', 'Respaldos') ?></h1>
+    <p class="page-sub"><?= __('bk_sub', 'Snapshots completos por podcast · audio + feed + portadas + metadatos') ?></p>
   </div>
   <div class="row" style="gap:8px">
     <form method="POST" style="display:inline" id="backupForm">
       <?= kp_csrf_field() ?>
       <input type="hidden" name="_action" value="create"/>
       <select name="podcast_id" id="backup_podcast_id" class="select" style="width:200px">
-        <option value="">Toda la instancia</option>
+        <option value=""><?= __('bk_all_instance', 'Toda la instancia') ?></option>
         <?php foreach ($podcasts as $p): ?>
           <option value="<?= (int)$p['id'] ?>"><?= e($p['title']) ?></option>
         <?php endforeach; ?>
       </select>
       <select name="backup_type" id="backup_backup_type" class="select" style="width:160px">
-        <option value="db">Solo Datos (.db)</option>
-        <option value="zip">Completo (.zip)</option>
+        <option value="db"><?= __('bk_type_db_short', 'Solo Datos (.db)') ?></option>
+        <option value="zip"><?= __('bk_type_zip_short', 'Completo (.zip)') ?></option>
       </select>
-      <button class="btn btn-primary" type="submit"><?= icon('download',13) ?> Nuevo respaldo</button>
+      <button class="btn btn-primary" type="submit"><?= icon('download',13) ?> <?= __('bk_new_backup', 'Nuevo respaldo') ?></button>
     </form>
 
   </div>
 </div>
 
 <div class="stat-grid">
-  <?= stat_card('Respaldos totales', (string)$total, 'layers', ['sub'=>'En historial']) ?>
-  <?= stat_card('Espacio usado', human_bytes($total_bytes), 'download') ?>
-  <?= stat_card('Último respaldo', $last ? kp_relative_time(is_numeric($last['created_at']) ? (int)$last['created_at'] : strtotime($last['created_at'])) : 'Nunca', 'check',
-       ['sub'=>$last ? ($last['podcast_title'] ?? 'Toda la instancia') : '—']) ?>
-  <?= stat_card('Próximo', $freq === 'daily' ? 'Mañana 04:00' : ($freq === 'weekly' ? 'Domingo 04:00' : 'Manual'), 'bell',
-       ['sub'=>'Política activa']) ?>
+  <?= stat_card(__('bk_stat_total', 'Respaldos totales'), (string)$total, 'layers', ['sub'=>__('bk_stat_total_sub', 'En historial')]) ?>
+  <?= stat_card(__('bk_stat_space', 'Espacio usado'), human_bytes($total_bytes), 'download') ?>
+  <?= stat_card(__('bk_stat_last', 'Último respaldo'), $last ? kp_relative_time(is_numeric($last['created_at']) ? (int)$last['created_at'] : strtotime($last['created_at'])) : __('bk_never', 'Nunca'), 'check',
+       ['sub'=>$last ? ($last['podcast_title'] ?? __('bk_all_instance', 'Toda la instancia')) : '—']) ?>
+  <?= stat_card(__('bk_stat_next', 'Próximo'), $freq === 'daily' ? __('bk_freq_tomorrow', 'Mañana 04:00') : ($freq === 'weekly' ? __('bk_freq_sunday', 'Domingo 04:00') : __('bk_freq_manual', 'Manual')), 'bell',
+       ['sub'=>__('bk_policy_active', 'Política activa')]) ?>
 </div>
 
 <!-- Política -->
 <form method="POST" class="card card-lg" style="padding:28px;margin-top:24px">
   <?= kp_csrf_field() ?>
   <input type="hidden" name="_action" value="policy"/>
-  <div class="card-title" style="margin-bottom:18px">Política de respaldos</div>
+  <div class="card-title" style="margin-bottom:18px"><?= __('bk_policy_title', 'Política de respaldos') ?></div>
   <div class="grid-12" style="gap:16px">
     <div class="card span-6" style="padding:16px;background:var(--surface-2)">
-      <label class="label">Frecuencia</label>
+      <label class="label"><?= __('bk_frequency', 'Frecuencia') ?></label>
       <select name="backup_frequency" class="select">
-        <option value="daily" <?= $freq==='daily'?'selected':''?>>Diaria · 04:00 UTC</option>
-        <option value="weekly" <?= $freq==='weekly'?'selected':''?>>Semanal · domingos</option>
-        <option value="manual" <?= $freq==='manual'?'selected':''?>>Solo manual</option>
+        <option value="daily" <?= $freq==='daily'?'selected':''?>><?= __('bk_freq_daily_label', 'Diaria · 04:00 UTC') ?></option>
+        <option value="weekly" <?= $freq==='weekly'?'selected':''?>><?= __('bk_freq_weekly_label', 'Semanal · domingos') ?></option>
+        <option value="manual" <?= $freq==='manual'?'selected':''?>><?= __('bk_freq_manual_label', 'Solo manual') ?></option>
       </select>
     </div>
     <div class="card span-6" style="padding:16px;background:var(--surface-2)">
-      <label class="label">Retención (días)</label>
+      <label class="label"><?= __('bk_retention_days', 'Retención (días)') ?></label>
       <select name="backup_retention_days" class="select">
         <?php foreach (['30','90','180','365','0'] as $d): ?>
           <option value="<?= $d ?>" <?= $retention==$d?'selected':''?>>
-            <?= $d === '0' ? 'Indefinida' : ($d.' días') ?>
+            <?= $d === '0' ? __('bk_retention_indefinite', 'Indefinida') : __raw('bk_retention_days_count', $d . ' días', ['count' => $d]) ?>
           </option>
         <?php endforeach; ?>
       </select>
     </div>
   </div>
   <div style="margin-top:16px;text-align:right">
-    <button class="btn btn-primary" type="submit"><?= icon('check',13) ?> Guardar política</button>
+    <button class="btn btn-primary" type="submit"><?= icon('check',13) ?> <?= __('bk_save_policy', 'Guardar política') ?></button>
   </div>
 </form>
 
 <!-- Historial -->
 <div class="card card-lg" style="padding:0;margin-top:24px">
   <div class="card-head" style="padding:20px 24px">
-    <div class="card-title">Historial</div>
-    <input class="input" placeholder="Filtrar por podcast…" style="width:240px" id="bkFilter"/>
+    <div class="card-title"><?= __('history', 'Historial') ?></div>
+    <input class="input" placeholder="<?= __('bk_filter_placeholder', 'Filtrar por podcast…') ?>" style="width:240px" id="bkFilter"/>
   </div>
   <?php if (!$rows): ?>
     <div style="padding:48px;text-align:center;color:var(--text-3)">
-      Sin respaldos todavía. Lanza uno manual o espera al primer ciclo programado.
+      <?= __('bk_empty', 'Sin respaldos todavía. Lanza uno manual o espera al primer ciclo programado.') ?>
     </div>
   <?php else: ?>
     <div class="list">
       <div style="display:grid;grid-template-columns:1fr 150px 100px 110px 95px 125px;gap:14px;padding:12px 32px;font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;border-bottom:1px solid var(--border)">
-        <div>Podcast</div><div>Fecha</div><div class="tabular">Tamaño</div><div>Contenido</div><div>Tipo</div><div></div>
+        <div><?= __('bk_th_podcast', 'Podcast') ?></div><div><?= __('bk_th_date', 'Fecha') ?></div><div class="tabular"><?= __('bk_th_size', 'Tamaño') ?></div><div><?= __('bk_th_content', 'Contenido') ?></div><div><?= __('bk_th_type', 'Tipo') ?></div><div></div>
       </div>
       <?php foreach ($rows as $b):
-        $label = $b['podcast_title'] ?? 'Toda la instancia';
+        $label = $b['podcast_title'] ?? __('bk_all_instance', 'Toda la instancia');
         $initial = strtoupper(substr($label, 0, 1));
-        $kind_label = $b['kind'] === 'scheduled' ? 'Programado' : ($b['kind'] === 'pre_import' ? 'Pre-import' : 'Manual');
+        $kind_label = $b['kind'] === 'scheduled' ? __('bk_kind_scheduled', 'Programado') : ($b['kind'] === 'pre_import' ? __('bk_kind_pre_import', 'Pre-import') : __('bk_kind_manual', 'Manual'));
         $kind_color = $b['kind'] === 'scheduled' ? '#10b981' : ($b['kind'] === 'pre_import' ? '#f59e0b' : 'var(--accent)');
         $status_color = $b['status'] === 'completed' ? '#10b981' : ($b['status'] === 'failed' ? '#ef4444' : '#f59e0b');
       ?>
@@ -250,19 +250,19 @@ if (!function_exists('human_bytes')) {
           <div><span class="tag" style="background:<?= $kind_color ?>22;color:<?= $kind_color ?>;font-size:11px"><?= e($kind_label) ?></span></div>
           <div class="row" style="gap:6px;justify-content:flex-end">
             <?php if (!empty($b['path']) && $b['status'] === 'completed'): ?>
-              <a class="kebab" href="<?= e($b['path']) ?>" title="Descargar" download style="width:32px;height:32px;border-radius:8px;display:inline-grid;place-items:center"><?= icon('download',16) ?></a>
-              <form method="POST" style="margin:0;display:inline" onsubmit="return confirm('¿Restaurar este respaldo? Reemplazará la base de datos actual.')">
+              <a class="kebab" href="<?= e($b['path']) ?>" title="<?= __('download', 'Descargar') ?>" download style="width:32px;height:32px;border-radius:8px;display:inline-grid;place-items:center"><?= icon('download',16) ?></a>
+              <form method="POST" style="margin:0;display:inline" onsubmit="return confirm('<?= e(__('bk_confirm_restore', '¿Restaurar este respaldo? Reemplazará la base de datos actual.')) ?>')">
                 <?= kp_csrf_field() ?>
                 <input type="hidden" name="_action" value="restore"/>
                 <input type="hidden" name="id" value="<?= $b['id'] ?>"/>
-                <button class="kebab" type="submit" title="Restaurar" style="border:none;background:none;cursor:pointer;width:32px;height:32px;border-radius:8px;display:grid;place-items:center"><?= icon('refreshCw',15) ?></button>
+                <button class="kebab" type="submit" title="<?= __('bk_restore', 'Restaurar') ?>" style="border:none;background:none;cursor:pointer;width:32px;height:32px;border-radius:8px;display:grid;place-items:center"><?= icon('refreshCw',15) ?></button>
               </form>
             <?php endif; ?>
-            <form method="POST" style="margin:0;display:inline" onsubmit="return confirm('¿Eliminar este respaldo permanentemente?')">
+            <form method="POST" style="margin:0;display:inline" onsubmit="return confirm('<?= e(__('bk_confirm_delete', '¿Eliminar este respaldo permanentemente?')) ?>')">
               <?= kp_csrf_field() ?>
               <input type="hidden" name="_action" value="delete"/>
               <input type="hidden" name="id" value="<?= $b['id'] ?>"/>
-              <button class="kebab" type="submit" title="Eliminar" style="border:none;background:none;cursor:pointer;width:32px;height:32px;border-radius:8px;display:grid;place-items:center"><?= icon('trash',15) ?></button>
+              <button class="kebab" type="submit" title="<?= __('delete', 'Eliminar') ?>" style="border:none;background:none;cursor:pointer;width:32px;height:32px;border-radius:8px;display:grid;place-items:center"><?= icon('trash',15) ?></button>
             </form>
           </div>
         </div>

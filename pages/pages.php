@@ -56,13 +56,13 @@ if (!isset($current['content_md']) && !empty($current['blocks'])) {
 ?>
 <div class="page-head">
   <div>
-    <h1 class="page-title">Páginas</h1>
-    <p class="page-sub">Editor visual de páginas estáticas del sitio público.</p>
+    <h1 class="page-title"><?= __('pages_title', 'Páginas') ?></h1>
+    <p class="page-sub"><?= __('pages_sub', 'Editor visual de páginas estáticas del sitio público.') ?></p>
   </div>
   <div class="row">
-    <button class="btn" type="button" onclick="KP_PAGES.del()" style="color:var(--red)"><?= icon('trash',13) ?> Eliminar</button>
-    <a class="btn" href="/p/<?= e($current['slug']) ?>" target="_blank"><?= icon('globe',13) ?> Ver pública</a>
-    <button class="btn btn-primary" type="button" onclick="KP_PAGES.save()"><?= icon('check',13) ?> Guardar</button>
+    <button class="btn" type="button" onclick="KP_PAGES.del()" style="color:var(--red)"><?= icon('trash',13) ?> <?= __('delete', 'Eliminar') ?></button>
+    <a class="btn" href="/p/<?= e($current['slug']) ?>" target="_blank"><?= icon('globe',13) ?> <?= __('pages_view_public', 'Ver pública') ?></a>
+    <button class="btn btn-primary" type="button" onclick="KP_PAGES.save()"><?= icon('check',13) ?> <?= __('save', 'Guardar') ?></button>
   </div>
 </div>
 
@@ -70,8 +70,8 @@ if (!isset($current['content_md']) && !empty($current['blocks'])) {
   <!-- Sidebar páginas -->
   <aside class="span-3 card" style="padding:0;overflow:hidden;align-self:flex-start">
     <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
-      <strong style="font-size:13px">Tus páginas</strong>
-      <button class="btn btn-sm" type="button" onclick="KP_PAGES.create()"><?= icon('plus',13) ?> Nueva</button>
+      <strong style="font-size:13px"><?= __('pages_your_pages', 'Tus páginas') ?></strong>
+      <button class="btn btn-sm" type="button" onclick="KP_PAGES.create()"><?= icon('plus',13) ?> <?= __('new', 'Nueva') ?></button>
     </div>
     <div class="page-list">
       <?php foreach ($pages as $sl => $pg): ?>
@@ -80,7 +80,7 @@ if (!isset($current['content_md']) && !empty($current['blocks'])) {
             <div class="strong"><?= e($pg['title']) ?></div>
             <div class="help"><code>/<?= e($sl) ?></code> · <?= e($pg['updated']) ?></div>
           </div>
-          <span class="tag <?= $pg['published'] ? 'published' : 'draft' ?>"><?= $pg['published'] ? 'Publicada' : 'Borrador' ?></span>
+          <span class="tag <?= $pg['published'] ? 'published' : 'draft' ?>"><?= $pg['published'] ? __('published', 'Publicada') : __('draft', 'Borrador') ?></span>
         </a>
       <?php endforeach; ?>
     </div>
@@ -90,20 +90,20 @@ if (!isset($current['content_md']) && !empty($current['blocks'])) {
   <div class="span-9 col" style="gap:24px">
     <div class="card card-lg">
       <div class="field-row">
-        <div class="field" style="flex:2"><label class="label">Título de la página</label><input class="input" id="pg_title" value="<?= e($current['title']) ?>"></div>
+        <div class="field" style="flex:2"><label class="label"><?= __('pages_page_title', 'Título de la página') ?></label><input class="input" id="pg_title" value="<?= e($current['title']) ?>"></div>
         <div class="field" style="flex:1"><label class="label">Slug (URL)</label>
           <div class="input-affix"><span><?= e(kp_setting('instance_domain', $_SERVER['HTTP_HOST'] ?? '')) ?>/</span><input class="input" id="pg_slug" value="<?= e($current['slug']) ?>" pattern="[a-z0-9\-]+" style="font-family:ui-monospace,monospace"></div>
         </div>
         <div class="field" style="flex:0 0 170px">
-          <label class="label">Aparece en</label>
+          <label class="label"><?= __('pages_appears_in', 'Aparece en') ?></label>
           <select class="input" id="pg_menu">
-            <?php $cur = $current['menu'] ?? 'header'; foreach (['header'=>'Header','footer'=>'Footer','legal'=>'Footer · Legal','none'=>'Oculta del menú'] as $k=>$lb): ?>
+            <?php $cur = $current['menu'] ?? 'header'; foreach (['header'=>__('pages_menu_header', 'Header'),'footer'=>__('pages_menu_footer', 'Footer'),'legal'=>__('pages_menu_legal', 'Footer · Legal'),'none'=>__('pages_menu_none', 'Oculta del menú')] as $k=>$lb): ?>
               <option value="<?= $k ?>" <?= $cur===$k?'selected':'' ?>><?= $lb ?></option>
             <?php endforeach; ?>
           </select>
         </div>
         <div class="field" style="flex:0 0 150px;align-self:flex-end">
-          <label class="toggle-row" style="padding:10px 14px"><span style="font-size:13.5px"><strong>Publicada</strong></span><label class="toggle"><input type="checkbox" id="pg_pub" <?= $current['published'] ? 'checked' : '' ?>><span class="toggle-track"></span></label></label>
+          <label class="toggle-row" style="padding:10px 14px"><span style="font-size:13.5px"><strong><?= __('published', 'Publicada') ?></strong></span><label class="toggle"><input type="checkbox" id="pg_pub" <?= $current['published'] ? 'checked' : '' ?>><span class="toggle-track"></span></label></label>
         </div>
       </div>
     </div>
@@ -111,9 +111,9 @@ if (!isset($current['content_md']) && !empty($current['blocks'])) {
     <div class="card card-lg" style="padding:0;overflow:hidden">
       <header style="padding: 14px 20px 0; border-bottom: 1px solid var(--border);">
         <div class="tab-strip md-tabs" style="margin-bottom: 0;">
-          <button type="button" class="tab active" data-md="edit">Editar</button>
-          <button type="button" class="tab" data-md="preview">Vista previa</button>
-          <button type="button" class="tab" data-md="split">Dividida</button>
+          <button type="button" class="tab active" data-md="edit"><?= __('edit', 'Editar') ?></button>
+          <button type="button" class="tab" data-md="preview"><?= __('preview', 'Vista previa') ?></button>
+          <button type="button" class="tab" data-md="split"><?= __('pages_split_view', 'Dividida') ?></button>
         </div>
       </header>
       <div class="md-toolbar" style="padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; gap: 8px;">
@@ -126,11 +126,11 @@ if (!isset($current['content_md']) && !empty($current['blocks'])) {
         <button class="btn btn-sm btn-ghost" type="button" data-md-cmd="code">{ }</button>
       </div>
       <div class="md-editor" style="display: flex; min-height: 400px;">
-        <textarea class="textarea md-source" id="pg_content" style="flex:1; border:none; border-radius:0; resize:none; padding: 20px; outline:none;" placeholder="Escribe aquí el contenido de la página. Puedes usar Markdown."><?= e($current['content_md'] ?? '') ?></textarea>
+        <textarea class="textarea md-source" id="pg_content" style="flex:1; border:none; border-radius:0; resize:none; padding: 20px; outline:none;" placeholder="<?= __('pages_content_placeholder', 'Escribe aquí el contenido de la página. Puedes usar Markdown.') ?>"><?= e($current['content_md'] ?? '') ?></textarea>
         <div class="md-preview prose" style="flex:1; padding: 20px; overflow-y:auto; border-left:1px solid var(--border);" hidden></div>
       </div>
       <div style="padding: 10px 20px; border-top: 1px solid var(--border); background: var(--surface-2);">
-        <span class="help"><span class="md-count">0</span> caracteres · Soporta Markdown estándar.</span>
+        <span class="help"><span class="md-count">0</span> <?= __('pages_chars_support_md', 'caracteres · Soporta Markdown estándar.') ?></span>
       </div>
     </div>
   </div>

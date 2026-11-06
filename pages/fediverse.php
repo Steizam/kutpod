@@ -70,43 +70,43 @@ try {
 ?>
 <?php if (isset($_GET['refederated']) && $_GET['refederated'] === '1'): ?>
   <div class="alert success" style="margin-bottom:var(--gap);display:flex;align-items:center;gap:8px;padding:12px;background:#10b98122;color:#10b981;border-radius:8px;border:1px solid #10b98144;font-size:14px">
-    <?= icon('check', 16) ?> El episodio se ha encolado para re-envío al Fediverso.
+    <?= icon('check', 16) ?> <?= __('fedi_refederate_success', 'El episodio se ha encolado para re-envío al Fediverso.') ?>
   </div>
 <?php endif; ?>
 <?php if (isset($_GET['defederated']) && $_GET['defederated'] === '1'): ?>
   <div class="alert success" style="margin-bottom:var(--gap);display:flex;align-items:center;gap:8px;padding:12px;background:#10b98122;color:#10b981;border-radius:8px;border:1px solid #10b98144;font-size:14px">
-    <?= icon('check', 16) ?> El post de este episodio en el Fediverso se ha encolado para eliminación.
+    <?= icon('check', 16) ?> <?= __('fedi_defederate_success', 'El post de este episodio en el Fediverso se ha encolado para eliminación.') ?>
   </div>
 <?php endif; ?>
 
 <div class="page-head">
   <div>
-    <h1 class="page-title">Fediverso</h1>
-    <p class="page-sub">Federación ActivityPub · cada podcast es una cuenta citable desde Mastodon · cada episodio una nota</p>
+    <h1 class="page-title"><?= __('fedi_title', 'Fediverso') ?></h1>
+    <p class="page-sub"><?= __('fedi_sub', 'Federación ActivityPub · cada podcast es una cuenta citable desde Mastodon · cada episodio una nota') ?></p>
   </div>
   <div class="row" style="gap:8px">
-    <a class="btn btn-primary" href="<?= admin_url('preferences') ?>"><?= icon('settings',13) ?> Configurar instancia</a>
+    <a class="btn btn-primary" href="<?= admin_url('preferences') ?>"><?= icon('settings',13) ?> <?= __('fedi_configure_instance', 'Configurar instancia') ?></a>
   </div>
 </div>
 
 <div class="stat-grid">
-  <?= stat_card('Cuentas federadas', (string)count($podcasts), 'users', ['sub'=>'Una por podcast']) ?>
-  <?= stat_card('Seguidores totales', number_format($total_followers), 'users', ['sub'=>'ActivityPub']) ?>
-  <?= stat_card('Notas publicadas', number_format($total_notes), 'rss', ['sub'=>'Episodios federados']) ?>
-  <?= stat_card('Dominios bloqueados', (string)count($blocked_domains), 'x', ['sub'=>'Lista local']) ?>
+  <?= stat_card(__('fedi_federated_accounts', 'Cuentas federadas'), (string)count($podcasts), 'users', ['sub'=>__('fedi_one_per_podcast', 'Una por podcast')]) ?>
+  <?= stat_card(__('fedi_total_followers', 'Seguidores totales'), number_format($total_followers), 'users', ['sub'=>'ActivityPub']) ?>
+  <?= stat_card(__('fedi_published_notes', 'Notas publicadas'), number_format($total_notes), 'rss', ['sub'=>__('fedi_federated_episodes', 'Episodios federados')]) ?>
+  <?= stat_card(__('fedi_blocked_domains', 'Dominios bloqueados'), (string)count($blocked_domains), 'x', ['sub'=>__('fedi_local_list', 'Lista local')]) ?>
 </div>
 
 <div class="card card-lg" style="padding:28px;margin-top:24px">
   <div class="card-head">
     <div>
-      <div class="card-title">Cuentas federadas</div>
-      <div class="page-sub" style="margin-top:4px;font-size:12.5px">Una cuenta ActivityPub por podcast · citables desde cualquier instancia Mastodon</div>
+      <div class="card-title"><?= __('fedi_federated_accounts', 'Cuentas federadas') ?></div>
+      <div class="page-sub" style="margin-top:4px;font-size:12.5px"><?= __('fedi_accounts_desc', 'Una cuenta ActivityPub por podcast · citables desde cualquier instancia Mastodon') ?></div>
     </div>
     <a class="btn" href="https://docs.joinmastodon.org/spec/activitypub/" target="_blank" rel="noopener"><?= icon('file',13) ?> Spec ActivityPub</a>
   </div>
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;margin-top:18px">
     <?php if (!$podcasts): ?>
-      <div class="page-sub" style="padding:40px;text-align:center;grid-column:1/-1">Aún no hay podcasts. <a class="pub-link" href="/admin/new-podcast">Crea el primero →</a></div>
+      <div class="page-sub" style="padding:40px;text-align:center;grid-column:1/-1"><?= __('fedi_no_podcasts_yet', 'Aún no hay podcasts.') ?> <a class="pub-link" href="/admin/new-podcast"><?= __('fedi_create_first_podcast', 'Crea el primero →') ?></a></div>
     <?php endif; foreach ($podcasts as $p): $eps = (int)($p['episodes'] ?? 0);
       // Conteos reales por podcast (si las tablas existen)
       $f_count = 0; $n_count = $eps; $b_count = 0;
@@ -122,15 +122,15 @@ try {
             <div style="font-weight:500;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><?= e($p['title']) ?></div>
             <div style="font-size:12px;color:var(--text-3);font-family:ui-monospace,monospace;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@<?= e($p['id']) ?>@<?= e($domain) ?></div>
           </div>
-          <span class="tag" style="background:#10b98122;color:#10b981;font-size:11px;flex-shrink:0">activa</span>
+          <span class="tag" style="background:#10b98122;color:#10b981;font-size:11px;flex-shrink:0"><?= __('active', 'activa') ?></span>
         </div>
         <div class="row" style="gap:22px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:12.5px">
           <div>
-            <div style="color:var(--text-3);font-size:10.5px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Seguidores</div>
+            <div style="color:var(--text-3);font-size:10.5px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600"><?= __('followers', 'Seguidores') ?></div>
             <div class="tabular" style="font-weight:600;margin-top:3px;font-size:14px"><?= number_format($f_count) ?></div>
           </div>
           <div>
-            <div style="color:var(--text-3);font-size:10.5px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Notas</div>
+            <div style="color:var(--text-3);font-size:10.5px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600"><?= __('notes', 'Notas') ?></div>
             <div class="tabular" style="font-weight:600;margin-top:3px;font-size:14px"><?= $n_count ?></div>
           </div>
         </div>
@@ -138,19 +138,19 @@ try {
     <?php endforeach; ?>
   </div>
   <div style="margin-top:18px;padding:14px;background:var(--surface-2);border-radius:10px;font-size:12.5px;color:var(--text-2)">
-    <?= icon('globe',14) ?> URL pública: <code><?= e($domain) ?>/@&lt;podcast&gt;</code> · perfil WebFinger válido en <code>/.well-known/webfinger</code>
+    <?= icon('globe',14) ?> <?= __('fedi_public_url', 'URL pública:') ?> <code><?= e($domain) ?>/@&lt;podcast&gt;</code> · <?= __('fedi_webfinger_hint', 'perfil WebFinger válido en <code>/.well-known/webfinger</code>') ?>
   </div>
 </div>
 
 <div class="card card-lg" style="padding:0;margin-top:24px">
   <div class="card-head" style="padding:20px 24px">
-    <div class="card-title">Últimos episodios federados</div>
+    <div class="card-title"><?= __('fedi_recent_episodes', 'Últimos episodios federados') ?></div>
   </div>
   <div class="list">
     <div style="overflow-x:auto;">
       <div style="min-width: 600px;">
         <?php if (!$recent_episodes): ?>
-          <div class="page-sub" style="padding:40px;text-align:center">No hay episodios federados.</div>
+          <div class="page-sub" style="padding:40px;text-align:center"><?= __('fedi_no_episodes', 'No hay episodios federados.') ?></div>
         <?php endif; foreach ($recent_episodes as $ep): ?>
           <div style="display:grid;grid-template-columns:44px 1.6fr 1fr 190px;gap:18px;padding:14px 24px;align-items:center;border-bottom:1px solid var(--border);font-size:13.5px">
             <?php
@@ -173,17 +173,17 @@ try {
             </div>
             <div style="font-size:13px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><?= e($ep['podcast_title']) ?></div>
             <div style="text-align:right">
-              <form method="POST" style="margin:0;padding:0;display:inline-block" onsubmit="return confirm('¿Estás seguro de que quieres volver a enviar este episodio al Fediverso?')">
+              <form method="POST" style="margin:0;padding:0;display:inline-block" onsubmit="return confirm('<?= e(__('fedi_confirm_refederate', '¿Estás seguro de que quieres volver a enviar este episodio al Fediverso?')) ?>')">
                 <?= kp_csrf_field() ?>
                 <input type="hidden" name="action" value="refederate">
                 <input type="hidden" name="episode_id" value="<?= (int)$ep['id'] ?>">
-                <button type="submit" class="btn" style="padding:4px 8px;font-size:12px;display:inline-flex;align-items:center;gap:4px;color:var(--accent);border-color:var(--accent)"><?= icon('globe',12) ?> Re-enviar</button>
+                <button type="submit" class="btn" style="padding:4px 8px;font-size:12px;display:inline-flex;align-items:center;gap:4px;color:var(--accent);border-color:var(--accent)"><?= icon('globe',12) ?> <?= __('fedi_btn_resend', 'Re-enviar') ?></button>
               </form>
-              <form method="POST" style="margin:0;padding:0;display:inline-block;margin-left:6px" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este post del Fediverso? Esto enviará una actividad Delete a tus seguidores.')">
+              <form method="POST" style="margin:0;padding:0;display:inline-block" onsubmit="return confirm('<?= e(__('fedi_confirm_defederate', '¿Estás seguro de que deseas eliminar este post del Fediverso? Esto enviará una actividad Delete a tus seguidores.')) ?>')">
                 <?= kp_csrf_field() ?>
                 <input type="hidden" name="action" value="defederate">
                 <input type="hidden" name="episode_id" value="<?= (int)$ep['id'] ?>">
-                <button type="submit" class="btn" style="padding:4px 8px;font-size:12px;display:inline-flex;align-items:center;gap:4px;color:#ef4444;border-color:#ef4444"><?= icon('trash',12) ?> Eliminar</button>
+                <button type="submit" class="btn" style="padding:4px 8px;font-size:12px;display:inline-flex;align-items:center;gap:4px;color:#ef4444;border-color:#ef4444;margin-left:6px"><?= icon('trash',12) ?> <?= __('delete', 'Eliminar') ?></button>
               </form>
             </div>
           </div>
@@ -195,13 +195,13 @@ try {
 
 <div class="card card-lg" style="padding:0;margin-top:24px">
   <div class="card-head" style="padding:20px 24px">
-    <div class="card-title">Actividad reciente</div>
+    <div class="card-title"><?= __('fedi_recent_activity', 'Actividad reciente') ?></div>
   </div>
   <div class="list">
     <div style="overflow-x:auto;">
       <div style="min-width: 600px;">
         <?php if (!$followers): ?>
-      <div class="page-sub" style="padding:40px;text-align:center">Sin actividad federada todavía. Cuando alguien siga uno de tus podcasts desde Mastodon, aparecerá aquí.</div>
+      <div class="page-sub" style="padding:40px;text-align:center"><?= __('fedi_no_activity', 'Sin actividad federada todavía. Cuando alguien siga uno de tus podcasts desde Mastodon, aparecerá aquí.') ?></div>
     <?php endif; foreach ($followers as $f): ?>
       <div style="display:grid;grid-template-columns:44px 1fr 1fr 240px;gap:18px;padding:14px 24px;align-items:center;border-bottom:1px solid var(--border);font-size:13.5px">
         <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,<?= e($f['color']) ?>,<?= e($f['color']) ?>99);color:white;font-weight:700;display:grid;place-items:center"><?= e(strtoupper(substr($f['name']?:'?',0,1))) ?></div>
@@ -221,18 +221,18 @@ try {
 <div class="grid-12" style="gap:24px;margin-top:24px">
   <div class="card card-lg span-12" style="padding:28px">
     <div class="card-head">
-      <div class="card-title">Dominios bloqueados</div>
+      <div class="card-title"><?= __('fedi_blocked_domains', 'Dominios bloqueados') ?></div>
       <form method="POST" id="form-block-domain" style="display:none;">
         <?= kp_csrf_field() ?>
         <input type="hidden" name="action" value="block_domain">
         <input type="hidden" name="domain" id="block-domain-input">
       </form>
-      <button class="btn" type="button" onclick="let d = prompt('Introduce el dominio a bloquear (ej. mastodon.social):'); if(d){ document.getElementById('block-domain-input').value=d; document.getElementById('form-block-domain').submit(); }"><?= icon('plus',13) ?> Añadir</button>
+      <button class="btn" type="button" onclick="let d = prompt('<?= e(__('fedi_prompt_block_domain', 'Introduce el dominio a bloquear (ej. mastodon.social):')) ?>'); if(d){ document.getElementById('block-domain-input').value=d; document.getElementById('form-block-domain').submit(); }"><?= icon('plus',13) ?> <?= __('add', 'Añadir') ?></button>
     </div>
     <div class="list" style="margin-top:14px">
       <div style="overflow-x:auto;">
         <div style="min-width: 400px;">
-          <?php if (!$blocked_domains): ?><div class="page-sub" style="padding:20px 4px">Sin dominios bloqueados.</div><?php endif; ?>
+          <?php if (!$blocked_domains): ?><div class="page-sub" style="padding:20px 4px"><?= __('fedi_no_blocked_domains', 'Sin dominios bloqueados.') ?></div><?php endif; ?>
       <?php foreach ($blocked_domains as $d): $auto = ($d['kind'] ?? '')==='Auto'; ?>
         <div style="display:grid;grid-template-columns:1fr 90px 110px 1fr 40px;gap:14px;padding:12px 4px;align-items:center;border-bottom:1px solid var(--border);font-size:13px">
           <div style="font-family:ui-monospace,monospace;font-weight:500"><?= e($d['domain']) ?></div>
@@ -243,7 +243,7 @@ try {
             <?= kp_csrf_field() ?>
             <input type="hidden" name="action" value="unblock_domain">
             <input type="hidden" name="domain" value="<?= e($d['domain']) ?>">
-            <button class="kebab" type="submit" title="Desbloquear" style="color:var(--text-3)" onclick="return confirm('¿Desbloquear <?= e($d['domain']) ?>?')"><?= icon('trash',14) ?></button>
+            <button class="kebab" type="submit" title="<?= __('fedi_unblock', 'Desbloquear') ?>" style="color:var(--text-3)" onclick="return confirm('<?= e(__('fedi_confirm_unblock', '¿Desbloquear :domain?')) ?>'.replace(':domain', '<?= e($d['domain']) ?>'))"><?= icon('trash',14) ?></button>
           </form>
         </div>
         <?php endforeach; ?>
