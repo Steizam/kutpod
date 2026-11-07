@@ -6,6 +6,18 @@
 
 require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/../version.php';
+require_once __DIR__ . '/updater.php';
+
+$kp_update_cache = kp_update_cached();
+$kp_update_available = false;
+$kp_available_ver = '';
+if ($kp_update_cache && !empty($kp_update_cache['available']) && !empty($kp_update_cache['new_version'])) {
+  if (version_compare($kp_update_cache['new_version'], KUTPOD_VERSION, '>')) {
+    $kp_update_available = true;
+    $kp_available_ver = $kp_update_cache['new_version'];
+  }
+}
+$kp_check_stale = kp_update_cache_stale();
 
 $is_podcast_section = in_array($page, ['podcasts','new-podcast','edit-podcast','new-episode','podcast','import']);
 
@@ -82,7 +94,10 @@ $is_auth_page = in_array($page, ['login', 'login-2fa', 'forgot', 'reset', 'recov
     </div>
     <div class="nav-section">
       <div class="nav-label"><?= __('nav_admin') ?></div>
-      <a class="nav-item <?= $page==='update'?'active':'' ?>" href="<?= admin_url('update') ?>"><?= icon('refreshCw') ?> <?= __('nav_update') ?></a>
+      <a class="nav-item <?= $page==='update'?'active':'' ?>" href="<?= admin_url('update') ?>">
+        <?= icon('refreshCw') ?> <span><?= __('nav_update') ?></span>
+        <span class="badge" id="kp-update-badge" style="background:var(--accent);color:var(--bg-1);margin-left:auto;font-size:10px;font-weight:700;<?= $kp_update_available ? '' : 'display:none;' ?>">v<?= e($kp_available_ver) ?></span>
+      </a>
       <a class="nav-item <?= $page==='queue'?'active':'' ?>" href="<?= admin_url('queue') ?>"><?= icon('layers') ?> <?= __('nav_queue') ?></a>
       <a class="nav-item <?= $page==='backups'?'active':'' ?>" href="<?= admin_url('backups') ?>"><?= icon('layers') ?> <?= __('nav_backups') ?></a>
       <a class="nav-item <?= $page==='preferences'?'active':'' ?>" href="<?= admin_url('preferences') ?>"><?= icon('settings') ?> <?= __('nav_preferences') ?></a>
@@ -141,9 +156,72 @@ $is_auth_page = in_array($page, ['login', 'login-2fa', 'forgot', 'reset', 'recov
       <a href="?lang=en" style="color:var(--text-1, white);text-decoration:none;padding:2px 6px;border-radius:4px;<?= $cur_lang === 'en' ? 'background:var(--accent);color:var(--bg-1, #000);' : 'opacity:0.6;' ?>">EN</a>
     </div>
     <?php endif; ?>
+    <?php if (!$is_auth_page && $page !== 'update'): ?>
+    <div id="kp-update-banner" class="update-notification-banner" style="<?= $kp_update_available ? 'display:flex;' : 'display:none;' ?>">
+      <div class="update-banner-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg>
+      </div>
+      <div class="update-banner-body">
+        <div class="update-banner-title"><?= __('kp_update_available_title', '¡Nueva versión disponible!') ?></div>
+        <div class="update-banner-desc">
+          <?= __('kp_update_available_desc', 'Hay una nueva versión de KutPod (:version). Actualmente tienes instalada la v:current.', [
+            'version' => '<strong id="kp-update-ver-label">v' . e($kp_available_ver) . '</strong>',
+            'current' => KUTPOD_VERSION
+          ]) ?>
+        </div>
+      </div>
+      <div class="update-banner-actions">
+        <a href="<?= admin_url('update') ?>" class="btn btn-accent btn-sm" style="text-decoration:none;font-weight:600"><?= __('kp_update_now_btn', 'Actualizar ahora') ?> →</a>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="dismissUpdateBanner('kp')" style="padding:4px 8px;font-size:14px;color:var(--text-3);border:none;cursor:pointer" title="Descartar">✕</button>
+      </div>
+    </div>
+    <?php endif; ?>
     <div class="page"><?= $body ?></div>
   </main>
 </div>
 <script src="/assets/app.js?v=<?= filemtime(__DIR__ . '/../assets/app.js') ?>" defer></script>
+<script>
+function dismissUpdateBanner(app) {
+  var ver = document.getElementById(app + '-update-ver-label')?.innerText || '1';
+  sessionStorage.setItem('dismissed_update_' + app, ver);
+  var b = document.getElementById(app + '-update-banner');
+  if (b) b.style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var banner = document.getElementById('kp-update-banner');
+  var badge = document.getElementById('kp-update-badge');
+  var verLabel = document.getElementById('kp-update-ver-label');
+
+  if (banner && banner.style.display !== 'none') {
+    var dismissed = sessionStorage.getItem('dismissed_update_kp');
+    if (dismissed && verLabel && dismissed === verLabel.innerText) {
+      banner.style.display = 'none';
+    }
+  }
+
+  <?php if (!empty($kp_check_stale)): ?>
+  fetch('/api/update?action=check', { method: 'GET', headers: { 'Accept': 'application/json' } })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data && data.available && data.new_version) {
+        var currentVer = '<?= KUTPOD_VERSION ?>';
+        if (data.new_version !== currentVer) {
+          if (verLabel) verLabel.innerText = 'v' + data.new_version;
+          if (badge) {
+            badge.innerText = 'v' + data.new_version;
+            badge.style.display = 'inline-block';
+          }
+          var dismissed = sessionStorage.getItem('dismissed_update_kp');
+          if (banner && dismissed !== ('v' + data.new_version) && '<?= $page ?>' !== 'update') {
+            banner.style.display = 'flex';
+          }
+        }
+      }
+    })
+    .catch(function() {});
+  <?php endif; ?>
+});
+</script>
 </body>
 </html>

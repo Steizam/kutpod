@@ -2061,6 +2061,60 @@ textarea.block-input { resize: vertical; line-height: 1.5; }
   }
 }
 
+/* Update notification banner */
+.update-notification-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  margin: 0 var(--pad-card, 24px) 20px var(--pad-card, 24px);
+  background: linear-gradient(135deg, var(--accent-soft, rgba(255, 95, 126, 0.14)) 0%, rgba(74, 222, 128, 0.1) 100%);
+  border: 1px solid var(--accent-soft, rgba(255, 95, 126, 0.25));
+  border-radius: var(--radius, 14px);
+  color: var(--text-1, #ffffff);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  animation: fadeInBanner 0.25s ease-out;
+}
+@keyframes fadeInBanner {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.update-notification-banner .update-banner-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #ffffff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px var(--accent-soft);
+}
+.update-notification-banner .update-banner-body {
+  flex: 1;
+  min-width: 0;
+}
+.update-notification-banner .update-banner-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-1, #ffffff);
+  margin-bottom: 2px;
+}
+.update-notification-banner .update-banner-desc {
+  font-size: 13px;
+  color: var(--text-2, #a1a1aa);
+}
+.update-notification-banner .update-banner-desc strong {
+  color: var(--accent);
+}
+.update-notification-banner .update-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
 
 
 
