@@ -164,7 +164,7 @@ $is_auth_page = in_array($page, ['login', 'login-2fa', 'forgot', 'reset', 'recov
       <div class="update-banner-body">
         <div class="update-banner-title"><?= __('kp_update_available_title', '¡Nueva versión disponible!') ?></div>
         <div class="update-banner-desc">
-          <?= __('kp_update_available_desc', 'Hay una nueva versión de KutPod (:version). Actualmente tienes instalada la v:current.', [
+          <?= __raw('kp_update_available_desc', 'Hay una nueva versión de KutPod (:version). Actualmente tienes instalada la v:current.', [
             'version' => '<strong id="kp-update-ver-label">v' . e($kp_available_ver) . '</strong>',
             'current' => KUTPOD_VERSION
           ]) ?>
